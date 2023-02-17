@@ -32,7 +32,13 @@ class Deposito extends CI_Controller
 
         $this->data['page_title'] = 'Data ' . $this->data['module'];
 
-        $this->data['get_all'] = $this->Deposito_model->get_all();
+        if (is_grandadmin()) {
+            $this->data['get_all'] = $this->Deposito_model->get_all();
+        } elseif (is_masteradmin()) {
+            $this->data['get_all'] = $this->Deposito_model->get_all_by_instansi();
+        } elseif (is_superadmin()) {
+            $this->data['get_all'] = $this->Deposito_model->get_all_by_cabang();
+        }
 
         $this->data['action']     = 'admin/deposito/update_action';
 
