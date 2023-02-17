@@ -238,6 +238,13 @@
                         $("#buttonComponent").html(data);
                     },
                 });
+
+                jQuery.ajax({
+                    url: "<?php echo base_url('admin/pembiayaan/component_dropdown/') ?>" + id_pembiayaan,
+                    success: function(data) {
+                        $("#showComponent").html(data);
+                    },
+                });
             });
 
             $(document).on('click', '#detailPembiayaan', function() {
@@ -338,6 +345,18 @@
                     alert("Tipe file tidak sesuai. Gambar harus bertipe .png, .gif atau .jpg.");
                 }
             }
+        }
+
+        function tampilCabang() {
+            instansi_id = document.getElementById("instansi_id").value;
+            $.ajax({
+                url: "<?php echo base_url(); ?>admin/cabang/pilih_cabang/" + instansi_id + "",
+                success: function(response) {
+                    $("#cabang_id").html(response);
+                },
+                dataType: "html"
+            });
+            return false;
         }
     </script>
 </body>

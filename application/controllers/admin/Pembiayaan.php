@@ -1093,6 +1093,12 @@ class Pembiayaan extends CI_Controller
 
     function update_action()
     {
+        if (is_grandadmin()) {
+            $this->form_validation->set_rules('instansi_id', 'Instansi', 'required');
+            $this->form_validation->set_rules('cabang_id', 'Cabang', 'required');
+        } elseif (is_masteradmin()) {
+            $this->form_validation->set_rules('cabang_id', 'Cabang', 'required');
+        }
         $this->form_validation->set_rules('name', 'Nama Anggota', 'trim|required');
         $this->form_validation->set_rules('nik', 'NIK', 'is_numeric|required');
         $this->form_validation->set_rules('address', 'Alamat', 'required');
@@ -1133,6 +1139,14 @@ class Pembiayaan extends CI_Controller
             $string = $this->input->post('jml_pinjaman');
             $jml_pinjaman = preg_replace("/[^0-9]/", "", $string);
 
+            if (is_grandadmin()) {
+                $instansi = $this->input->post('instansi_id');
+                $cabang = $this->input->post('cabang_id');
+            } elseif (is_masteradmin()) {
+                $instansi = $this->session->instansi_id;
+                $cabang = $this->input->post('cabang_id');
+            }
+
             if ($_FILES['photo']['error'] <> 4) {
                 $nmfile = strtolower(url_title($this->input->post('name'))) . date('YmdHis');
 
@@ -1166,7 +1180,8 @@ class Pembiayaan extends CI_Controller
                         'address'                   => $this->input->post('address'),
                         'email'                     => $this->input->post('email'),
                         'phone'                     => $this->input->post('phone'),
-                        'instansi_id'               => $this->session->instansi_id,
+                        'instansi_id'               => $instansi,
+                        'cabang_id'                 => $cabang,
                         'jml_pinjaman'              => (int) $jml_pinjaman,
                         'jangka_waktu_pinjam'       => $this->input->post('jangka_waktu_pinjam'),
                         'jenis_barang_gadai'        => $this->input->post('jenis_barang_gadai'),
@@ -1189,7 +1204,8 @@ class Pembiayaan extends CI_Controller
                     'address'                   => $this->input->post('address'),
                     'email'                     => $this->input->post('email'),
                     'phone'                     => $this->input->post('phone'),
-                    'instansi_id'               => $this->session->instansi_id,
+                    'instansi_id'               => $instansi,
+                    'cabang_id'                 => $cabang,
                     'jml_pinjaman'              => (int) $jml_pinjaman,
                     'jangka_waktu_pinjam'       => $this->input->post('jangka_waktu_pinjam'),
                     'jenis_barang_gadai'        => $this->input->post('jenis_barang_gadai'),
@@ -1563,5 +1579,35 @@ class Pembiayaan extends CI_Controller
         $this->Pembiayaan_model->update($this->session->id_anggota, $data);
 
         redirect('admin/pembiayaan/sumber_dana_tabungan');
+    }
+
+    function component_dropdown($id_pembiayaan)
+    {
+        $this->data['pembiayaan'] = $this->Pembiayaan_model->get_by_id($id_pembiayaan);
+
+        if (is_grandadmin()) {
+            $this->data['get_all_combobox_instansi'] = $this->Instansi_model->get_all_combobox();
+            $this->data['get_all_combobox_cabang'] = $this->Cabang_model->get_all_combobox_by_instansi($this->data['pembiayaan']->instansi_id);
+        } elseif (is_masteradmin()) {
+            $this->data['get_all_combobox_cabang'] = $this->Cabang_model->get_all_combobox_by_instansi($this->session->instansi_id);
+        }
+
+        $this->data['instansi_id'] = [
+            'name'          => 'instansi_id',
+            'id'            => 'instansi_id',
+            'class'         => 'form-control',
+            'required'      => '',
+            'onChange'      => 'tampilCabang()',
+            'value'         => $this->form_validation->set_value('instansi_id'),
+        ];
+        $this->data['cabang_id'] = [
+            'name'          => 'cabang_id',
+            'id'            => 'cabang_id',
+            'class'         => 'form-control',
+            'required'      => '',
+            'value'         => $this->form_validation->set_value('cabang_id'),
+        ];
+
+        $this->load->view('back/pembiayaan/v_component_dropdown', $this->data);
     }
 }
