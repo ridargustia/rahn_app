@@ -42,6 +42,13 @@
                                 <td>:</td>
                                 <td><b>+<span class="phone"></span></b></td>
                             </tr>
+                            <?php if (is_grandadmin()) { ?>
+                            <tr>
+                                <td>Instansi</td>
+                                <td>:</td>
+                                <td><b><span class="instansi_name"></span></b></td>
+                            </tr>
+                            <?php } ?>
                             <tr>
                                 <td>Cabang</td>
                                 <td>:</td>
