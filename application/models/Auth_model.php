@@ -59,6 +59,8 @@ class Auth_model extends CI_Model
 
     $this->db->join('usertype', 'users.usertype_id = usertype.id_usertype', 'left');
 
+    $this->db->where('users.instansi_id', $this->session->instansi_id);
+    $this->db->where('users.cabang_id', $this->session->cabang_id);
     $this->db->where('users.usertype_id >', '2');
     $this->db->where('users.usertype_id <', '5');
     $this->db->where('is_delete', '0');

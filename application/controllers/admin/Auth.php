@@ -141,8 +141,10 @@ class Auth extends CI_Controller
     }
 
     if (is_grandadmin()) {
+      $this->data['get_all_combobox_instansi']     = $this->Instansi_model->get_all_combobox();
       $this->data['get_all_combobox_usertype']     = $this->Usertype_model->get_all_combobox();
     } elseif (is_masteradmin()) {
+      $this->data['get_all_combobox_cabang']       = $this->Cabang_model->get_all_combobox_by_instansi($this->session->instansi_id);
       $this->data['get_all_combobox_usertype']     = $this->Usertype_model->get_all_combobox_for_masteradmin();
     } elseif (is_superadmin()) {
       $this->data['get_all_combobox_usertype']     = $this->Usertype_model->get_all_combobox_for_superadmin();
@@ -153,6 +155,21 @@ class Auth extends CI_Controller
     $this->data['page_title'] = 'Tambah Data ' . $this->data['module'];
     $this->data['action']     = 'admin/auth/create_action';
 
+    $this->data['instansi_id'] = [
+        'name'          => 'instansi_id',
+        'id'            => 'instansi_id',
+        'class'         => 'form-control',
+        'required'      => '',
+        'onChange'      => 'tampilCabang()',
+        'value'         => $this->form_validation->set_value('instansi_id'),
+    ];
+    $this->data['cabang_id'] = [
+        'name'          => 'cabang_id',
+        'id'            => 'cabang_id',
+        'class'         => 'form-control',
+        'required'      => '',
+        'value'         => $this->form_validation->set_value('cabang_id'),
+    ];
     $this->data['name'] = [
       'name'          => 'name',
       'id'            => 'name',
@@ -247,6 +264,12 @@ class Auth extends CI_Controller
 
   function create_action()
   {
+    if (is_grandadmin()) {
+        $this->form_validation->set_rules('instansi_id', 'Instansi', 'required');
+        $this->form_validation->set_rules('cabang_id', 'Cabang', 'required');
+    } elseif (is_masteradmin()) {
+        $this->form_validation->set_rules('cabang_id', 'Cabang', 'required');
+    }
     $this->form_validation->set_rules('name', 'Nama Lengkap', 'trim|required');
     $this->form_validation->set_rules('gender', 'Jenis Kelamin', 'required');
     $this->form_validation->set_rules('phone', 'No. HP/Telephone', 'trim|is_numeric|required');
@@ -269,6 +292,14 @@ class Auth extends CI_Controller
     if ($this->form_validation->run() === FALSE) {
       $this->create();
     } else {
+      if (is_grandadmin()) {
+          $instansi = $this->input->post('instansi_id');
+          $cabang = $this->input->post('cabang_id');
+      } elseif (is_masteradmin()) {
+          $instansi = $this->session->instansi_id;
+          $cabang = $this->input->post('cabang_id');
+      }
+
       $password = password_hash($this->input->post('password'), PASSWORD_BCRYPT);
 
       //Format no telephone
@@ -315,7 +346,8 @@ class Auth extends CI_Controller
             'email'             => $this->input->post('email'),
             'username'          => $username,
             'password'          => $password,
-            'instansi_id'       => $this->session->instansi_id,
+            'instansi_id'       => $instansi,
+            'cabang_id'         => $cabang,
             'usertype_id'       => $this->input->post('usertype_id'),
             'created_by'        => $this->session->username,
             'ip_add_reg'        => $this->input->ip_address(),
@@ -358,7 +390,8 @@ class Auth extends CI_Controller
           'email'             => $this->input->post('email'),
           'username'          => $username,
           'password'          => $password,
-          'instansi_id'       => $this->session->instansi_id,
+          'instansi_id'       => $instansi,
+          'cabang_id'         => $cabang,
           'usertype_id'       => $this->input->post('usertype_id'),
           'created_by'        => $this->session->username,
           'ip_add_reg'        => $this->input->ip_address(),

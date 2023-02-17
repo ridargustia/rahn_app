@@ -142,6 +142,29 @@
                                       </div>
                                     </div>
                                     <div class="row">
+                                      <?php if (is_grandadmin()) { ?>
+                                      <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Instansi <span style="color: red">*</span></label>
+                                            <?php echo form_dropdown('', $get_all_combobox_instansi, '', $instansi_id) ?>
+                                        </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Cabang <span style="color: red">*</span></label>
+                                            <?php echo form_dropdown('', array('' => '- Pilih Instansi Dulu -'), '', $cabang_id) ?>
+                                        </div>
+                                      </div>
+                                      <?php } elseif (is_masteradmin()) { ?>
+                                      <div class="col-md-12">
+                                          <div class="form-group">
+                                              <label>Cabang <span style="color: red">*</span></label>
+                                              <?php echo form_dropdown('', $get_all_combobox_cabang, '', $cabang_id) ?>
+                                          </div>
+                                      </div>
+                                      <?php } ?>
+                                    </div>
+                                    <div class="row">
                                       <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Usertype <span style="color: red">*</span></label>
@@ -231,6 +254,18 @@
                     alert("Tipe file tidak sesuai. Gambar harus bertipe .png, .gif atau .jpg.");
                 }
             }
+        }
+
+        function tampilCabang() {
+            instansi_id = document.getElementById("instansi_id").value;
+            $.ajax({
+                url: "<?php echo base_url(); ?>admin/cabang/pilih_cabang/" + instansi_id + "",
+                success: function(response) {
+                    $("#cabang_id").html(response);
+                },
+                dataType: "html"
+            });
+            return false;
         }
     </script>
 </body>
