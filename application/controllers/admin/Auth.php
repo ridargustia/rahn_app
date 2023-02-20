@@ -183,6 +183,7 @@ class Auth extends CI_Controller
       'id'            => 'gender',
       'class'         => 'form-control',
       'required'      => '',
+      'value'         => $this->form_validation->set_value('gender'),
     ];
     $this->data['gender_value'] = [
       ''              => '- Pilih Jenis Kelamin -',
@@ -225,6 +226,7 @@ class Auth extends CI_Controller
       'id'            => 'username',
       'class'         => 'form-control',
       'autocomplete'  => 'off',
+      'onChange'      => 'checkUsername()',
       'required'      => '',
       'value'         => $this->form_validation->set_value('username'),
     ];
@@ -233,6 +235,7 @@ class Auth extends CI_Controller
       'id'            => 'email',
       'class'         => 'form-control',
       'autocomplete'  => 'off',
+      'onChange'      => 'checkEmail()',
       'required'      => '',
       'value'         => $this->form_validation->set_value('email'),
     ];
@@ -257,6 +260,7 @@ class Auth extends CI_Controller
       'id'            => 'usertype_id',
       'class'         => 'form-control',
       'required'      => '',
+      'value'         => $this->form_validation->set_value('usertype_id'),
     ];
 
     $this->load->view('back/auth/user_add', $this->data);
@@ -1074,16 +1078,16 @@ class Auth extends CI_Controller
   {
     $username = $this->input->post('username');
 
-    $check_username     = $this->Auth_model->get_by_username($username);
+    $check_username = $this->Auth_model->get_by_username($username);
 
     if (!empty($username)) {
       if ($check_username) {
-        echo "<div class='text-red'>Username telah ada, silahkan ganti yang lain</div>";
+        echo $username;
       } else {
-        echo "<div class='text-green'>Username tersedia</div>";
+        echo NULL;
       }
     } else {
-      echo "<div class='text-red'>Wajib diisi</div>";
+      echo "Wajib diisi";
     }
   }
 
@@ -1091,21 +1095,16 @@ class Auth extends CI_Controller
   {
     $email = $this->input->post('email');
 
-    $check_email     = $this->Auth_model->get_by_email($email);
+    $check_email = $this->Auth_model->get_by_email($email);
 
     if (!empty($email)) {
       if ($check_email) {
-        echo "<div class='text-red'>Email telah ada, silahkan ganti yang lain</div>";
+        echo $email;
       } else {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-          echo "<div class='text-danger'>Format email belum benar</div>";
-        } else {
-          echo "<div class='text-green'>Email tersedia</div>";
-        }
+        echo NULL;
       }
-    }
-    else {
-      echo "<div class='text-red'>Wajib diisi</div>";
+    } else {
+      echo "Wajib diisi";
     }
   }
 

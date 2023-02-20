@@ -36,7 +36,7 @@
                             } ?>
                             <?php echo validation_errors() ?>
                             <!-- Content -->
-                            <?php echo form_open_multipart($action) ?>
+                            <?php echo form_open_multipart($action, array('id' => 'add_form')) ?>
                               <div class="card mb-4">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                   <h5 class="m-0 font-weight-bold text-primary">Data Personal</h5>
@@ -118,12 +118,18 @@
                                             <div class="form-group">
                                                 <label>Username <span style="color: red">*</span></label>
                                                 <?php echo form_input($username) ?>
+                                                <div class="valid-feedback">Username tersedia</div>
+                                                <div class="invalid-feedback">Username telah ada, silahkan ganti yang lain</div>
+                                                <img src="<?php echo base_url('assets/images/loading.gif') ?>" id="loaderIcon" style="display:none" />
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Email <span style="color: red">*</span></label>
                                                 <?php echo form_input($email) ?>
+                                                <div class="valid-feedback">Email tersedia</div>
+                                                <div class="invalid-feedback">Email telah ada, silahkan ganti yang lain</div>
+                                                <img src="<?php echo base_url('assets/images/loading.gif') ?>" id="loaderIconEmail" style="display:none" />
                                             </div>
                                         </div>
                                     </div>
@@ -267,6 +273,47 @@
             });
             return false;
         }
+
+        function checkUsername() {
+          $("#username").removeClass("is-valid");
+          $("#username").removeClass("is-invalid");
+          $("#loaderIcon").show();
+          jQuery.ajax({
+            url: "<?php echo base_url('admin/auth/check_username') ?>",
+            data: 'username=' + $("#username").val(),
+            type: "POST",
+            success: function(response) {
+              $("#loaderIcon").hide();
+              if (response) {
+                $("#username").addClass("is-invalid");
+              } else {
+                $("#username").addClass("is-valid");
+              }
+            },
+            error: function() {}
+          });
+        }
+
+        function checkEmail() {
+          $("#email").removeClass("is-valid");
+          $("#email").removeClass("is-invalid");
+          $("#loaderIconEmail").show();
+          jQuery.ajax({
+            url: "<?php echo base_url('admin/auth/check_email') ?>",
+            data: 'email=' + $("#email").val(),
+            type: "POST",
+            success: function(response) {
+              $("#loaderIconEmail").hide();
+              if (response) {
+                $("#email").addClass("is-invalid");
+              } else {
+                $("#email").addClass("is-valid");
+              }
+            },
+            error: function() {}
+          });
+        }
+
     </script>
 </body>
 
