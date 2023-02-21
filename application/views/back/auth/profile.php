@@ -69,7 +69,17 @@
                                                                 <tr>
                                                                     <td>Tempat/Tanggal Lahir </td>
                                                                     <td>:</td>
-                                                                    <td><b><?php echo $user->birthplace . ', ' . date_indonesian_only($user->birthdate) ?></b></td>
+                                                                    <td><b>
+                                                                        <?php
+                                                                        if ($user->birthplace and $user->birthdate) {
+                                                                            echo $user->birthplace . ', ' . date_indonesian_only($user->birthdate);
+                                                                        } elseif (empty($user->birthplace) and $user->birthdate) {
+                                                                            echo date_indonesian_only($user->birthdate);
+                                                                        } elseif ($user->birthplace and empty($user->birthdate)) {
+                                                                            echo $user->birthplace;
+                                                                        }
+                                                                        ?>
+                                                                    </b></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Alamat</td>
