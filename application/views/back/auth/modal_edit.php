@@ -68,6 +68,9 @@
                     <label>Email<span style="color: red">*</span></label>
                     <?php echo form_input($email) ?>
                 </div>
+                <?php if (is_grandadmin() or is_masteradmin()) { ?>
+                <div id="showComponent"></div>
+                <?php } ?>
                 <div class="form-group">
                     <label>Usertype<span style="color: red">*</span></label>
                     <?php echo form_dropdown('', $get_all_combobox_usertype, '', $usertype_id) ?>

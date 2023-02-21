@@ -261,6 +261,9 @@ class Deposito extends CI_Controller
             } elseif (is_masteradmin()) {
                 $instansi = $this->session->instansi_id;
                 $cabang = $this->input->post('cabang_id');
+            } elseif (is_superadmin()) {
+                $instansi = $this->session->instansi_id;
+                $cabang = $this->session->cabang_id;
             }
 
             $data = array(
@@ -329,6 +332,9 @@ class Deposito extends CI_Controller
             } elseif (is_masteradmin()) {
                 $instansi = $this->session->instansi_id;
                 $cabang = $this->input->post('cabang_id');
+            } elseif (is_superadmin()) {
+                $instansi = $this->session->instansi_id;
+                $cabang = $this->session->cabang_id;
             }
 
             $data = array(
@@ -388,7 +394,13 @@ class Deposito extends CI_Controller
 
         $this->data['page_title'] = 'Recycle Bin ' . $this->data['module'];
 
-        $this->data['get_all_deleted'] = $this->Deposito_model->get_all_deleted();
+        if (is_grandadmin()) {
+            $this->data['get_all_deleted'] = $this->Deposito_model->get_all_deleted();
+        } elseif (is_masteradmin()) {
+            $this->data['get_all_deleted'] = $this->Deposito_model->get_all_deleted_by_instansi();
+        } elseif (is_superadmin()) {
+            $this->data['get_all_deleted'] = $this->Deposito_model->get_all_deleted_by_cabang();
+        }
 
         $this->load->view('back/deposito/deposito_deleted_list', $this->data);
     }

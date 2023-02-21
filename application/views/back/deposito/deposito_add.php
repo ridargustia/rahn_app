@@ -37,10 +37,10 @@
                             <?php echo validation_errors() ?>
                             <!-- Content -->
                             <?php echo form_open($action) ?>
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <?php if (is_grandadmin()) { ?>
+                            <?php if (is_grandadmin()) { ?>
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Instansi</label>
@@ -53,17 +53,24 @@
                                                     <?php echo form_dropdown('', array('' => '- Pilih Instansi Dulu -'), '', $cabang_id) ?>
                                                 </div>
                                             </div>
-                                        <?php } elseif (is_masteradmin()) { ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php } elseif (is_masteradmin()) { ?>
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>Cabang</label>
                                                     <?php echo form_dropdown('', $get_all_combobox_cabang, '', $cabang_id) ?>
                                                 </div>
                                             </div>
-                                        <?php } ?>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            <?php } ?>
+
                             <div class="card mb-4">
                                 <div class="card-body">
                                     <div class="row">

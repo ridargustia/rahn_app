@@ -17,7 +17,7 @@ class Deposito_model extends CI_Model
 
         $this->db->where('is_delete_deposito', '0');
 
-        $this->db->order_by($this->id, 'ASC');
+        $this->db->order_by($this->id, $this->order);
 
         return $this->db->get($this->table)->result();
     }
@@ -32,7 +32,7 @@ class Deposito_model extends CI_Model
         $this->db->where('is_delete_deposito', '0');
         $this->db->where('deposito.instansi_id', $this->session->instansi_id);
 
-        $this->db->order_by($this->id, 'ASC');
+        $this->db->order_by($this->id, $this->order);
 
         return $this->db->get($this->table)->result();
     }
@@ -47,7 +47,7 @@ class Deposito_model extends CI_Model
         $this->db->where('is_delete_deposito', '0');
         $this->db->where('deposito.cabang_id', $this->session->cabang_id);
 
-        $this->db->order_by($this->id, 'ASC');
+        $this->db->order_by($this->id, $this->order);
 
         return $this->db->get($this->table)->result();
     }
@@ -57,6 +57,30 @@ class Deposito_model extends CI_Model
         $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by');
 
         $this->db->where('is_delete_deposito', '1');
+
+        $this->db->order_by($this->id, $this->order);
+
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_deleted_by_instansi()
+    {
+        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by');
+
+        $this->db->where('is_delete_deposito', '1');
+        $this->db->where('deposito.instansi_id', $this->session->instansi_id);
+
+        $this->db->order_by($this->id, $this->order);
+
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_deleted_by_cabang()
+    {
+        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by');
+
+        $this->db->where('is_delete_deposito', '1');
+        $this->db->where('deposito.cabang_id', $this->session->cabang_id);
 
         $this->db->order_by($this->id, $this->order);
 

@@ -87,7 +87,7 @@
                                                 // Action
                                                 $edit = '<a href="#" id="editUser" class="btn btn-sm btn-warning" title="Edit Data" data-toggle="modal" data-target="#modalEditUser" data-id_users="' . $data->id_users . '" data-name="' . $data->name . '" data-birthplace="' . $data->birthplace . '" data-birthdate="' . $data->birthdate . '" data-gender="' . $data->gender . '" data-address="' . $data->address . '" data-phone="' . $data->phone . '" data-email="' . $data->email . '" data-username="' . $data->username . '" data-usertype_id="' . $data->usertype_id . '" data-image="' . $data->photo . '"><i class="fas fa-pen"></i></a>';
                                                 $delete = '<a href="' . base_url('admin/auth/delete/' . $data->id_users) . '" id="delete-button" class="btn btn-sm btn-danger" title="Hapus Data"><i class="fas fa-trash"></i></a>';
-                                                $detail = '<a href="#" id="detailUser" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#modalDetailUser" data-name="' . $data->name . '" data-birthplace="' . $data->birthplace . '" data-birthdate="' . $birthdate . '" data-gender="' . $gender . '" data-address="' . $data->address . '" data-phone="' . $data->phone . '" data-email="' . $data->email . '" data-username="' . $data->username . '" data-usertype="' . $data->usertype_name . '" data-created_by="' . $data->created_by . '" data-image="' . $data->photo . '"><i class="fas fa-info-circle"></i></a>';
+                                                $detail = '<a href="#" id="detailUser" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#modalDetailUser" data-name="' . $data->name . '" data-birthplace="' . $data->birthplace . '" data-birthdate="' . $birthdate . '" data-gender="' . $gender . '" data-address="' . $data->address . '" data-phone="' . $data->phone . '" data-email="' . $data->email . '" data-username="' . $data->username . '" data-usertype="' . $data->usertype_name . '" data-created_by="' . $data->created_by . '" data-image="' . $data->photo . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '"><i class="fas fa-info-circle"></i></a>';
                                             ?>
                                                 <tr>
                                                     <td><?php echo $no++ ?></td>
@@ -176,6 +176,8 @@
                 const usertype = $(this).data('usertype');
                 const created_by = $(this).data('created_by');
                 const image = $(this).data('image');
+                const cabang_name = $(this).data('cabang_name');
+                const instansi_name = $(this).data('instansi_name');
                 $('.name').text(name);
                 $('.birthplace').text(birthplace);
                 $('.birthdate').text(birthdate);
@@ -186,6 +188,8 @@
                 $('.username').text(username);
                 $('.usertype').text(usertype);
                 $('.created_by').text(created_by);
+                $('.cabang_name').text(cabang_name);
+                $('.instansi_name').text(instansi_name);
 
                 jQuery.ajax({
                     url: "<?php echo base_url('admin/auth/get_image/') ?>" + image,
@@ -229,6 +233,13 @@
                     url: "<?php echo base_url('admin/auth/current_access_data/') ?>" + id_users,
                     success: function(data) {
                         $("#currentAccessData").html(data);
+                    },
+                });
+
+                jQuery.ajax({
+                    url: "<?php echo base_url('admin/auth/component_dropdown/') ?>" + id_users,
+                    success: function(data) {
+                        $("#showComponent").html(data);
                     },
                 });
             });
