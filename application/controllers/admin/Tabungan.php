@@ -25,6 +25,23 @@ class Tabungan extends CI_Controller
         }
     }
 
+    function index()
+    {
+        is_read();
+
+        $this->data['page_title'] = 'Data ' . $this->data['module'];
+
+        if (is_grandadmin()) {
+            $this->data['get_all'] = $this->Sumberdana_model->get_all();
+        } elseif (is_masteradmin()) {
+            $this->data['get_all'] = $this->Sumberdana_model->get_all_by_instansi();
+        } elseif (is_superadmin()) {
+            $this->data['get_all'] = $this->Sumberdana_model->get_all_by_cabang();
+        }
+
+        $this->load->view('back/tabungan/tabungan_list', $this->data);
+    }
+
     function create()
     {
         is_create();
