@@ -53,7 +53,6 @@
                                                 <th>No</th>
                                                 <th>Nama</th>
                                                 <th>Username</th>
-                                                <th>Email</th>
                                                 <th>Status</th>
                                                 <th>Usertype</th>
                                                 <th width="25px">Aksi</th>
@@ -93,7 +92,6 @@
                                                     <td><?php echo $no++ ?></td>
                                                     <td><?php echo $data->name ?></td>
                                                     <td><?php echo $data->username ?></td>
-                                                    <td><?php echo $data->email ?></td>
                                                     <td><?php echo $is_active ?></td>
                                                     <td><?php echo $data->usertype_name ?></td>
                                                     <td><?php echo $detail ?> <?php echo $edit ?> <?php echo $delete ?></td>

@@ -266,6 +266,7 @@ class Deposito extends CI_Controller
                 $cabang = $this->session->cabang_id;
             }
 
+            //Tambah Deposito
             $data = array(
                 'name'              => $this->input->post('name'),
                 'nik'               => $this->input->post('nik'),
@@ -283,6 +284,32 @@ class Deposito extends CI_Controller
             );
 
             $this->Deposito_model->insert($data);
+
+            //Tambah User
+            //Format penulisan username
+            $username = str_replace(' ', '', strtolower($this->input->post('name')));
+
+            $password = password_hash('12345678', PASSWORD_BCRYPT);
+
+            $data = array(
+                'name'              => $this->input->post('name'),
+                'gender'            => 1,
+                'birthdate'         => '',
+                'birthplace'        => '',
+                'address'           => $this->input->post('address'),
+                'phone'             => $phone,
+                'email'             => $this->input->post('email'),
+                'username'          => $username,
+                'password'          => $password,
+                'instansi_id'       => $instansi,
+                'cabang_id'         => $cabang,
+                'usertype_id'       => 3,
+                'created_by'        => $this->session->username,
+                'ip_add_reg'        => $this->input->ip_address(),
+                'photo'             => 'noimage.jpg',
+            );
+
+            $this->Auth_model->insert($data);
 
             write_log();
 

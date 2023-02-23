@@ -14,6 +14,10 @@ class Usertype_model extends CI_Model{
 
   function get_all_combobox()
   {
+    $this->db->where('id_usertype >', '0');
+    $this->db->where('id_usertype !=', '3');
+    $this->db->where('id_usertype !=', '4');
+
     $this->db->order_by('id_usertype');
     $data = $this->db->get($this->table);
 
@@ -31,7 +35,7 @@ class Usertype_model extends CI_Model{
   function get_all_combobox_for_masteradmin()
   {
     $this->db->where('id_usertype >', '1');
-    $this->db->where('id_usertype <', '5');
+    $this->db->where('id_usertype <', '3');
 
     $this->db->order_by('id_usertype');
 

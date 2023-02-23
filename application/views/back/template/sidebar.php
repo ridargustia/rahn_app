@@ -125,6 +125,7 @@
     <div class="sidebar-heading">
         Settings
     </div>
+    <?php if (is_grandadmin() or is_masteradmin()) { ?>
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUser" aria-expanded="true"
             aria-controls="collapsePage">
@@ -140,6 +141,7 @@
             </div>
         </div>
     </li>
+    <?php } ?>
     <?php if (is_grandadmin()) { ?>
     <li class="nav-item">
         <a class="nav-link" href="charts.html">
