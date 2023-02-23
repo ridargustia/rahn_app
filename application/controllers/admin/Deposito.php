@@ -266,25 +266,6 @@ class Deposito extends CI_Controller
                 $cabang = $this->session->cabang_id;
             }
 
-            //Tambah Deposito
-            $data = array(
-                'name'              => $this->input->post('name'),
-                'nik'               => $this->input->post('nik'),
-                'address'           => $this->input->post('address'),
-                'email'             => $this->input->post('email'),
-                'phone'             => $phone,
-                'instansi_id'       => $instansi,
-                'cabang_id'         => $cabang,
-                'total_deposito'    => (int) $total_deposito,
-                'saldo_deposito'    => (int) $total_deposito,
-                'jangka_waktu'      => $jangka_waktu_deposito,
-                'waktu_deposito'    => $this->input->post('waktu_deposito'),
-                'jatuh_tempo'       => $this->input->post('jatuh_tempo'),
-                'created_by'        => $this->session->username,
-            );
-
-            $this->Deposito_model->insert($data);
-
             //Tambah User
             //Format penulisan username
             $username = str_replace(' ', '', strtolower($this->input->post('name')));
@@ -310,6 +291,28 @@ class Deposito extends CI_Controller
             );
 
             $this->Auth_model->insert($data);
+
+            $user_id = $this->db->insert_id();
+
+            //Tambah Deposito
+            $data = array(
+                'name'              => $this->input->post('name'),
+                'nik'               => $this->input->post('nik'),
+                'address'           => $this->input->post('address'),
+                'email'             => $this->input->post('email'),
+                'phone'             => $phone,
+                'user_id'           => $user_id,
+                'instansi_id'       => $instansi,
+                'cabang_id'         => $cabang,
+                'total_deposito'    => (int) $total_deposito,
+                'saldo_deposito'    => (int) $total_deposito,
+                'jangka_waktu'      => $jangka_waktu_deposito,
+                'waktu_deposito'    => $this->input->post('waktu_deposito'),
+                'jatuh_tempo'       => $this->input->post('jatuh_tempo'),
+                'created_by'        => $this->session->username,
+            );
+
+            $this->Deposito_model->insert($data);
 
             write_log();
 
