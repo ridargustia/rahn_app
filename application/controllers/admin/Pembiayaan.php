@@ -394,6 +394,35 @@ class Pembiayaan extends CI_Controller
                         $cabang = $this->session->cabang_id;
                     }
 
+                    //Tambah User
+                    //Format penulisan username
+                    $username = str_replace(' ', '', strtolower($this->input->post('name')));
+
+                    $password = password_hash('12345678', PASSWORD_BCRYPT);
+
+                    $data = array(
+                        'name'              => $this->input->post('name'),
+                        'gender'            => 1,
+                        'birthdate'         => '',
+                        'birthplace'        => '',
+                        'address'           => $this->input->post('address'),
+                        'phone'             => $phone,
+                        'email'             => $this->input->post('email'),
+                        'username'          => $username,
+                        'password'          => $password,
+                        'instansi_id'       => $instansi,
+                        'cabang_id'         => $cabang,
+                        'usertype_id'       => 4,
+                        'created_by'        => $this->session->username,
+                        'ip_add_reg'        => $this->input->ip_address(),
+                        'photo'             => 'noimage.jpg',
+                    );
+
+                    $this->Auth_model->insert($data);
+
+                    $user_id = $this->db->insert_id();
+
+                    //Tambah Pembiayaan
                     $data = array(
                         'no_pinjaman'               => $no_pinjaman,
                         'name'                      => $this->input->post('name'),
@@ -401,6 +430,7 @@ class Pembiayaan extends CI_Controller
                         'address'                   => $this->input->post('address'),
                         'email'                     => $this->input->post('email'),
                         'phone'                     => $phone,
+                        'user_id'                   => $user_id,
                         'instansi_id'               => $instansi,
                         'cabang_id'                 => $cabang,
                         'jml_pinjaman'              => (int) $jml_pinjaman,
@@ -429,6 +459,8 @@ class Pembiayaan extends CI_Controller
                             'id_anggota'            => $id_anggota,
                             'nama_anggota'          => $this->input->post('name'),
                             'jml_pinjaman'          => $jml_pinjaman,
+                            'instansi'              => $instansi,
+                            'cabang'                => $cabang,
                         );
 
                         $this->session->set_userdata($array_session);
@@ -441,6 +473,8 @@ class Pembiayaan extends CI_Controller
                             'jml_pinjaman'          => $jml_pinjaman,
                             'total_pinjaman'        => $jml_pinjaman,
                             'status_sumber_dana'    => $this->input->post('sumber_dana'),
+                            'instansi'              => $instansi,
+                            'cabang'                => $cabang,
                             'id_deposito'           => array(),
                             'persentase_deposito'   => array(),
                             'nama_deposan'          => array(),
@@ -457,6 +491,8 @@ class Pembiayaan extends CI_Controller
                             'jml_pinjaman'          => $jml_pinjaman,
                             'total_pinjaman'        => $jml_pinjaman,
                             'status_sumber_dana'    => $this->input->post('sumber_dana'),
+                            'instansi'              => $instansi,
+                            'cabang'                => $cabang,
                             'persentase_tabungan'   => 100,
                             'id_deposito'           => array(),
                             'persentase_deposito'   => array(),
@@ -475,13 +511,14 @@ class Pembiayaan extends CI_Controller
 
     function create_action()
     {
-        $instansi = $this->Instansi_model->get_by_id($this->session->instansi_id);
+        $instansi = $this->Instansi_model->get_by_id($this->input->post('instansi_id'));
+        $cabang = $this->Cabang_model->get_by_id($this->input->post('cabang_id'));
 
         if ($this->input->post('sumber_dana') == 1) {
             $pembiayaan = $this->Pembiayaan_model->get_by_id($this->input->post('id_pembiayaan'));
 
             //Cek ketersediaan saldo tabungan
-            $saldo_tabungan = $instansi->saldo_tabungan - $this->session->jml_pinjaman;
+            $saldo_tabungan = $cabang->saldo_tabungan - $this->session->jml_pinjaman;
 
             if ($saldo_tabungan >= 0) {
                 $data_sumber_dana = array(
@@ -499,18 +536,32 @@ class Pembiayaan extends CI_Controller
                 write_log();
 
                 //MANIPULASI DATA INSTANSI
-                $resapan_tabungan = $instansi->resapan_tabungan + $this->session->jml_pinjaman;
+                $resapan_tabungan_instansi = $instansi->resapan_tabungan + $this->session->jml_pinjaman;
+                $saldo_tabungan_instansi = $instansi->saldo_tabungan - $this->session->jml_pinjaman;
 
                 $data = array(
-                    'saldo_tabungan'    => $saldo_tabungan,
-                    'resapan_tabungan'  => $resapan_tabungan,
+                    'saldo_tabungan'    => $saldo_tabungan_instansi,
+                    'resapan_tabungan'  => $resapan_tabungan_instansi,
                 );
 
-                $this->Instansi_model->update($this->session->instansi_id, $data);
+                $this->Instansi_model->update($this->input->post('instansi_id'), $data);
+
+                //MANIPULASI DATA CABANG
+                $resapan_tabungan_cabang = $cabang->resapan_tabungan + $this->session->jml_pinjaman;
+                $saldo_tabungan_cabang = $cabang->saldo_tabungan - $this->session->jml_pinjaman;
+
+                $data = array(
+                    'saldo_tabungan'    => $saldo_tabungan_cabang,
+                    'resapan_tabungan'  => $resapan_tabungan_cabang,
+                );
+
+                $this->Cabang_model->update($this->input->post('cabang_id'), $data);
 
                 $this->session->unset_userdata('id_anggota');
                 $this->session->unset_userdata('nama_anggota');
                 $this->session->unset_userdata('jml_pinjaman');
+                $this->session->unset_userdata('instansi');
+                $this->session->unset_userdata('cabang');
             } else {
                 //Hapus file di direktori images
                 $dir        = "./assets/images/barang_gadai/" . $pembiayaan->image;
@@ -534,19 +585,31 @@ class Pembiayaan extends CI_Controller
                 //Jalankan fitur update
                 //Ambil nominal pada pembiayaan_id yang bersangkutan dan deposito_id dengan value NULL
                 $this->db->where('pembiayaan_id', $this->input->post('id_pembiayaan'));
-                $this->db->where('deposito_id', 'NULL');
+                $this->db->where('deposito_id', NULL);
                 $sumber_dana_tabungan = $this->db->get('sumber_dana')->row();
 
                 if ($sumber_dana_tabungan) {
-                    $saldo_tabungan = $instansi->saldo_tabungan + $sumber_dana_tabungan->nominal;
-                    $resapan_tabungan = $instansi->resapan_tabungan - $sumber_dana_tabungan->nominal;
+                    //MANIPULASI DATA INSTANSI
+                    $saldo_tabungan_instansi = $instansi->saldo_tabungan + $sumber_dana_tabungan->nominal;
+                    $resapan_tabungan_instansi = $instansi->resapan_tabungan - $sumber_dana_tabungan->nominal;
 
                     $data = array(
-                        'saldo_tabungan'    => $saldo_tabungan,
-                        'resapan_tabungan'  => $resapan_tabungan,
+                        'saldo_tabungan'    => $saldo_tabungan_instansi,
+                        'resapan_tabungan'  => $resapan_tabungan_instansi,
                     );
 
-                    $this->Instansi_model->update($this->session->instansi_id, $data);
+                    $this->Instansi_model->update($this->input->post('instansi_id'), $data);
+
+                    //MANIPULASI DATA CABANG
+                    $saldo_tabungan_cabang = $cabang->saldo_tabungan + $sumber_dana_tabungan->nominal;
+                    $resapan_tabungan_cabang = $cabang->resapan_tabungan - $sumber_dana_tabungan->nominal;
+
+                    $data = array(
+                        'saldo_tabungan'    => $saldo_tabungan_cabang,
+                        'resapan_tabungan'  => $resapan_tabungan_cabang,
+                    );
+
+                    $this->Cabang_model->update($this->input->post('cabang_id'), $data);
                 }
 
                 //Ambil nominal pada pembiayaan_id yang bersangkutan dan deposito_id dengan value not null
@@ -674,6 +737,8 @@ class Pembiayaan extends CI_Controller
             $this->session->unset_userdata('persentase_deposito');
             $this->session->unset_userdata('nama_deposan');
             $this->session->unset_userdata('nominal_deposito');
+            $this->session->unset_userdata('instansi');
+            $this->session->unset_userdata('cabang');
         } elseif ($this->input->post('sumber_dana') == 3) {
             //Jalankan fitur add atau update
             //Dengan mengecek apakah di database sumber dana sudah ada datanya, jika sudah ada data berdasarkan pembiayaan id lakukan update dan jika tidak ada data lakukan add
@@ -689,15 +754,27 @@ class Pembiayaan extends CI_Controller
                 $sumber_dana_tabungan = $this->db->get('sumber_dana')->row();
 
                 if ($sumber_dana_tabungan) {
-                    $saldo_tabungan = $instansi->saldo_tabungan + $sumber_dana_tabungan->nominal;
-                    $resapan_tabungan = $instansi->resapan_tabungan - $sumber_dana_tabungan->nominal;
+                    //MANIPULASI DATA INSTANSI
+                    $saldo_tabungan_instansi = $instansi->saldo_tabungan + $sumber_dana_tabungan->nominal;
+                    $resapan_tabungan_instansi = $instansi->resapan_tabungan - $sumber_dana_tabungan->nominal;
 
                     $data = array(
-                        'saldo_tabungan'    => $saldo_tabungan,
-                        'resapan_tabungan'  => $resapan_tabungan,
+                        'saldo_tabungan'    => $saldo_tabungan_instansi,
+                        'resapan_tabungan'  => $resapan_tabungan_instansi,
                     );
 
-                    $this->Instansi_model->update($this->session->instansi_id, $data);
+                    $this->Instansi_model->update($this->input->post('instansi_id'), $data);
+
+                    //MANIPULASI DATA CABANG
+                    $saldo_tabungan_cabang = $cabang->saldo_tabungan + $sumber_dana_tabungan->nominal;
+                    $resapan_tabungan_cabang = $cabang->resapan_tabungan - $sumber_dana_tabungan->nominal;
+
+                    $data = array(
+                        'saldo_tabungan'    => $saldo_tabungan_cabang,
+                        'resapan_tabungan'  => $resapan_tabungan_cabang,
+                    );
+
+                    $this->Cabang_model->update($this->input->post('cabang_id'), $data);
                 }
 
                 //Ambil nominal pada pembiayaan_id yang bersangkutan dan deposito_id dengan value not null
@@ -787,15 +864,26 @@ class Pembiayaan extends CI_Controller
                 write_log();
 
                 //MANIPULASI DATA INSTANSI
-                $saldo_tabungan = $instansi->saldo_tabungan - $this->session->total_pinjaman;
-                $resapan_tabungan = $instansi->resapan_tabungan + $this->session->total_pinjaman;
+                $saldo_tabungan_instansi = $instansi->saldo_tabungan - $this->session->total_pinjaman;
+                $resapan_tabungan_instansi = $instansi->resapan_tabungan + $this->session->total_pinjaman;
 
                 $data = array(
-                    'saldo_tabungan'    => $saldo_tabungan,
-                    'resapan_tabungan'  => $resapan_tabungan,
+                    'saldo_tabungan'    => $saldo_tabungan_instansi,
+                    'resapan_tabungan'  => $resapan_tabungan_instansi,
                 );
 
-                $this->Instansi_model->update($this->session->instansi_id, $data);
+                $this->Instansi_model->update($this->input->post('instansi_id'), $data);
+
+                //MANIPULASI DATA CABANG
+                $saldo_tabungan_cabang = $cabang->saldo_tabungan - $this->session->total_pinjaman;
+                $resapan_tabungan_cabang = $cabang->resapan_tabungan + $this->session->total_pinjaman;
+
+                $data = array(
+                    'saldo_tabungan'    => $saldo_tabungan_cabang,
+                    'resapan_tabungan'  => $resapan_tabungan_cabang,
+                );
+
+                $this->Cabang_model->update($this->input->post('cabang_id'), $data);
 
                 //Ubah kolom sumber dana pada data pembiayaan by id pembiayaan
                 $this->Pembiayaan_model->update($this->input->post('id_pembiayaan'), array('sumber_dana' => 3));
@@ -859,15 +947,26 @@ class Pembiayaan extends CI_Controller
                 write_log();
 
                 //MANIPULASI DATA INSTANSI
-                $saldo_tabungan = $instansi->saldo_tabungan - $this->session->total_pinjaman;
-                $resapan_tabungan = $instansi->resapan_tabungan + $this->session->total_pinjaman;
+                $saldo_tabungan_instansi = $instansi->saldo_tabungan - $this->session->total_pinjaman;
+                $resapan_tabungan_instansi = $instansi->resapan_tabungan + $this->session->total_pinjaman;
 
                 $data = array(
-                    'saldo_tabungan'    => $saldo_tabungan,
-                    'resapan_tabungan'  => $resapan_tabungan,
+                    'saldo_tabungan'    => $saldo_tabungan_instansi,
+                    'resapan_tabungan'  => $resapan_tabungan_instansi,
                 );
 
-                $this->Instansi_model->update($this->session->instansi_id, $data);
+                $this->Instansi_model->update($this->input->post('instansi_id'), $data);
+
+                //MANIPULASI DATA CABANG
+                $saldo_tabungan_cabang = $cabang->saldo_tabungan - $this->session->total_pinjaman;
+                $resapan_tabungan_cabang = $cabang->resapan_tabungan + $this->session->total_pinjaman;
+
+                $data = array(
+                    'saldo_tabungan'    => $saldo_tabungan_cabang,
+                    'resapan_tabungan'  => $resapan_tabungan_cabang,
+                );
+
+                $this->Cabang_model->update($this->input->post('cabang_id'), $data);
             }
 
             $this->session->unset_userdata('id_anggota');
@@ -880,6 +979,8 @@ class Pembiayaan extends CI_Controller
             $this->session->unset_userdata('persentase_deposito');
             $this->session->unset_userdata('nama_deposan');
             $this->session->unset_userdata('nominal_deposito');
+            $this->session->unset_userdata('instansi');
+            $this->session->unset_userdata('cabang');
         }
 
         $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data Berhasil Disimpan!</b></h6></div>');
@@ -931,6 +1032,16 @@ class Pembiayaan extends CI_Controller
                 'id'            => 'sumber_dana',
                 'type'          => 'hidden',
             ];
+            $this->data['instansi_id'] = [
+                'name'          => 'instansi_id',
+                'id'            => 'instansi_id',
+                'type'          => 'hidden',
+            ];
+            $this->data['cabang_id'] = [
+                'name'          => 'cabang_id',
+                'id'            => 'cabang_id',
+                'type'          => 'hidden',
+            ];
 
             $this->load->view('back/pembiayaan/pembiayaan_add_forward', $this->data);
         }
@@ -963,6 +1074,16 @@ class Pembiayaan extends CI_Controller
         $this->data['sumber_dana'] = [
             'name'          => 'sumber_dana',
             'id'            => 'sumber_dana',
+            'type'          => 'hidden',
+        ];
+        $this->data['instansi_id'] = [
+            'name'          => 'instansi_id',
+            'id'            => 'instansi_id',
+            'type'          => 'hidden',
+        ];
+        $this->data['cabang_id'] = [
+            'name'          => 'cabang_id',
+            'id'            => 'cabang_id',
             'type'          => 'hidden',
         ];
 
@@ -1017,6 +1138,16 @@ class Pembiayaan extends CI_Controller
         $this->data['sumber_dana'] = [
             'name'          => 'sumber_dana',
             'id'            => 'sumber_dana',
+            'type'          => 'hidden',
+        ];
+        $this->data['instansi_id'] = [
+            'name'          => 'instansi_id',
+            'id'            => 'instansi_id',
+            'type'          => 'hidden',
+        ];
+        $this->data['cabang_id'] = [
+            'name'          => 'cabang_id',
+            'id'            => 'cabang_id',
             'type'          => 'hidden',
         ];
 
@@ -1416,6 +1547,8 @@ class Pembiayaan extends CI_Controller
     {
         $this->data['sumber_dana_id'] = $sumber_dana;
         $this->data['pembiayaan'] = $this->Pembiayaan_model->get_by_id($id_pembiayaan);
+        $this->data['data_instansi'] = $this->Instansi_model->get_by_id($this->data['pembiayaan']->instansi_id);
+        $this->data['data_cabang'] = $this->Cabang_model->get_by_id($this->data['pembiayaan']->cabang_id);
 
         $this->data['id_pembiayaan'] = [
             'name'          => 'id_pembiayaan',
@@ -1427,12 +1560,24 @@ class Pembiayaan extends CI_Controller
             'id'            => 'sumber_dana',
             'type'          => 'hidden',
         ];
+        $this->data['instansi_id'] = [
+            'name'          => 'instansi_id',
+            'id'            => 'instansi_id',
+            'type'          => 'hidden',
+        ];
+        $this->data['cabang_id'] = [
+            'name'          => 'cabang_id',
+            'id'            => 'cabang_id',
+            'type'          => 'hidden',
+        ];
 
         if ($sumber_dana == 1) {
             $array_session = array(
                 'id_anggota'            => $id_pembiayaan,
                 'nama_anggota'          => $this->data['pembiayaan']->name,
                 'jml_pinjaman'          => $this->data['pembiayaan']->jml_pinjaman,
+                'instansi'              => $this->data['pembiayaan']->instansi_id,
+                'cabang'                => $this->data['pembiayaan']->cabang_id,
             );
 
             $this->session->set_userdata($array_session);
@@ -1444,6 +1589,8 @@ class Pembiayaan extends CI_Controller
                 'nama_anggota'          => $this->data['pembiayaan']->name,
                 'jml_pinjaman'          => $this->data['pembiayaan']->jml_pinjaman,
                 'total_pinjaman'        => $this->data['pembiayaan']->jml_pinjaman,
+                'instansi'              => $this->data['pembiayaan']->instansi_id,
+                'cabang'                => $this->data['pembiayaan']->cabang_id,
                 'status_sumber_dana'    => 2,
                 'id_deposito'           => array(),
                 'persentase_deposito'   => array(),
@@ -1460,6 +1607,8 @@ class Pembiayaan extends CI_Controller
                 'nama_anggota'          => $this->data['pembiayaan']->name,
                 'jml_pinjaman'          => $this->data['pembiayaan']->jml_pinjaman,
                 'total_pinjaman'        => $this->data['pembiayaan']->jml_pinjaman,
+                'instansi'              => $this->data['pembiayaan']->instansi_id,
+                'cabang'                => $this->data['pembiayaan']->cabang_id,
                 'status_sumber_dana'    => 3,
                 'persentase_tabungan'   => 100,
                 'id_deposito'           => array(),
@@ -1484,6 +1633,8 @@ class Pembiayaan extends CI_Controller
     function update_sumber_dana_tabungan()
     {
         $pembiayaan = $this->Pembiayaan_model->get_by_id($this->input->post('id_pembiayaan'));
+        $instansi = $this->Instansi_model->get_by_id($this->input->post('instansi_id'));
+        $cabang = $this->Cabang_model->get_by_id($this->input->post('cabang_id'));
 
         //Ambil nominal pada pembiayaan_id yang bersangkutan dan deposito_id dengan value NULL
         $this->db->where('pembiayaan_id', $this->input->post('id_pembiayaan'));
@@ -1491,15 +1642,27 @@ class Pembiayaan extends CI_Controller
         $sumber_dana_tabungan = $this->db->get('sumber_dana')->row();
 
         if ($sumber_dana_tabungan) {
-            $saldo_tabungan = $this->data['instansi']->saldo_tabungan + $sumber_dana_tabungan->nominal;
-            $resapan_tabungan = $this->data['instansi']->resapan_tabungan - $sumber_dana_tabungan->nominal;
+            //MANIPULASI DATA INSTANSI
+            $saldo_tabungan_instansi = $instansi->saldo_tabungan + $sumber_dana_tabungan->nominal;
+            $resapan_tabungan_instansi = $instansi->resapan_tabungan - $sumber_dana_tabungan->nominal;
 
             $data = array(
-                'saldo_tabungan'    => $saldo_tabungan,
-                'resapan_tabungan'  => $resapan_tabungan,
+                'saldo_tabungan'    => $saldo_tabungan_instansi,
+                'resapan_tabungan'  => $resapan_tabungan_instansi,
             );
 
-            $this->Instansi_model->update($this->session->instansi_id, $data);
+            $this->Instansi_model->update($this->input->post('instansi_id'), $data);
+
+            //MANIPULASI DATA CABANG
+            $saldo_tabungan_cabang = $cabang->saldo_tabungan + $sumber_dana_tabungan->nominal;
+            $resapan_tabungan_cabang = $cabang->resapan_tabungan - $sumber_dana_tabungan->nominal;
+
+            $data = array(
+                'saldo_tabungan'    => $saldo_tabungan_cabang,
+                'resapan_tabungan'  => $resapan_tabungan_cabang,
+            );
+
+            $this->Cabang_model->update($this->input->post('cabang_id'), $data);
         }
 
         //Ambil nominal pada pembiayaan_id yang bersangkutan dan deposito_id dengan value not null
@@ -1546,15 +1709,26 @@ class Pembiayaan extends CI_Controller
         write_log();
 
         //MANIPULASI DATA INSTANSI
-        $saldo_tabungan = $this->data['instansi']->saldo_tabungan - $this->session->jml_pinjaman;
-        $resapan_tabungan = $this->data['instansi']->resapan_tabungan + $this->session->jml_pinjaman;
+        $saldo_tabungan_instansi = $instansi->saldo_tabungan - $this->session->jml_pinjaman;
+        $resapan_tabungan_instansi = $instansi->resapan_tabungan + $this->session->jml_pinjaman;
 
         $data = array(
-            'saldo_tabungan'    => $saldo_tabungan,
-            'resapan_tabungan'  => $resapan_tabungan,
+            'saldo_tabungan'    => $saldo_tabungan_instansi,
+            'resapan_tabungan'  => $resapan_tabungan_instansi,
         );
 
-        $this->Instansi_model->update($this->session->instansi_id, $data);
+        $this->Instansi_model->update($this->input->post('instansi_id'), $data);
+
+        //MANIPULASI DATA CABANG
+        $saldo_tabungan_cabang = $cabang->saldo_tabungan - $this->session->jml_pinjaman;
+        $resapan_tabungan_cabang = $cabang->resapan_tabungan + $this->session->jml_pinjaman;
+
+        $data = array(
+            'saldo_tabungan'    => $saldo_tabungan_cabang,
+            'resapan_tabungan'  => $resapan_tabungan_cabang,
+        );
+
+        $this->Cabang_model->update($this->input->post('cabang_id'), $data);
 
         //Ubah kolom sumber dana pada data pembiayaan by id pembiayaan
         $this->Pembiayaan_model->update($this->input->post('id_pembiayaan'), array('sumber_dana' => 1));
@@ -1563,6 +1737,8 @@ class Pembiayaan extends CI_Controller
         $this->session->unset_userdata('id_anggota');
         $this->session->unset_userdata('nama_anggota');
         $this->session->unset_userdata('jml_pinjaman');
+        $this->session->unset_userdata('instansi');
+        $this->session->unset_userdata('cabang');
 
         $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data Berhasil Disimpan!</b></h6></div>');
         redirect('admin/pembiayaan');

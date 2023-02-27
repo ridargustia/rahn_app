@@ -105,6 +105,8 @@
                                 <hr>
                                 <?php echo form_input($id_pembiayaan, $this->session->id_anggota) ?>
                                 <?php echo form_input($sumber_dana, $status_sumber_dana) ?>
+                                <?php echo form_input($instansi_id, $this->session->instansi) ?>
+                                <?php echo form_input($cabang_id, $this->session->cabang) ?>
                                 <div class="card-footer">
                                     <button type="reset" class="btn btn-warning"><?php echo $btn_reset ?></button>
                                     <button type="submit" class="btn btn-primary"><?php echo $btn_submit ?></button>

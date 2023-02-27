@@ -1,10 +1,12 @@
 <?php echo form_input($id_pembiayaan, $this->session->id_anggota) ?>
 <?php echo form_input($sumber_dana, $sumber_dana_id) ?>
+<?php echo form_input($instansi_id, $this->session->instansi) ?>
+<?php echo form_input($cabang_id, $this->session->cabang) ?>
 
 <?php if ($sumber_dana_id == 1) { ?>
     <div class="alert alert-success" role="alert">
-        Saldo Tabungan Saat Ini : <b>Rp <?php echo number_format($instansi->saldo_tabungan, 0, ',', '.') ?></b><br>
-        Serapan Tabungan Saat Ini : <b>Rp <?php echo number_format($instansi->resapan_tabungan, 0, ',', '.') ?></b><br>
+        Saldo Tabungan Saat Ini : <b>Rp <?php echo number_format($data_instansi->saldo_tabungan, 0, ',', '.') ?></b><br>
+        Serapan Tabungan Saat Ini : <b>Rp <?php echo number_format($data_instansi->resapan_tabungan, 0, ',', '.') ?></b><br>
         Dana Yang Digunakan : <b>Rp <?php echo number_format($this->session->jml_pinjaman, 0, ',', '.') ?> (100%)</b>
     </div>
 
