@@ -188,10 +188,8 @@ class Auth_model extends CI_Model
 
   function get_all_combobox_by_instansi($instansi_id)
   {
-    $this->db->join('instansi', 'users.instansi_id = instansi.id_instansi', 'LEFT');
-
     $this->db->where('instansi_id', $instansi_id);
-    $this->db->where('usertype_id <', '4');
+    $this->db->where('usertype_id <', '5');
 
     $this->db->order_by('name');
 
@@ -208,10 +206,8 @@ class Auth_model extends CI_Model
 
   function get_all_combobox_by_cabang($cabang_id)
   {
-    $this->db->join('cabang', 'users.cabang_id = cabang.id_cabang');
-
     $this->db->where('cabang_id', $cabang_id);
-    $this->db->where('usertype_id <', '4');
+    $this->db->where('usertype_id <', '5');
     $this->db->where('usertype_id >', '1');
 
     $this->db->order_by('name');

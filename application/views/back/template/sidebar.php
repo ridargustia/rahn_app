@@ -213,7 +213,7 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+        <a class="nav-link" href="<?php echo base_url('admin/auth/change_password') ?>">
             <i class="fas fa-fw fa-lock"></i>
             <span>Ubah Password</span>
         </a>

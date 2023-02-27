@@ -937,8 +937,8 @@ class Auth extends CI_Controller
     $this->data['user_id'] = [
       'name'          => 'user_id',
       'id'            => 'user_id',
-      'type'          => 'hidden',
-      'class'         => 'form-control',
+      'class'         => 'select2-single-placeholder form-control',
+      'required'      => '',
     ];
     $this->data['new_password'] = [
       'name'          => 'new_password',
@@ -960,6 +960,9 @@ class Auth extends CI_Controller
 
   function change_password_action()
   {
+    if (is_grandadmin() or is_masteradmin() or is_superadmin()) {
+      $this->form_validation->set_rules('user_id', 'User', 'required');
+    }
     $this->form_validation->set_rules('new_password', 'Password', 'min_length[8]|required');
     $this->form_validation->set_rules('confirm_new_password', 'Password Confirmation', 'matches[new_password]|required');
 
@@ -973,7 +976,7 @@ class Auth extends CI_Controller
     } else {
       $password = password_hash($this->input->post('new_password'), PASSWORD_BCRYPT);
 
-      if (is_admin()) {
+      if (is_admin() or is_pegawai()) {
         $id_user = $this->session->user_id;
       } else {
         $id_user = $this->input->post('user_id');
@@ -987,7 +990,7 @@ class Auth extends CI_Controller
 
       write_log();
 
-      $this->session->set_flashdata('message', '<div class="alert alert-success">Password berhasil diganti</div>');
+      $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Password Berhasil Diganti</b></h6></div>');
       redirect('admin/auth/change_password');
     }
   }
