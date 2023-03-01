@@ -86,7 +86,7 @@
                 <div class="row">
                     <div class="col-md-5">
                         <div class="form-group">
-                            <label for="dateRangePicker">Foto Barang Yang Digadaikan</label>
+                            <label>Foto Barang Yang Digadaikan</label>
                             <div id="currentImage"></div>
                             <img id="preview" width="100%" />
                         </div>

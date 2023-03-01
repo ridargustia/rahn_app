@@ -762,6 +762,16 @@ class Auth extends CI_Controller
         'autocomplete'  => 'off',
         'required'      => '',
       ];
+      $this->data['gender'] = [
+        'name'          => 'gender',
+        'id'            => 'gender',
+        'class'         => 'form-control',
+      ];
+      $this->data['gender_value'] = [
+        ''              => '- Pilih Jenis Kelamin -',
+        '1'             => 'Laki - laki',
+        '2'             => 'Perempuan',
+      ];
       $this->data['birthdate'] = [
         'name'          => 'birthdate',
         'id'            => 'birthdate',
@@ -774,25 +784,16 @@ class Auth extends CI_Controller
         'class'         => 'form-control',
         'autocomplete'  => 'off',
       ];
-      $this->data['gender'] = [
-        'name'          => 'gender',
-        'id'            => 'gender',
+      $this->data['phone'] = [
+        'name'          => 'phone',
+        'id'            => 'phone',
         'class'         => 'form-control',
-      ];
-      $this->data['gender_value'] = [
-        '1'             => 'Male',
-        '2'             => 'Female',
+        'autocomplete'  => 'off',
+        'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
       ];
       $this->data['address'] = [
         'name'          => 'address',
         'id'            => 'address',
-        'class'         => 'form-control',
-        'autocomplete'  => 'off',
-        'rows'           => '3',
-      ];
-      $this->data['phone'] = [
-        'name'          => 'phone',
-        'id'            => 'phone',
         'class'         => 'form-control',
         'autocomplete'  => 'off',
       ];
@@ -801,6 +802,7 @@ class Auth extends CI_Controller
         'id'            => 'email',
         'class'         => 'form-control',
         'autocomplete'  => 'off',
+        'onChange'      => 'checkEmail()',
         'required'      => '',
       ];
       $this->data['username'] = [
@@ -808,36 +810,33 @@ class Auth extends CI_Controller
         'id'            => 'username',
         'class'         => 'form-control',
         'autocomplete'  => 'off',
-        'required'      => '',
-      ];
-      $this->data['usertype'] = [
-        'name'          => 'usertype',
-        'id'            => 'usertype',
-        'class'         => 'form-control',
+        'onChange'      => 'checkUsername()',
         'required'      => '',
       ];
 
       $this->load->view('back/auth/update_profile', $this->data);
     } else {
-      $this->session->set_flashdata('message', '<div class="alert alert-danger">Data tidak ditemukan</div>');
+      $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-ban"></i><b> Data Tidak Ditemukan!</b></h6></div>');
       redirect('admin/dashboard');
     }
   }
 
   function update_profile_action()
   {
-    $this->form_validation->set_rules('name', 'Full Name', 'trim|required');
-    $this->form_validation->set_rules('phone', 'Phone No', 'trim|is_numeric');
+    $this->form_validation->set_rules('name', 'Nama Lengkap', 'trim|required');
+    $this->form_validation->set_rules('gender', 'Jenis Kelamin', 'required');
+    $this->form_validation->set_rules('phone', 'No HP/Telephone', 'required|is_numeric');
     $this->form_validation->set_rules('username', 'Username', 'trim|required');
     $this->form_validation->set_rules('email', 'Email', 'valid_email|required');
 
     $this->form_validation->set_message('required', '{field} wajib diisi');
     $this->form_validation->set_message('valid_email', '{field} format email tidak benar');
+    $this->form_validation->set_message('is_numeric', '{field} harus angka');
 
     $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
     if ($this->form_validation->run() === FALSE) {
-      $this->update($this->input->post('id_users'));
+      $this->update_profile($this->input->post('id_users'));
     } else {
       if ($_FILES['photo']['error'] <> 4) {
         $nmfile = strtolower(url_title($this->input->post('username'))) . date('YmdHis');
@@ -854,7 +853,7 @@ class Auth extends CI_Controller
         $dir        = "./assets/images/user/" . $delete->photo;
         $dir_thumb  = "./assets/images/user/" . $delete->photo_thumb;
 
-        if (is_file($dir)) {
+        if (is_file($dir_thumb)) {
           unlink($dir);
           unlink($dir_thumb);
         }
@@ -863,7 +862,7 @@ class Auth extends CI_Controller
           $error = array('error' => $this->upload->display_errors());
           $this->session->set_flashdata('message', '<div class="alert alert-danger">' . $error['error'] . '</div>');
 
-          $this->update($this->input->post('id_users'));
+          $this->update_profile($this->input->post('id_users'));
         } else {
           $photo = $this->upload->data();
 
@@ -879,13 +878,13 @@ class Auth extends CI_Controller
 
           $data = array(
             'name'              => $this->input->post('name'),
-            'birthdate'         => $this->input->post('birthdate'),
-            'birthplace'        => $this->input->post('birthplace'),
             'gender'            => $this->input->post('gender'),
-            'address'           => $this->input->post('address'),
+            'birthplace'        => $this->input->post('birthplace'),
+            'birthdate'         => $this->input->post('birthdate'),
             'phone'             => $this->input->post('phone'),
-            'email'             => $this->input->post('email'),
+            'address'           => $this->input->post('address'),
             'username'          => $this->input->post('username'),
+            'email'             => $this->input->post('email'),
             'modified_by'       => $this->session->username,
             'photo'             => $this->upload->data('file_name'),
             'photo_thumb'       => $nmfile . '_thumb' . $this->upload->data('file_ext'),
@@ -895,19 +894,19 @@ class Auth extends CI_Controller
 
           write_log();
 
-          $this->session->set_flashdata('message', '<div class="alert alert-success">Data berhasil disimpan</div>');
+          $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data berhasil disimpan. Silahkan lakukan login ulang untuk update akun!</b></h6></div>');
           redirect('admin/auth/update_profile/' . $this->session->id_users);
         }
       } else {
         $data = array(
           'name'              => $this->input->post('name'),
-          'birthdate'         => $this->input->post('birthdate'),
-          'birthplace'        => $this->input->post('birthplace'),
           'gender'            => $this->input->post('gender'),
-          'address'           => $this->input->post('address'),
+          'birthplace'        => $this->input->post('birthplace'),
+          'birthdate'         => $this->input->post('birthdate'),
           'phone'             => $this->input->post('phone'),
-          'email'             => $this->input->post('email'),
+          'address'           => $this->input->post('address'),
           'username'          => $this->input->post('username'),
+          'email'             => $this->input->post('email'),
           'modified_by'       => $this->session->username,
         );
 
@@ -915,7 +914,7 @@ class Auth extends CI_Controller
 
         write_log();
 
-        $this->session->set_flashdata('message', '<div class="alert alert-success">Data berhasil disimpan</div>');
+        $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data berhasil disimpan. Silahkan lakukan login ulang untuk update akun!</b></h6></div>');
         redirect('admin/auth/update_profile/' . $this->session->id_users);
       }
     }
@@ -1130,6 +1129,44 @@ class Auth extends CI_Controller
 
     if (!empty($email)) {
       if ($check_email) {
+        echo $email;
+      } else {
+        echo NULL;
+      }
+    } else {
+      echo "Wajib diisi";
+    }
+  }
+
+  function check_username_for_update_profile()
+  {
+    $username = $this->input->post('username');
+
+    $check_username = $this->Auth_model->get_by_username($username);
+
+    if (!empty($username)) {
+      if ($check_username->username == $this->session->username) {
+        echo NULL;
+      } elseif ($check_username) {
+        echo $username;
+      } else {
+        echo NULL;
+      }
+    } else {
+      echo "Wajib diisi";
+    }
+  }
+
+  function check_email_for_update_profile()
+  {
+    $email = $this->input->post('email');
+
+    $check_email = $this->Auth_model->get_by_email($email);
+
+    if (!empty($email)) {
+      if ($check_email->email == $this->session->email) {
+        echo NULL;
+      } elseif ($check_email) {
         echo $email;
       } else {
         echo NULL;

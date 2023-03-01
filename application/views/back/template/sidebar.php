@@ -207,7 +207,7 @@
     </li>
     <?php } ?>
     <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+        <a class="nav-link" href="<?php echo base_url('admin/auth/update_profile/'.$this->session->id_users) ?>">
             <i class="fas fa-fw fa-user"></i>
             <span>Edit Profile</span>
         </a>
