@@ -976,7 +976,7 @@ class Auth extends CI_Controller
       $password = password_hash($this->input->post('new_password'), PASSWORD_BCRYPT);
 
       if (is_admin() or is_pegawai()) {
-        $id_user = $this->session->user_id;
+        $id_user = $this->session->id_users;
       } else {
         $id_user = $this->input->post('user_id');
       }
