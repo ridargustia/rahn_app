@@ -34,10 +34,19 @@ class Deposito extends CI_Controller
 
         if (is_grandadmin()) {
             $this->data['get_all'] = $this->Deposito_model->get_all();
+            $this->data['get_total_deposito'] = $this->Deposito_model->total_deposito();
+            $this->data['get_serapan_deposito'] = $this->Deposito_model->serapan_deposito();
+            $this->data['get_saldo_deposito'] = $this->Deposito_model->saldo_deposito();
         } elseif (is_masteradmin()) {
             $this->data['get_all'] = $this->Deposito_model->get_all_by_instansi();
+            $this->data['get_total_deposito'] = $this->Deposito_model->total_deposito_by_instansi();
+            $this->data['get_serapan_deposito'] = $this->Deposito_model->serapan_deposito_by_instansi();
+            $this->data['get_saldo_deposito'] = $this->Deposito_model->saldo_deposito_by_instansi();
         } elseif (is_superadmin()) {
             $this->data['get_all'] = $this->Deposito_model->get_all_by_cabang();
+            $this->data['get_total_deposito'] = $this->Deposito_model->total_deposito_by_cabang();
+            $this->data['get_serapan_deposito'] = $this->Deposito_model->serapan_deposito_by_cabang();
+            $this->data['get_saldo_deposito'] = $this->Deposito_model->saldo_deposito_by_cabang();
         }
 
         $this->data['action']     = 'admin/deposito/update_action';

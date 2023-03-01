@@ -98,6 +98,46 @@ class Deposito_model extends CI_Model
         return $this->db->query('SELECT sum(total_deposito) AS total_deposito from deposito where is_delete_deposito = 0')->result();
     }
 
+    function total_deposito_by_instansi()
+    {
+        return $this->db->query('SELECT sum(total_deposito) AS total_deposito from deposito where is_delete_deposito = 0 AND instansi_id = ' . $this->session->instansi_id)->result();
+    }
+
+    function total_deposito_by_cabang()
+    {
+        return $this->db->query('SELECT sum(total_deposito) AS total_deposito from deposito where is_delete_deposito = 0 AND cabang_id = ' . $this->session->cabang_id)->result();
+    }
+
+    function serapan_deposito()
+    {
+        return $this->db->query('SELECT sum(resapan_deposito) AS resapan_deposito from deposito where is_delete_deposito = 0')->result();
+    }
+
+    function serapan_deposito_by_instansi()
+    {
+        return $this->db->query('SELECT sum(resapan_deposito) AS resapan_deposito from deposito where is_delete_deposito = 0 AND instansi_id = ' . $this->session->instansi_id)->result();
+    }
+
+    function serapan_deposito_by_cabang()
+    {
+        return $this->db->query('SELECT sum(resapan_deposito) AS resapan_deposito from deposito where is_delete_deposito = 0 AND cabang_id = ' . $this->session->cabang_id)->result();
+    }
+
+    function saldo_deposito()
+    {
+        return $this->db->query('SELECT sum(saldo_deposito) AS saldo_deposito from deposito where is_delete_deposito = 0')->result();
+    }
+
+    function saldo_deposito_by_instansi()
+    {
+        return $this->db->query('SELECT sum(saldo_deposito) AS saldo_deposito from deposito where is_delete_deposito = 0 AND instansi_id = ' . $this->session->instansi_id)->result();
+    }
+
+    function saldo_deposito_by_cabang()
+    {
+        return $this->db->query('SELECT sum(saldo_deposito) AS saldo_deposito from deposito where is_delete_deposito = 0 AND cabang_id = ' . $this->session->cabang_id)->result();
+    }
+
     function get_by_id($id)
     {
         $this->db->where($this->id, $id);

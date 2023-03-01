@@ -43,6 +43,15 @@
                                 echo $this->session->flashdata('message');
                             } ?>
                             <?php echo validation_errors() ?>
+
+                            <div class="alert alert-info" role="alert">
+                                <b>INFORMASI KESELURUHAN DEPOSITO</b>
+                                <hr>
+                                Total Deposito : <b>Rp <?php echo number_format($get_total_deposito[0]->total_deposito, 0, ',', '.') ?></b><br>
+                                Serapan Deposito : <b>Rp <?php echo number_format($get_serapan_deposito[0]->resapan_deposito, 0, ',', '.') ?></b><br>
+                                Saldo Deposito : <b>Rp <?php echo number_format($get_saldo_deposito[0]->saldo_deposito, 0, ',', '.') ?></b>
+                            </div>
+
                             <!-- Content -->
                             <div class="card mb-4">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">

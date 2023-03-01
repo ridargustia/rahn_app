@@ -18,7 +18,7 @@
                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                     Settings
                 </a> -->
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="<?php echo base_url('admin/auth/change_password') ?>">
                     <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
                     Ubah Password
                 </a>
