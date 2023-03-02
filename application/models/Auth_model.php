@@ -382,6 +382,52 @@ class Auth_model extends CI_Model
     return $this->db->get($this->table)->num_rows();
   }
 
+  function get_total_deposan()
+  {
+    $this->db->where('is_delete', '0');
+    $this->db->where('usertype_id', '3');
+    return $this->db->get($this->table)->num_rows();
+  }
+
+  function get_total_deposan_by_instansi()
+  {
+    $this->db->where('is_delete', '0');
+    $this->db->where('usertype_id', '3');
+    $this->db->where('instansi_id', $this->session->instansi_id);
+    return $this->db->get($this->table)->num_rows();
+  }
+
+  function get_total_deposan_by_cabang()
+  {
+    $this->db->where('is_delete', '0');
+    $this->db->where('usertype_id', '3');
+    $this->db->where('cabang_id', $this->session->cabang_id);
+    return $this->db->get($this->table)->num_rows();
+  }
+
+  function get_total_anggota()
+  {
+    $this->db->where('is_delete', '0');
+    $this->db->where('usertype_id', '4');
+    return $this->db->get($this->table)->num_rows();
+  }
+
+  function get_total_anggota_by_instansi()
+  {
+    $this->db->where('is_delete', '0');
+    $this->db->where('usertype_id', '4');
+    $this->db->where('instansi_id', $this->session->instansi_id);
+    return $this->db->get($this->table)->num_rows();
+  }
+
+  function get_total_anggota_by_cabang()
+  {
+    $this->db->where('is_delete', '0');
+    $this->db->where('usertype_id', '4');
+    $this->db->where('cabang_id', $this->session->cabang_id);
+    return $this->db->get($this->table)->num_rows();
+  }
+
   function total_rows_by_instansi()
   {
     $this->db->join('instansi', 'users.instansi_id = instansi.id_instansi');

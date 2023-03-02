@@ -93,6 +93,44 @@ class Instansi_model extends CI_Model{
     return $this->db->get($this->table)->num_rows();
   }
 
+  function total_tabungan()
+  {
+    $serapan_tabungan = $this->db->query('SELECT sum(resapan_tabungan) AS resapan_tabungan from instansi where is_delete_instansi = 0')->result();
+
+    $saldo_tabungan = $this->db->query('SELECT sum(saldo_tabungan) AS saldo_tabungan from instansi where is_delete_instansi = 0')->result();
+
+    return $serapan_tabungan[0]->resapan_tabungan + $saldo_tabungan[0]->saldo_tabungan;
+  }
+
+  function serapan_tabungan()
+  {
+    return $this->db->query('SELECT sum(resapan_tabungan) AS resapan_tabungan from instansi where is_delete_instansi = 0')->result();
+  }
+
+  function saldo_tabungan()
+  {
+    return $this->db->query('SELECT sum(saldo_tabungan) AS saldo_tabungan from instansi where is_delete_instansi = 0')->result();
+  }
+
+  function total_tabungan_by_instansi()
+  {
+    $serapan_tabungan = $this->db->query('SELECT sum(resapan_tabungan) AS resapan_tabungan from instansi where is_delete_instansi = 0 AND id_instansi = ' . $this->session->instansi_id)->result();
+
+    $saldo_tabungan = $this->db->query('SELECT sum(saldo_tabungan) AS saldo_tabungan from instansi where is_delete_instansi = 0 AND id_instansi = ' . $this->session->instansi_id)->result();
+
+    return $serapan_tabungan[0]->resapan_tabungan + $saldo_tabungan[0]->saldo_tabungan;
+  }
+
+  function serapan_tabungan_by_instansi()
+  {
+    return $this->db->query('SELECT sum(resapan_tabungan) AS resapan_tabungan from instansi where is_delete_instansi = 0 AND id_instansi = ' . $this->session->instansi_id)->result();
+  }
+
+  function saldo_tabungan_by_instansi()
+  {
+    return $this->db->query('SELECT sum(saldo_tabungan) AS saldo_tabungan from instansi where is_delete_instansi = 0 AND id_instansi = ' . $this->session->instansi_id)->result();
+  }
+
   function insert($data)
   {
     $this->db->insert($this->table, $data);

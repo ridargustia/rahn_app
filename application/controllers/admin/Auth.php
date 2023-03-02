@@ -894,7 +894,7 @@ class Auth extends CI_Controller
 
           write_log();
 
-          $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data berhasil disimpan. Silahkan lakukan login ulang untuk update akun!</b></h6></div>');
+          $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data berhasil disimpan. Silahkan lakukan login ulang untuk refresh akun!</b></h6></div>');
           redirect('admin/auth/update_profile/' . $this->session->id_users);
         }
       } else {
@@ -914,7 +914,7 @@ class Auth extends CI_Controller
 
         write_log();
 
-        $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data berhasil disimpan. Silahkan lakukan login ulang untuk update akun!</b></h6></div>');
+        $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data berhasil disimpan. Silahkan lakukan login ulang untuk refresh akun!</b></h6></div>');
         redirect('admin/auth/update_profile/' . $this->session->id_users);
       }
     }

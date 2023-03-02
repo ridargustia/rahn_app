@@ -138,6 +138,13 @@ class Deposito_model extends CI_Model
         return $this->db->query('SELECT sum(saldo_deposito) AS saldo_deposito from deposito where is_delete_deposito = 0 AND cabang_id = ' . $this->session->cabang_id)->result();
     }
 
+    function get_deposito_by_deposan()
+    {
+        $this->db->where('user_id', $this->session->id_users);
+
+        return $this->db->get($this->table)->row();
+    }
+
     function get_by_id($id)
     {
         $this->db->where($this->id, $id);

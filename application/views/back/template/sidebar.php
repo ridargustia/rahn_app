@@ -12,10 +12,12 @@
             <span>Dashboard</span>
         </a>
     </li>
-    <hr class="sidebar-divider">
-    <div class="sidebar-heading">
-        Menu Transaksi
-    </div>
+    <?php if (!is_admin() and !is_pegawai()) { ?>
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">
+            Menu Transaksi
+        </div>
+    <?php } ?>
     <?php
     $this->db->join('menu_access', 'menu.id_menu = menu_access.menu_id');
     $this->db->where('menu_access.usertype_id', $this->session->usertype_id);
