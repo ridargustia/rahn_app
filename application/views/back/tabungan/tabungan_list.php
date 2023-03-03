@@ -40,6 +40,20 @@
                                 echo $this->session->flashdata('message');
                             } ?>
                             <?php echo validation_errors() ?>
+
+                            <div class="alert alert-info" role="alert">
+                                <b>INFORMASI KESELURUHAN TABUNGAN</b>
+                                <hr>
+                                Total Tabungan : <b>Rp <?php echo number_format($get_total_tabungan, 0, ',', '.') ?></b><br>
+                                <?php if (is_superadmin()) { ?>
+                                    Serapan Tabungan : <b>Rp <?php echo number_format($get_tabungan->resapan_tabungan, 0, ',', '.') ?></b><br>
+                                    Saldo Tabungan : <b>Rp <?php echo number_format($get_tabungan->saldo_tabungan, 0, ',', '.') ?></b>
+                                <?php } else { ?>
+                                    Serapan Tabungan : <b>Rp <?php echo number_format($get_serapan_tabungan[0]->resapan_tabungan, 0, ',', '.') ?></b><br>
+                                    Saldo Tabungan : <b>Rp <?php echo number_format($get_saldo_tabungan[0]->saldo_tabungan, 0, ',', '.') ?></b>
+                                <?php } ?>
+                            </div>
+
                             <!-- Content -->
                             <div class="card mb-4">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
