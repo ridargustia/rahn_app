@@ -41,6 +41,14 @@
                                 echo $this->session->flashdata('message');
                             } ?>
                             <?php echo validation_errors() ?>
+
+                            <div class="alert alert-info" role="alert">
+                                <b>INFORMASI KESELURUHAN PEMBIAYAAN</b>
+                                <hr>
+                                Total Pembiayaan : <b>Rp <?php echo number_format($get_total_pinjaman[0]->total_pinjaman, 0, ',', '.') ?></b><br>
+                                Total Biaya Sewa : <b>Rp <?php echo number_format($get_biaya_sewa[0]->biaya_sewa, 0, ',', '.') ?></b>
+                            </div>
+
                             <!-- Content -->
                             <div class="card mb-4">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">

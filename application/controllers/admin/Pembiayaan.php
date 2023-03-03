@@ -33,10 +33,16 @@ class Pembiayaan extends CI_Controller
 
         if (is_grandadmin()) {
             $this->data['get_all'] = $this->Pembiayaan_model->get_all();
+            $this->data['get_total_pinjaman'] = $this->Pembiayaan_model->total_pinjaman();
+			$this->data['get_biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa();
         } elseif (is_masteradmin()) {
             $this->data['get_all'] = $this->Pembiayaan_model->get_all_by_instansi();
+            $this->data['get_total_pinjaman'] = $this->Pembiayaan_model->total_pinjaman_by_instansi();
+			$this->data['get_biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa_by_instansi();
         } elseif (is_superadmin()) {
             $this->data['get_all'] = $this->Pembiayaan_model->get_all_by_cabang();
+            $this->data['get_total_pinjaman'] = $this->Pembiayaan_model->total_pinjaman_by_cabang();
+			$this->data['get_biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa_by_cabang();
         }
 
         $this->data['action']     = 'admin/pembiayaan/update_action';
