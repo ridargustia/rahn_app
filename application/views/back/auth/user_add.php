@@ -118,7 +118,7 @@
                                             <div class="form-group">
                                                 <label>Username <span style="color: red">*</span></label>
                                                 <?php echo form_input($username) ?>
-                                                <div class="valid-feedback">Username tersedia</div>
+                                                <div class="valid-feedback">Username tersedia. Format penulisan username otomatis diubah menjadi tanpa spasi dan huruf kapital</div>
                                                 <div class="invalid-feedback">Username telah ada, silahkan ganti yang lain</div>
                                                 <img src="<?php echo base_url('assets/images/loading.gif') ?>" id="loaderIcon" style="display:none" />
                                             </div>

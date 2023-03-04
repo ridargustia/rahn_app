@@ -29,7 +29,7 @@ class Tabungan extends CI_Controller
     {
         is_read();
 
-        $this->data['page_title'] = 'Data ' . $this->data['module'];
+        $this->data['page_title'] = 'Pengguna ' . $this->data['module'];
 
         if (is_grandadmin()) {
             $this->data['get_all'] = $this->Sumberdana_model->get_all();

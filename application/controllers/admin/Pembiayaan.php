@@ -1007,7 +1007,11 @@ class Pembiayaan extends CI_Controller
 
             $this->data['status_sumber_dana'] = 2;
 
-            $this->data['get_all'] = $this->Deposito_model->get_all();
+            if (is_grandadmin() or is_masteradmin()) {
+                $this->data['get_all'] = $this->Deposito_model->get_all_by_cabang_for_grandadmin_masteradmin($this->session->cabang);
+            } elseif (is_superadmin()) {
+                $this->data['get_all'] = $this->Deposito_model->get_all_by_cabang();
+            }
 
             $this->data['persentase_deposito'] = [
                 'name'          => 'persentase_deposito',
@@ -1065,6 +1069,12 @@ class Pembiayaan extends CI_Controller
 
         $this->data['saldo_tabungan'] = (int) $this->data['instansi']->saldo_tabungan - (int) $this->session->jml_pinjaman;
 
+        if (is_grandadmin() or is_masteradmin()) {
+            $this->data['cabang'] = $this->Cabang_model->get_by_id($this->session->cabang);
+        } elseif (is_superadmin()) {
+            $this->data['cabang'] = $this->Cabang_model->get_by_id($this->session->cabang_id);
+        }
+
         $this->data['jml_pinjaman'] = [
             'name'          => 'jml_pinjaman',
             'id'            => 'jml_pinjaman',
@@ -1105,7 +1115,13 @@ class Pembiayaan extends CI_Controller
 
         $this->data['status_sumber_dana'] = 3;
 
-        $this->data['deposito'] = $this->Deposito_model->get_all();
+        if (is_grandadmin() or is_masteradmin()) {
+            $this->data['deposito'] = $this->Deposito_model->get_all_by_cabang_for_grandadmin_masteradmin($this->session->cabang);
+            $this->data['cabang'] = $this->Cabang_model->get_by_id($this->session->cabang);
+        } elseif (is_superadmin()) {
+            $this->data['deposito'] = $this->Deposito_model->get_all_by_cabang();
+            $this->data['cabang'] = $this->Cabang_model->get_by_id($this->session->cabang_id);
+        }
 
         $this->data['cek_tabungan'] = (int) $this->data['instansi']->saldo_tabungan - (int) $this->session->total_pinjaman;
 

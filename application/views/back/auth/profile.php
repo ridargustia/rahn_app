@@ -36,7 +36,11 @@
                                 <div class="card-body">
                                     <div class="row mb-4">
                                         <div class="col-md-12" style="text-align: center">
-                                            <img class="img-profile rounded-circle" src="<?php echo base_url('assets/images/boy.png') ?>" style="max-width: 150px">
+                                            <?php if ($this->session->photo_thumb == NULL) { ?>
+                                                <img class="img-profile rounded-circle" src="<?php echo base_url('assets/images/user/noimage.jpg') ?>" style="max-width: 150px">
+                                            <?php } else { ?>
+                                                <img class="img-profile rounded-circle" src="<?php echo base_url('assets/images/user/'.$this->session->photo_thumb) ?>" style="max-width: 150px">
+                                            <?php } ?>
                                         </div>
                                     </div>
                                     <div class="row">

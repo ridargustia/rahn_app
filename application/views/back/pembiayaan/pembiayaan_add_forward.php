@@ -54,7 +54,7 @@
                                         Nama Anggota : <b><?php echo $this->session->nama_anggota ?></b><br>
                                         Jumlah Pinjaman Anggota : <b>Rp <?php echo number_format($this->session->jml_pinjaman, 0, ',', '.') ?></b> <?php if ($saldo_tabungan < 0) { ?><a href="#" id="changePinjaman" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modalChangePinjaman">Ubah Jumlah Pinjaman</a> <?php } ?><br>
                                         <hr>
-                                        Saldo Tabungan Saat Ini : <b>Rp <?php echo number_format($instansi->saldo_tabungan, 0, ',', '.') ?></b><br>
+                                        Saldo Tabungan Saat Ini : <b>Rp <?php echo number_format($cabang->saldo_tabungan, 0, ',', '.') ?></b><br>
                                         Dana Yang Digunakan : <b>Rp <?php echo number_format($this->session->jml_pinjaman, 0, ',', '.') ?> (100%)</b>
                                     </div>
                                 <?php } elseif ($status_sumber_dana == 2) { ?>

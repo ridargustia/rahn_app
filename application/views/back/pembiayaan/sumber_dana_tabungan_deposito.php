@@ -54,8 +54,8 @@
 
     <b>PENGGUNAAN DANA TABUNGAN</b><br>
     <hr>
-    Saldo Tabungan Saat Ini : <b>Rp <?php echo number_format($instansi->saldo_tabungan, 0, ',', '.') ?></b><br>
-    Serapan Tabungan Saat Ini : <b>Rp <?php echo number_format($instansi->resapan_tabungan, 0, ',', '.') ?></b><br>
+    Saldo Tabungan Saat Ini : <b>Rp <?php echo number_format($cabang->saldo_tabungan, 0, ',', '.') ?></b><br>
+    Serapan Tabungan Saat Ini : <b>Rp <?php echo number_format($cabang->resapan_tabungan, 0, ',', '.') ?></b><br>
     Persentase Dana Yang Digunakan : <b><?php echo $this->session->persentase_tabungan ?>% dari jumlah pinjaman Anggota menggunakan dana tabungan</b><br>
     Nominal Dana Yang Digunakan : <b>Rp <?php echo number_format($this->session->total_pinjaman, 0, ',', '.') ?></b>
 </div>
