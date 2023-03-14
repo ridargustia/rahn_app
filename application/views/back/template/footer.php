@@ -45,4 +45,23 @@
             }
         })
     });
+
+    $(document).on('click', '#lunasPembayaran', function(e) {
+        e.preventDefault();
+        const link = $(this).attr('href');
+
+        Swal.fire({
+            title: 'Konfirmasi Pelunasan',
+            text: "Pastikan Anggota telah melakukan pelunasan pinjaman sebelum anda melakukan konfirmasi.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00a65a',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Konfirmasi'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = link;
+            }
+        })
+    });
 </script>

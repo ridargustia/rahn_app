@@ -1104,6 +1104,13 @@ class Auth extends CI_Controller
     $this->load->view('back/auth/v_user', $this->data);
   }
 
+  function pilih_anggota()
+  {
+    $this->data['anggota'] = $this->Auth_model->get_all_combobox_anggota_by_cabang($this->uri->segment(4));
+
+    $this->load->view('back/auth/v_anggota', $this->data);
+  }
+
   function check_username()
   {
     $username = $this->input->post('username');

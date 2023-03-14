@@ -1826,4 +1826,15 @@ class Pembiayaan extends CI_Controller
 
         $this->load->view('back/pembiayaan/v_component_dropdown', $this->data);
     }
+
+    function pilih_pinjaman()
+    {
+        $this->data['pinjaman'] = $this->Pembiayaan_model->get_pinjaman_by_user($this->uri->segment(4));
+
+        $this->data['tanggungan'] = $this->data['pinjaman']->jml_pinjaman + $this->data['pinjaman']->total_biaya_sewa;
+
+        $this->data['kekurangan_bayar'] = $this->data['tanggungan'] - $this->data['pinjaman']->jml_terbayar;
+
+        $this->load->view('back/pembayaran/v_pinjaman', $this->data);
+    }
 }

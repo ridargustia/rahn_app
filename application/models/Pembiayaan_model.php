@@ -140,6 +140,12 @@ class Pembiayaan_model extends CI_Model
         return $this->db->get($this->table)->row();
     }
 
+    function get_pinjaman_by_user($id_user)
+    {
+        $this->db->where('user_id', $id_user);
+        return $this->db->get($this->table)->row();
+    }
+
     function insert($data)
     {
         $this->db->insert($this->table, $data);

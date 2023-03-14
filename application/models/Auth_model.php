@@ -289,6 +289,29 @@ class Auth_model extends CI_Model
     return $result;
   }
 
+  function get_all_combobox_anggota_by_cabang($id_cabang)
+  {
+    $this->db->join('pembiayaan', 'users.id_users = pembiayaan.user_id');
+
+    $this->db->where('users.usertype_id', 4);
+    $this->db->where('users.cabang_id', $id_cabang);
+    $this->db->where('users.is_delete', 0);
+
+    $this->db->order_by('users.name');
+
+    $data = $this->db->get($this->table);
+
+    if ($data->num_rows() > 0) {
+      foreach ($data->result_array() as $row) {
+        $result[''] = '- Silahkan Pilih Anggota -';
+        $result[$row['id_users']] = ucwords(strtolower($row['name'])) . ' - (' . $row['nik'] . ')';
+      }
+    } else {
+      $result[''] = '- Belum Ada data Anggota -';
+    }
+    return $result;
+  }
+
   function get_all_deleted()
   {
     $this->db->join('usertype', 'users.usertype_id = usertype.id_usertype');

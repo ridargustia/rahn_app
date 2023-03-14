@@ -115,4 +115,10 @@ class Sumberdana_model extends CI_Model
     {
         return $this->db->query('SELECT sum(basil_for_deposan) AS basil_for_deposan from sumber_dana where deposito_id = ' . $id_deposito)->row();
     }
+
+    function update($id,$data)
+    {
+        $this->db->where($this->id, $id);
+        $this->db->update($this->table, $data);
+    }
 }
