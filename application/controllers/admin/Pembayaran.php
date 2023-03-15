@@ -182,7 +182,51 @@ class Pembayaran extends CI_Controller
                             }
                         }
                     } elseif ($pembiayaan->sumber_dana == 3) {
+                        //Get data sumber dana by pembiayaan id
+                        $sumber_dana = $this->Sumberdana_model->cek_available_data($this->input->post('id_pembiayaan'));
 
+                        //Lakukan perulangan data sumberdana by pembiayaan id
+                        foreach($sumber_dana as $data) {
+                            $nominal_per_deposan = $nominal_cicilan * $data->persentase/100;
+                            //Jika basil_for_lembaga_berjalan tidak sama dengan basil for lembaga
+                            if ($data->basil_for_lembaga_berjalan != $data->basil_for_lembaga and $data->basil_for_lembaga > $data->basil_for_lembaga_berjalan) {
+
+                                //Tambahkan basil for lembaga berjalan dengan nominal inputan form
+                                if ($data->deposito_id != NULL) {
+                                    $basil_lembaga = $data->basil_for_lembaga_berjalan + ($nominal_per_deposan*70/100);
+                                } else {
+                                    $basil_lembaga = $data->basil_for_lembaga_berjalan + $nominal_per_deposan;
+                                }
+
+                                //Nominal cicilan lebih besar dari basil for lembaga
+                                if ($basil_lembaga > $data->basil_for_lembaga) {
+                                    //Update ke database by id sumber dana
+                                    $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_lembaga_berjalan' => $data->basil_for_lembaga));
+                                } else {
+                                    //Update ke database by id sumber dana
+                                    $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_lembaga_berjalan' => $basil_lembaga));
+                                }
+
+                            }
+
+                            if ($data->deposito_id != NULL) {
+                                //Jika basil_for_deposan_berjalan tidak sama dengan basil for deposan
+                                if ($data->basil_for_deposan_berjalan != $data->basil_for_deposan and $data->basil_for_deposan > $data->basil_for_deposan_berjalan) {
+
+                                    //Tambahkan basil for deposan berjalan dengan nominal inputan form
+                                    $basil_deposan = $data->basil_for_deposan_berjalan + ($nominal_per_deposan*30/100);
+
+                                    //Nominal cicilan lebih besar dari basil for lembaga
+                                    if ($basil_deposan > $data->basil_for_deposan) {
+                                        //Update ke database by id sumber dana
+                                        $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_deposan_berjalan' => $data->basil_for_deposan));
+                                    } else {
+                                        //Update ke database by id sumber dana
+                                        $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_deposan_berjalan' => $basil_deposan));
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     write_log();
@@ -202,18 +246,86 @@ class Pembayaran extends CI_Controller
         //Get data pembiayaan by id_pembiayaan
         $pembiayaan = $this->Pembiayaan_model->get_by_id($id_pembiayaan);
 
+        //Menghitung jumlah tanggungan
         $tanggungan = $pembiayaan->jml_pinjaman + $pembiayaan->total_biaya_sewa;
 
-        $kekurangan_bayar = $tanggungan - $pembiayaan->jml_terbayar;
+        //Jika jml terbayar dan jml tanggungan sama nilainya
+        if ($pembiayaan->jml_terbayar != $tanggungan and $tanggungan > $pembiayaan->jml_terbayar) {
 
-        $jml_pelunasan = $pembiayaan->jml_terbayar + $kekurangan_bayar;
+            //Menghitung kekurangan bayar
+            $kekurangan_bayar = $tanggungan - $pembiayaan->jml_terbayar;
 
-        //Update data jml terbayar pada tabel pembiayaan by id
-        $this->Pembiayaan_model->update($id_pembiayaan, array('jml_terbayar' => $jml_pelunasan));
+            //Tambahkan jml terbayar dengan kekurangan bayar
+            $jml_pelunasan = $pembiayaan->jml_terbayar + $kekurangan_bayar;
 
-        write_log();
+            //Update data jml terbayar pada tabel pembiayaan by id
+            $this->Pembiayaan_model->update($id_pembiayaan, array('jml_terbayar' => $jml_pelunasan));
 
-        $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data Berhasil Disimpan!</b></h6></div>');
-        redirect('admin/pembayaran');
+            //Kondisi menyesuaikan sumber dana
+            if ($pembiayaan->sumber_dana == 1) {
+                //Get data sumber dana by pembiayaan id
+                $sumber_dana = $this->Sumberdana_model->cek_available_data($id_pembiayaan);
+
+                //Lakukan perulangan data sumberdana by pembiayaan id
+                foreach($sumber_dana as $data) {
+                    //Jika basil_for_lembaga_berjalan tidak sama dengan basil for lembaga
+                    if ($data->basil_for_lembaga_berjalan != $data->basil_for_lembaga and $data->basil_for_lembaga > $data->basil_for_lembaga_berjalan) {
+                        //Update ke database by id sumber dana
+                        $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_lembaga_berjalan' => $data->basil_for_lembaga));
+                    }
+                }
+            } elseif ($pembiayaan->sumber_dana == 2) {
+                //Get data sumber dana by pembiayaan id
+                $sumber_dana = $this->Sumberdana_model->cek_available_data($id_pembiayaan);
+
+                //Lakukan perulangan data sumberdana by pembiayaan id
+                foreach($sumber_dana as $data) {
+                    //Jika basil_for_lembaga_berjalan tidak sama dengan basil for lembaga
+                    if ($data->basil_for_lembaga_berjalan != $data->basil_for_lembaga and $data->basil_for_lembaga > $data->basil_for_lembaga_berjalan) {
+
+                        //Update ke database by id sumber dana
+                        $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_lembaga_berjalan' => $data->basil_for_lembaga));
+                    }
+
+                    //Jika basil_for_deposan_berjalan tidak sama dengan basil for deposan
+                    if ($data->basil_for_deposan_berjalan != $data->basil_for_deposan and $data->basil_for_deposan > $data->basil_for_deposan_berjalan) {
+
+                        //Update ke database by id sumber dana
+                        $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_deposan_berjalan' => $data->basil_for_deposan));
+                    }
+                }
+            } elseif ($pembiayaan->sumber_dana == 3) {
+                //Get data sumber dana by pembiayaan id
+                $sumber_dana = $this->Sumberdana_model->cek_available_data($id_pembiayaan);
+
+                //Lakukan perulangan data sumberdana by pembiayaan id
+                foreach($sumber_dana as $data) {
+                    //Jika basil_for_lembaga_berjalan tidak sama dengan basil for lembaga
+                    if ($data->basil_for_lembaga_berjalan != $data->basil_for_lembaga and $data->basil_for_lembaga > $data->basil_for_lembaga_berjalan) {
+
+                        //Update ke database by id sumber dana
+                        $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_lembaga_berjalan' => $data->basil_for_lembaga));
+                    }
+
+                    if ($data->deposito_id != NULL) {
+                        //Jika basil_for_deposan_berjalan tidak sama dengan basil for deposan
+                        if ($data->basil_for_deposan_berjalan != $data->basil_for_deposan and $data->basil_for_deposan > $data->basil_for_deposan_berjalan) {
+
+                            //Update ke database by id sumber dana
+                            $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_deposan_berjalan' => $data->basil_for_deposan));
+                        }
+                    }
+                }
+            }
+
+            write_log();
+
+            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data Berhasil Disimpan!</b></h6></div>');
+            redirect('admin/pembayaran');
+        } else {
+            $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-ban"></i><b> Proses Gagal. Pinjaman telah lunas!</b></h6></div>');
+            redirect('admin/pembayaran');
+        }
+
     }
 }
