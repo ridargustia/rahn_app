@@ -27,7 +27,19 @@ class Pembayaran extends CI_Controller
 
     function index()
     {
+        is_read();
 
+        $this->data['page_title'] = 'Riwayat ' . $this->data['module'];
+
+        if (is_grandadmin()) {
+            $this->data['get_all'] = $this->Riwayatpembayaran_model->get_all_pembiayaan_from_riwayat_pembayaran();
+        } elseif (is_masteradmin()) {
+            $this->data['get_all'] = $this->Riwayatpembayaran_model->get_all_pembiayaan_from_riwayat_pembayaran_by_instansi();
+        } elseif (is_superadmin()) {
+            $this->data['get_all'] = $this->Riwayatpembayaran_model->get_all_pembiayaan_from_riwayat_pembayaran_by_cabang();
+        }
+
+        $this->load->view('back/pembayaran/riwayat_pembayaran_list', $this->data);
     }
 
     function create()
