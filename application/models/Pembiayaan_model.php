@@ -128,6 +128,16 @@ class Pembiayaan_model extends CI_Model
         return $this->db->query('SELECT sum(jml_pinjaman) AS jml_pinjaman from pembiayaan where is_delete_pembiayaan = 0')->result();
     }
 
+    function get_detail_by_id($id)
+    {
+        $this->db->join('users', 'pembiayaan.user_id = users.id_users', 'left');
+        $this->db->join('instansi', 'pembiayaan.instansi_id = instansi.id_instansi', 'left');
+        $this->db->join('cabang', 'pembiayaan.cabang_id = cabang.id_cabang', 'left');
+
+        $this->db->where($this->id, $id);
+        return $this->db->get($this->table)->row();
+    }
+
     function get_by_id($id)
     {
         $this->db->where($this->id, $id);

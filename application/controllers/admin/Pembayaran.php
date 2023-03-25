@@ -42,6 +42,21 @@ class Pembayaran extends CI_Controller
         $this->load->view('back/pembayaran/riwayat_pembayaran_list', $this->data);
     }
 
+    function detail($id_pembiayaan)
+    {
+        $this->data['page_title'] = 'Detail Riwayat ' . $this->data['module'];
+
+        $this->data['pembiayaan'] = $this->Pembiayaan_model->get_detail_by_id($id_pembiayaan);
+
+        $this->data['riwayat_pembayaran'] = $this->Riwayatpembayaran_model->get_all_riwayat_pembayaran_by_pembiayaan($id_pembiayaan);
+
+        $this->data['tanggungan'] = $this->data['pembiayaan']->jml_pinjaman + $this->data['pembiayaan']->total_biaya_sewa;
+
+        $this->data['kekurangan_bayar'] = $this->data['tanggungan'] - $this->data['pembiayaan']->jml_terbayar;
+
+        $this->load->view('back/pembayaran/riwayat_pembayaran_detail', $this->data);
+    }
+
     function create()
     {
         is_create();

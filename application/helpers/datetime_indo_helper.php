@@ -60,3 +60,12 @@ function date_indonesian_only($string)
 
   return $pecahkan[0] . ' ' . $bulan[(int)$pecahkan[1]] . ' ' . $pecahkan[2];
 }
+
+function datetime_indo4($string)
+{
+  $datetime = $string;
+  $dt       = strtotime($datetime); //make timestamp with datetime string
+  $string   = date("d/m/Y | G:i", $dt); //echo the year of the datestamp just created
+
+  return $string;
+}

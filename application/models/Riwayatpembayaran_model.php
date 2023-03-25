@@ -7,6 +7,18 @@ class Riwayatpembayaran_model extends CI_Model
     public $id    = 'id_riwayat_pembayaran';
     public $order = 'DESC';
 
+    function get_all_riwayat_pembayaran_by_pembiayaan($id_pembiayaan)
+    {
+        $this->db->select('riwayat_pembayaran.id_riwayat_pembayaran, riwayat_pembayaran.no_invoice, riwayat_pembayaran.nominal, riwayat_pembayaran.created_by, riwayat_pembayaran.created_at');
+
+        $this->db->where('pembiayaan_id', $id_pembiayaan);
+        $this->db->where('is_delete_riwayat_pembayaran', '0');
+
+        $this->db->order_by($this->id, $this->order);
+
+        return $this->db->get($this->table)->result();
+    }
+
     function get_all_pembiayaan_from_riwayat_pembayaran()
     {
         $this->db->select('riwayat_pembayaran.pembiayaan_id');
