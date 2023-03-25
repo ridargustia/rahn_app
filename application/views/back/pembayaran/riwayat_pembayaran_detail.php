@@ -111,16 +111,24 @@
                                                         <td style="padding-right: 7px; padding-left: 7px" class="text-center">:</td>
                                                         <td style="padding-right: 5px; padding-left: 5px"><b><?php echo $pembiayaan->username ?></b></td>
                                                     </tr>
-                                                    <tr>
-                                                        <td style="width: 120px; padding-right: 5px">Cabang</td>
-                                                        <td style="padding-right: 7px; padding-left: 7px" class="text-center">:</td>
-                                                        <td style="padding-right: 5px; padding-left: 5px"><b><?php echo $pembiayaan->cabang_name ?></b></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="width: 120px; padding-right: 5px">Instansi</td>
-                                                        <td style="padding-right: 7px; padding-left: 7px" class="text-center">:</td>
-                                                        <td style="padding-right: 5px; padding-left: 5px"><b><?php echo $pembiayaan->instansi_name ?></b></td>
-                                                    </tr>
+                                                    <?php if (is_grandadmin()) { ?>
+                                                        <tr>
+                                                            <td style="width: 120px; padding-right: 5px">Cabang</td>
+                                                            <td style="padding-right: 7px; padding-left: 7px" class="text-center">:</td>
+                                                            <td style="padding-right: 5px; padding-left: 5px"><b><?php echo $pembiayaan->cabang_name ?></b></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="width: 120px; padding-right: 5px">Instansi</td>
+                                                            <td style="padding-right: 7px; padding-left: 7px" class="text-center">:</td>
+                                                            <td style="padding-right: 5px; padding-left: 5px"><b><?php echo $pembiayaan->instansi_name ?></b></td>
+                                                        </tr>
+                                                    <?php } elseif (is_masteradmin()) { ?>
+                                                        <tr>
+                                                            <td style="width: 120px; padding-right: 5px">Cabang</td>
+                                                            <td style="padding-right: 7px; padding-left: 7px" class="text-center">:</td>
+                                                            <td style="padding-right: 5px; padding-left: 5px"><b><?php echo $pembiayaan->cabang_name ?></b></td>
+                                                        </tr>
+                                                    <?php } ?>
                                                     <tr>
                                                         <td style="width: 120px; padding-right: 5px">Waktu Gadai</td>
                                                         <td style="padding-right: 7px; padding-left: 7px" class="text-center">:</td>

@@ -70,7 +70,7 @@
     </div>
     <div class="row">
         <div class="col-xl-6 col-md-12">
-            <a href="#" id="cicilanPembayaran" class="btn btn-info btn-block" data-toggle="modal" data-target="#cicilanPembayaranModal" data-id_pembiayaan="<?php echo $pinjaman->id_pembiayaan ?>">Cicil</a>
+            <a href="#" id="cicilanPembayaran" class="btn btn-info btn-block" data-toggle="modal" data-target="#cicilanPembayaranModal" data-id_pembiayaan="<?php echo $pinjaman->id_pembiayaan ?>" data-id_cabang="<?php echo $pinjaman->cabang_id ?>" data-id_instansi="<?php echo $pinjaman->instansi_id ?>">Cicil</a>
         </div>
         <div class="col-xl-6 col-md-12">
             <a href="<?php echo base_url('admin/pembayaran/create_lunas_action/' . $pinjaman->id_pembiayaan) ?>" class="btn btn-success btn-block" id="lunasPembayaran">Lunas</a>

@@ -24,6 +24,8 @@
                 <!-- Content -->
             </div>
             <?php echo form_input($id_pembiayaan) ?>
+            <?php echo form_input($id_instansi) ?>
+            <?php echo form_input($id_cabang) ?>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>

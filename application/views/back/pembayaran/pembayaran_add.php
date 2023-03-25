@@ -146,7 +146,11 @@
         $(document).ready(function() {
             $(document).on('click', '#cicilanPembayaran', function() {
                 const id_pembiayaan = $(this).data('id_pembiayaan');
+                const id_cabang = $(this).data('id_cabang');
+                const id_instansi = $(this).data('id_instansi');
                 $('#id_pembiayaan').val(id_pembiayaan);
+                $('#id_cabang').val(id_cabang);
+                $('#id_instansi').val(id_instansi);
             });
 
             $('#nominal').maskMoney({

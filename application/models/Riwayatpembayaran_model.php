@@ -130,4 +130,9 @@ class Riwayatpembayaran_model extends CI_Model
             return (object) $result_id_pembiayaan;
         }
     }
+
+    function insert($data)
+    {
+        $this->db->insert($this->table, $data);
+    }
 }
