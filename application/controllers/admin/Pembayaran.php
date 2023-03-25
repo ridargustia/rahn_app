@@ -335,6 +335,43 @@ class Pembayaran extends CI_Controller
             //Update data jml terbayar pada tabel pembiayaan by id
             $this->Pembiayaan_model->update($id_pembiayaan, array('jml_terbayar' => $jml_pelunasan));
 
+            //Ubah status pembayaran menjadi lunas jika jml_tanggungan sama dengan jml_terbayar
+            $jml_terbayar_now = $this->Pembiayaan_model->get_by_id($id_pembiayaan)->jml_terbayar;
+
+            if ($tanggungan == $jml_terbayar_now) {
+                //Update data status pembayaran pada tabel pembiayaan by id
+                $this->Pembiayaan_model->update($id_pembiayaan, array('status_pembayaran' => 1));
+            }
+
+            //Tambah Riwayat Pembayaran Baru
+            //Generate kode/no invoice
+            $get_last_id = (int) $this->db->query('SELECT max(id_riwayat_pembayaran) as last_id FROM riwayat_pembayaran')->row()->last_id;
+            $get_last_id++;
+            $random = mt_rand(10, 99);
+            $no_invoice = $random . sprintf("%04s", $get_last_id);
+
+            if (is_grandadmin()) {
+                $instansi = $pembiayaan->instansi_id;
+                $cabang = $pembiayaan->cabang_id;
+            } elseif (is_masteradmin()) {
+                $instansi = $this->session->instansi_id;
+                $cabang = $pembiayaan->cabang_id;
+            } elseif (is_superadmin()) {
+                $instansi = $this->session->instansi_id;
+                $cabang = $this->session->cabang_id;
+            }
+
+            $data = array(
+                'no_invoice'        => $no_invoice,
+                'pembiayaan_id'     => $id_pembiayaan,
+                'instansi_id'       => $instansi,
+                'cabang_id'         => $cabang,
+                'nominal'           => $kekurangan_bayar,
+                'created_by'        => $this->session->username,
+            );
+
+            $this->Riwayatpembayaran_model->insert($data);
+
             //Kondisi menyesuaikan sumber dana
             if ($pembiayaan->sumber_dana == 1) {
                 //Get data sumber dana by pembiayaan id

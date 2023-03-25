@@ -64,7 +64,6 @@
                                             foreach ($get_all as $data) {
                                                 // Action
                                                 $detail = '<a href="' . base_url('admin/pembayaran/detail/' . $data->id_pembiayaan) . '" class="btn btn-sm btn-info" title="Detail Data"><i class="fas fa-info-circle"></i></a>';
-                                                $delete = '<a href="' . base_url('admin/pembayaran/delete/' . $data->id_pembiayaan) . '" id="delete-button" class="btn btn-sm btn-danger" title="Hapus Data"><i class="fas fa-trash"></i></a>';
                                             ?>
                                                 <tr>
                                                     <td><?php echo $no++ ?></td>
@@ -77,7 +76,7 @@
                                                     <?php } elseif (is_masteradmin()) { ?>
                                                         <td><?php echo $data->cabang_name ?></td>
                                                     <?php } ?>
-                                                    <td><?php echo $detail ?> <?php echo $delete ?></td>
+                                                    <td><?php echo $detail ?></td>
                                                 </tr>
                                             <?php } ?>
                                         </tbody>
