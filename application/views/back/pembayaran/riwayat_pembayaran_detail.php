@@ -53,7 +53,7 @@
                                                     <?php
                                                         foreach ($riwayat_pembayaran as $data) {
                                                         //Action
-                                                        $cetak = '<a href="#" class="btn btn-sm btn-info" title="Cetak Invoice"><i class="fas fa-print"></i></a>';
+                                                        $cetak = '<a href="' . base_url('admin/pembayaran/cetak_resi/' . $data->id_riwayat_pembayaran) . '" target="_blank" class="btn btn-sm btn-info" title="Cetak Invoice"><i class="fas fa-print"></i></a>';
                                                     ?>
                                                     <tr>
                                                         <td class="text-primary">#<?php echo $data->no_invoice ?></td>

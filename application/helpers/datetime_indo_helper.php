@@ -69,3 +69,21 @@ function datetime_indo4($string)
 
   return $string;
 }
+
+function date_only2($string)
+{
+  $datetime = $string;
+  $dt       = strtotime($datetime); //make timestamp with datetime string
+  $string   = date("d/m/Y", $dt); //echo the year of the datestamp just created
+
+  return $string;
+}
+
+function time_only($string)
+{
+  $datetime = $string;
+  $dt       = strtotime($datetime); //make timestamp with datetime string
+  $string   = date("H:i:s", $dt); //echo the year of the datestamp just created
+
+  return $string;
+}

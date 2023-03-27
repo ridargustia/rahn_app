@@ -131,6 +131,18 @@ class Riwayatpembayaran_model extends CI_Model
         }
     }
 
+    function get_by_id($id)
+    {
+        $this->db->select('riwayat_pembayaran.id_riwayat_pembayaran, riwayat_pembayaran.no_invoice, riwayat_pembayaran.nominal, riwayat_pembayaran.terbayar, riwayat_pembayaran.kekurangan_bayar, riwayat_pembayaran.created_by, riwayat_pembayaran.created_at, instansi.instansi_name, cabang.cabang_name, pembiayaan.no_pinjaman, pembiayaan.jml_pinjaman, pembiayaan.total_biaya_sewa');
+
+        $this->db->join('instansi', 'riwayat_pembayaran.instansi_id = instansi.id_instansi');
+        $this->db->join('cabang', 'riwayat_pembayaran.cabang_id = cabang.id_cabang');
+        $this->db->join('pembiayaan', 'riwayat_pembayaran.pembiayaan_id = pembiayaan.id_pembiayaan');
+
+        $this->db->where($this->id, $id);
+        return $this->db->get($this->table)->row();
+    }
+
     function insert($data)
     {
         $this->db->insert($this->table, $data);

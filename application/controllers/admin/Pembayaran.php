@@ -182,12 +182,16 @@ class Pembayaran extends CI_Controller
                         $cabang = $this->session->cabang_id;
                     }
 
+                    $kekurangan = $jml_tanggungan - $jml_terbayar_now;
+
                     $data = array(
                         'no_invoice'        => $no_invoice,
                         'pembiayaan_id'     => $this->input->post('id_pembiayaan'),
                         'instansi_id'       => $instansi,
                         'cabang_id'         => $cabang,
                         'nominal'           => $nominal_cicilan,
+                        'terbayar'          => $jml_terbayar_now,
+                        'kekurangan_bayar'  => $kekurangan,
                         'created_by'        => $this->session->username,
                     );
 
@@ -367,6 +371,8 @@ class Pembayaran extends CI_Controller
                 'instansi_id'       => $instansi,
                 'cabang_id'         => $cabang,
                 'nominal'           => $kekurangan_bayar,
+                'terbayar'          => $jml_terbayar_now,
+                'kekurangan_bayar'  => 0,
                 'created_by'        => $this->session->username,
             );
 
@@ -438,5 +444,83 @@ class Pembayaran extends CI_Controller
             redirect('admin/pembayaran');
         }
 
+    }
+
+    function cetak_resi($id_riwayat_pembayaran)
+    {
+        // Get Data
+        $riwayat_pembayaran = $this->Riwayatpembayaran_model->get_by_id($id_riwayat_pembayaran);
+        $tanggungan = $riwayat_pembayaran->jml_pinjaman + $riwayat_pembayaran->total_biaya_sewa;
+
+        // Import library FPDF
+        require FCPATH . '/vendor/autoload.php';
+        require FCPATH . '/vendor/setasign/fpdf/fpdf.php';
+
+        // Rancang template struk pembayaran dengan ekstensi PDF
+        $pdf = new FPDF('P', 'mm', array(75, 100));
+        $pdf->SetTitle('Struk Transaksi Pembayaran Tunai - ' . $riwayat_pembayaran->no_invoice);
+        $pdf->SetTopMargin(5);
+        $pdf->SetLeftMargin(5);
+        $pdf->AddPage();
+
+        $pdf->SetFont('Arial', 'B', 8);
+        $pdf->Cell(65, 3, strtoupper($riwayat_pembayaran->instansi_name), 0, 1, 'C');
+
+        $pdf->SetFont('Arial', '', 7);
+
+        //make a dummy empty cell as a vertical spacer
+        $pdf->Cell(65, 4, '', 0, 1); //end of line
+
+        $pdf->Cell(65, 3, 'STRUK TRANSAKSI', 0, 1, 'C');
+        $pdf->Cell(65, 3, 'PEMBAYARAN TUNAI', 0, 1, 'C');
+
+        //make a dummy empty cell as a vertical spacer
+        $pdf->Cell(65, 5, '', 0, 1); //end of line
+
+        $pdf->Cell(32.5, 3, 'KANTOR CABANG ' . strtoupper($riwayat_pembayaran->cabang_name), 0, 1, 'L');
+
+        //make a dummy empty cell as a vertical spacer
+        $pdf->Cell(65, 3, '', 0, 1); //end of line
+
+        $pdf->Cell(22, 3, 'TANGGAL', 0, 0, 'L');
+        $pdf->Cell(18, 3, 'WAKTU', 0, 0, 'L');
+        $pdf->Cell(22, 3, 'PETUGAS', 0, 1, 'L');
+        $pdf->Cell(22, 3, date_only2($riwayat_pembayaran->created_at), 0, 0, 'L');
+        $pdf->Cell(18, 3, time_only($riwayat_pembayaran->created_at), 0, 0, 'L');
+        $pdf->Cell(22, 3, $riwayat_pembayaran->created_by, 0, 1, 'L');
+
+        //make a dummy empty cell as a vertical spacer
+        $pdf->Cell(65, 5, '', 0, 1); //end of line
+
+        $pdf->Cell(22, 3.5, 'NO INVOICE', 0, 0, 'L');
+        $pdf->Cell(3, 3.5, ':', 0, 0, 'C');
+        $pdf->Cell(40, 3.5, $riwayat_pembayaran->no_invoice, 0, 1, 'L');
+        $pdf->Cell(22, 3.5, 'NO ANGGOTA', 0, 0, 'L');
+        $pdf->Cell(3, 3.5, ':', 0, 0, 'C');
+        $pdf->Cell(40, 3.5, $riwayat_pembayaran->no_pinjaman, 0, 1, 'L');
+        $pdf->Cell(22, 3.5, 'BAYAR TUNAI', 0, 0, 'L');
+        $pdf->Cell(3, 3.5, ':', 0, 0, 'C');
+        $pdf->Cell(40, 3.5, 'RP. ' . number_format($riwayat_pembayaran->nominal, 0, ',', '.'), 0, 1, 'L');
+
+        //make a dummy empty cell as a vertical spacer
+        $pdf->Cell(65, 4, '', 0, 1); //end of line
+
+        $pdf->Cell(22, 3.5, 'TANGGUNGAN', 0, 0, 'L');
+        $pdf->Cell(3, 3.5, ':', 0, 0, 'C');
+        $pdf->Cell(40, 3.5, 'RP. ' . number_format($tanggungan, 0, ',', '.'), 0, 1, 'L');
+        $pdf->Cell(22, 3.5, 'TERBAYAR', 0, 0, 'L');
+        $pdf->Cell(3, 3.5, ':', 0, 0, 'C');
+        $pdf->Cell(40, 3.5, 'RP. ' . number_format($riwayat_pembayaran->terbayar, 0, ',', '.'), 0, 1, 'L');
+        $pdf->Cell(22, 3.5, 'KEKURANGAN', 0, 0, 'L');
+        $pdf->Cell(3, 3.5, ':', 0, 0, 'C');
+        $pdf->Cell(40, 3.5, 'RP. ' . number_format($riwayat_pembayaran->kekurangan_bayar, 0, ',', '.'), 0, 1, 'L');
+
+        //make a dummy empty cell as a vertical spacer
+        $pdf->Cell(65, 7, '', 0, 1); //end of line
+
+        $pdf->Cell(65, 3, '--Resi ini adalah bukti transaksi yang sah--', 0, 1, 'C');
+        $pdf->Cell(65, 3, '--Terima kasih--', 0, 1, 'C');
+
+        $pdf->Output('I', 'Struk Transaksi Pembayaran Tunai - ' . $riwayat_pembayaran->no_invoice . '.pdf');
     }
 }
