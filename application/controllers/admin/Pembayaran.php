@@ -747,7 +747,7 @@ class Pembayaran extends CI_Controller
         $pdf->Cell(22, 3.5, 'TANGGUNGAN', 0, 0, 'L');
         $pdf->Cell(3, 3.5, ':', 0, 0, 'C');
         $pdf->Cell(40, 3.5, 'RP. ' . number_format($tanggungan, 0, ',', '.'), 0, 1, 'L');
-        $pdf->Cell(22, 3.5, 'TERBAYAR', 0, 0, 'L');
+        $pdf->Cell(22, 3.5, 'TOTAL TERBAYAR', 0, 0, 'L');
         $pdf->Cell(3, 3.5, ':', 0, 0, 'C');
         $pdf->Cell(40, 3.5, 'RP. ' . number_format($riwayat_pembayaran->terbayar, 0, ',', '.'), 0, 1, 'L');
         $pdf->Cell(22, 3.5, 'KEKURANGAN', 0, 0, 'L');
