@@ -54,6 +54,7 @@ class Dashboard extends CI_Controller
 		} elseif (is_admin()) {
 			$this->data['get_deposito'] = $this->Deposito_model->get_deposito_by_deposan();
 			$this->data['get_basil'] = $this->Sumberdana_model->get_basil_for_deposan($this->data['get_deposito']->id_deposito);
+			$this->data['get_basil_berjalan'] = $this->Sumberdana_model->get_basil_for_deposan_berjalan($this->data['get_deposito']->id_deposito);
 		} elseif (is_pegawai()) {
 			$this->data['get_pembiayaan'] = $this->Pembiayaan_model->get_pembiayaan_by_anggota();
 			$this->data['get_tanggungan'] = $this->data['get_pembiayaan']->jml_pinjaman + $this->data['get_pembiayaan']->total_biaya_sewa;

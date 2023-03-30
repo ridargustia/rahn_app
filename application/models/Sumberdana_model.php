@@ -59,7 +59,7 @@ class Sumberdana_model extends CI_Model
 
     function get_deposan_by_pembiayaan($id_pembiayaan)
     {
-        $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.persentase, sumber_dana.nominal, sumber_dana.total_basil, sumber_dana.basil_for_deposan, sumber_dana.basil_for_lembaga, deposito.name');
+        $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.persentase, sumber_dana.nominal, sumber_dana.total_basil, sumber_dana.basil_for_deposan, sumber_dana.basil_for_lembaga, deposito.name, sumber_dana.deposito_id');
 
         $this->db->join('deposito', 'sumber_dana.deposito_id = deposito.id_deposito', 'left');
 
@@ -114,6 +114,11 @@ class Sumberdana_model extends CI_Model
     function get_basil_for_deposan($id_deposito)
     {
         return $this->db->query('SELECT sum(basil_for_deposan) AS basil_for_deposan from sumber_dana where deposito_id = ' . $id_deposito)->row();
+    }
+
+    function get_basil_for_deposan_berjalan($id_deposito)
+    {
+        return $this->db->query('SELECT sum(basil_for_deposan_berjalan) AS basil_for_deposan_berjalan from sumber_dana where deposito_id = ' . $id_deposito)->row();
     }
 
     function update($id,$data)

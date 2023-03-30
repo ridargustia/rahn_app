@@ -578,6 +578,8 @@ class Pembiayaan extends CI_Controller
 
                 $this->Pembiayaan_model->delete($this->input->post('id_pembiayaan'));
 
+                $this->Auth_model->delete($pembiayaan->user_id);
+
                 $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-ban"></i><b> Proses Gagal. Saldo Tabungan Tidak Cukup!</b></h6></div>');
                 redirect('admin/pembiayaan');
             }

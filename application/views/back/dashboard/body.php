@@ -97,7 +97,7 @@
                                         <div class="row no-gutters align-items-center">
                                             <div class="col mr-2">
                                                 <div class="text-xs font-weight-bold text-uppercase mb-1">Saldo Bagi Hasil Berjalan</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">RP <?php echo number_format($get_basil->basil_for_deposan, 0, ',', '.') ?></div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">RP <?php echo number_format($get_basil_berjalan->basil_for_deposan_berjalan, 0, ',', '.') ?></div>
                                             </div>
                                             <div class="col-auto">
                                                 <i class="fas fa-wallet fa-2x text-success"></i>

@@ -159,9 +159,129 @@ class Pembayaran extends CI_Controller
                     //Ubah status pembayaran menjadi lunas jika jml_tanggungan sama dengan jml_terbayar
                     $jml_terbayar_now = $this->Pembiayaan_model->get_by_id($this->input->post('id_pembiayaan'))->jml_terbayar;
 
+                    // Pengkondisian jika pinjaman telah lunas
                     if ($jml_tanggungan == $jml_terbayar_now) {
                         //Update data status pembayaran pada tabel pembiayaan by id
                         $this->Pembiayaan_model->update($this->input->post('id_pembiayaan'), array('status_pembayaran' => 1));
+
+                        if ($pembiayaan->sumber_dana == 1) {
+                            // MANIPULASI DATA INSTANSI
+                            // Update data instansi untuk dikembalikan nominal yg dipinjam
+                            $data_instansi = $this->Instansi_model->get_by_id($pembiayaan->instansi_id);
+
+                            // Menghitung jml resapan terbaru setelah dikembalikan
+                            $resapan_tabungan = $data_instansi->resapan_tabungan - $pembiayaan->jml_pinjaman;
+
+                            // Menghitung jml saldo tabungan terbaru setelah dikembalikan
+                            $saldo_tabungan = $data_instansi->saldo_tabungan + $pembiayaan->jml_pinjaman;
+
+                            $data = array(
+                                'saldo_tabungan'    => $saldo_tabungan,
+                                'resapan_tabungan'  => $resapan_tabungan,
+                            );
+
+                            $this->Instansi_model->update($pembiayaan->instansi_id, $data);
+
+                            // MANIPULASI DATA CABANG
+                            // Update data cabang untuk dikembalikan nominal yg dipinjam
+                            $data_cabang = $this->Cabang_model->get_by_id($pembiayaan->cabang_id);
+
+                            // Menghitung jml resapan terbaru setelah dikembalikan
+                            $resapan_tabungan = $data_cabang->resapan_tabungan - $pembiayaan->jml_pinjaman;
+
+                            // Menghitung jml saldo tabungan terbaru setelah dikembalikan
+                            $saldo_tabungan = $data_cabang->saldo_tabungan + $pembiayaan->jml_pinjaman;
+
+                            $data = array(
+                                'saldo_tabungan'    => $saldo_tabungan,
+                                'resapan_tabungan'  => $resapan_tabungan,
+                            );
+
+                            $this->Cabang_model->update($pembiayaan->cabang_id, $data);
+
+                        } elseif ($pembiayaan->sumber_dana == 2) {
+                            // MANIPULASI DATA DEPOSITO
+                            // Update data deposito untuk dikembalikan nominal yg dipinjam
+                            $sumber_dana_deposito = $this->Sumberdana_model->get_deposan_by_pembiayaan($pembiayaan->id_pembiayaan);
+
+                            // Karena deposito dalam satu pinjaman bisa lebih dari satu maka lakukan perulangan
+                            foreach ($sumber_dana_deposito as $data) {
+                                $data_deposito = $this->Deposito_model->get_by_id($data->deposito_id);
+
+                                // Menghitung jml resapan terbaru setelah dikembalikan
+                                $resapan_deposito = $data_deposito->resapan_deposito - $data->nominal;
+
+                                // Menghitung jml saldo depostio terbaru setelah dikembalikan
+                                $saldo_deposito = $data_deposito->saldo_deposito + $data->nominal;
+
+                                $change_data = array(
+                                    'saldo_deposito'    => $saldo_deposito,
+                                    'resapan_deposito'  => $resapan_deposito,
+                                );
+
+                                $this->Deposito_model->update($data->deposito_id, $change_data);
+                            }
+                        } elseif ($pembiayaan->sumber_dana == 3) {
+                            $sumber_dana_tabungan = $this->Sumberdana_model->get_tabungan_by_pembiayaan($pembiayaan->id_pembiayaan);
+
+                            foreach ($sumber_dana_tabungan as $data) {
+                                // MANIPULASI DATA INSTANSI
+                                // Update data instansi untuk dikembalikan nominal yg dipinjam
+                                $data_instansi = $this->Instansi_model->get_by_id($pembiayaan->instansi_id);
+
+                                // Menghitung jml resapan terbaru setelah dikembalikan
+                                $resapan_tabungan = $data_instansi->resapan_tabungan - $data->nominal;
+
+                                // Menghitung jml saldo tabungan terbaru setelah dikembalikan
+                                $saldo_tabungan = $data_instansi->saldo_tabungan + $data->nominal;
+
+                                $change_data = array(
+                                    'saldo_tabungan'    => $saldo_tabungan,
+                                    'resapan_tabungan'  => $resapan_tabungan,
+                                );
+
+                                $this->Instansi_model->update($pembiayaan->instansi_id, $change_data);
+
+                                // MANIPULASI DATA CABANG
+                                // Update data cabang untuk dikembalikan nominal yg dipinjam
+                                $data_cabang = $this->Cabang_model->get_by_id($pembiayaan->cabang_id);
+
+                                // Menghitung jml resapan terbaru setelah dikembalikan
+                                $resapan_tabungan = $data_cabang->resapan_tabungan - $data->nominal;
+
+                                // Menghitung jml saldo tabungan terbaru setelah dikembalikan
+                                $saldo_tabungan = $data_cabang->saldo_tabungan + $data->nominal;
+
+                                $change_data = array(
+                                    'saldo_tabungan'    => $saldo_tabungan,
+                                    'resapan_tabungan'  => $resapan_tabungan,
+                                );
+
+                                $this->Cabang_model->update($pembiayaan->cabang_id, $change_data);
+                            }
+
+                            // MANIPULASI DATA DEPOSITO
+                            // Update data deposito untuk dikembalikan nominal yg dipinjam
+                            $sumber_dana_deposito = $this->Sumberdana_model->get_deposan_by_pembiayaan($pembiayaan->id_pembiayaan);
+
+                            // Karena deposito dalam satu pinjaman bisa lebih dari satu maka lakukan perulangan
+                            foreach ($sumber_dana_deposito as $data) {
+                                $data_deposito = $this->Deposito_model->get_by_id($data->deposito_id);
+
+                                // Menghitung jml resapan terbaru setelah dikembalikan
+                                $resapan_deposito = $data_deposito->resapan_deposito - $data->nominal;
+
+                                // Menghitung jml saldo depostio terbaru setelah dikembalikan
+                                $saldo_deposito = $data_deposito->saldo_deposito + $data->nominal;
+
+                                $change_data = array(
+                                    'saldo_deposito'    => $saldo_deposito,
+                                    'resapan_deposito'  => $resapan_deposito,
+                                );
+
+                                $this->Deposito_model->update($data->deposito_id, $change_data);
+                            }
+                        }
                     }
 
                     //Tambah Riwayat Pembayaran Baru
@@ -342,9 +462,128 @@ class Pembayaran extends CI_Controller
             //Ubah status pembayaran menjadi lunas jika jml_tanggungan sama dengan jml_terbayar
             $jml_terbayar_now = $this->Pembiayaan_model->get_by_id($id_pembiayaan)->jml_terbayar;
 
+            // Pengkondisian jika pinjaman telah lunas
             if ($tanggungan == $jml_terbayar_now) {
                 //Update data status pembayaran pada tabel pembiayaan by id
                 $this->Pembiayaan_model->update($id_pembiayaan, array('status_pembayaran' => 1));
+
+                if ($pembiayaan->sumber_dana == 1) {
+                    // MANIPULASI DATA INSTANSI
+                    // Update data instansi untuk dikembalikan nominal yg dipinjam
+                    $data_instansi = $this->Instansi_model->get_by_id($pembiayaan->instansi_id);
+
+                    // Menghitung jml resapan terbaru setelah dikembalikan
+                    $resapan_tabungan = $data_instansi->resapan_tabungan - $pembiayaan->jml_pinjaman;
+
+                    // Menghitung jml saldo tabungan terbaru setelah dikembalikan
+                    $saldo_tabungan = $data_instansi->saldo_tabungan + $pembiayaan->jml_pinjaman;
+
+                    $data = array(
+                        'saldo_tabungan'    => $saldo_tabungan,
+                        'resapan_tabungan'  => $resapan_tabungan,
+                    );
+
+                    $this->Instansi_model->update($pembiayaan->instansi_id, $data);
+
+                    // MANIPULASI DATA CABANG
+                    // Update data cabang untuk dikembalikan nominal yg dipinjam
+                    $data_cabang = $this->Cabang_model->get_by_id($pembiayaan->cabang_id);
+
+                    // Menghitung jml resapan terbaru setelah dikembalikan
+                    $resapan_tabungan = $data_cabang->resapan_tabungan - $pembiayaan->jml_pinjaman;
+
+                    // Menghitung jml saldo tabungan terbaru setelah dikembalikan
+                    $saldo_tabungan = $data_cabang->saldo_tabungan + $pembiayaan->jml_pinjaman;
+
+                    $data = array(
+                        'saldo_tabungan'    => $saldo_tabungan,
+                        'resapan_tabungan'  => $resapan_tabungan,
+                    );
+
+                    $this->Cabang_model->update($pembiayaan->cabang_id, $data);
+                } elseif ($pembiayaan->sumber_dana == 2) {
+                    // MANIPULASI DATA DEPOSITO
+                    // Update data deposito untuk dikembalikan nominal yg dipinjam
+                    $sumber_dana_deposito = $this->Sumberdana_model->get_deposan_by_pembiayaan($pembiayaan->id_pembiayaan);
+
+                    // Karena deposito dalam satu pinjaman bisa lebih dari satu maka lakukan perulangan
+                    foreach ($sumber_dana_deposito as $data) {
+                        $data_deposito = $this->Deposito_model->get_by_id($data->deposito_id);
+
+                        // Menghitung jml resapan terbaru setelah dikembalikan
+                        $resapan_deposito = $data_deposito->resapan_deposito - $data->nominal;
+
+                        // Menghitung jml saldo depostio terbaru setelah dikembalikan
+                        $saldo_deposito = $data_deposito->saldo_deposito + $data->nominal;
+
+                        $change_data = array(
+                            'saldo_deposito'    => $saldo_deposito,
+                            'resapan_deposito'  => $resapan_deposito,
+                        );
+
+                        $this->Deposito_model->update($data->deposito_id, $change_data);
+                    }
+                } elseif ($pembiayaan->sumber_dana == 3) {
+                    $sumber_dana_tabungan = $this->Sumberdana_model->get_tabungan_by_pembiayaan($pembiayaan->id_pembiayaan);
+
+                    foreach ($sumber_dana_tabungan as $data) {
+                        // MANIPULASI DATA INSTANSI
+                        // Update data instansi untuk dikembalikan nominal yg dipinjam
+                        $data_instansi = $this->Instansi_model->get_by_id($pembiayaan->instansi_id);
+
+                        // Menghitung jml resapan terbaru setelah dikembalikan
+                        $resapan_tabungan = $data_instansi->resapan_tabungan - $data->nominal;
+
+                        // Menghitung jml saldo tabungan terbaru setelah dikembalikan
+                        $saldo_tabungan = $data_instansi->saldo_tabungan + $data->nominal;
+
+                        $change_data = array(
+                            'saldo_tabungan'    => $saldo_tabungan,
+                            'resapan_tabungan'  => $resapan_tabungan,
+                        );
+
+                        $this->Instansi_model->update($pembiayaan->instansi_id, $change_data);
+
+                        // MANIPULASI DATA CABANG
+                        // Update data cabang untuk dikembalikan nominal yg dipinjam
+                        $data_cabang = $this->Cabang_model->get_by_id($pembiayaan->cabang_id);
+
+                        // Menghitung jml resapan terbaru setelah dikembalikan
+                        $resapan_tabungan = $data_cabang->resapan_tabungan - $data->nominal;
+
+                        // Menghitung jml saldo tabungan terbaru setelah dikembalikan
+                        $saldo_tabungan = $data_cabang->saldo_tabungan + $data->nominal;
+
+                        $change_data = array(
+                            'saldo_tabungan'    => $saldo_tabungan,
+                            'resapan_tabungan'  => $resapan_tabungan,
+                        );
+
+                        $this->Cabang_model->update($pembiayaan->cabang_id, $change_data);
+                    }
+
+                    // MANIPULASI DATA DEPOSITO
+                    // Update data deposito untuk dikembalikan nominal yg dipinjam
+                    $sumber_dana_deposito = $this->Sumberdana_model->get_deposan_by_pembiayaan($pembiayaan->id_pembiayaan);
+
+                    // Karena deposito dalam satu pinjaman bisa lebih dari satu maka lakukan perulangan
+                    foreach ($sumber_dana_deposito as $data) {
+                        $data_deposito = $this->Deposito_model->get_by_id($data->deposito_id);
+
+                        // Menghitung jml resapan terbaru setelah dikembalikan
+                        $resapan_deposito = $data_deposito->resapan_deposito - $data->nominal;
+
+                        // Menghitung jml saldo depostio terbaru setelah dikembalikan
+                        $saldo_deposito = $data_deposito->saldo_deposito + $data->nominal;
+
+                        $change_data = array(
+                            'saldo_deposito'    => $saldo_deposito,
+                            'resapan_deposito'  => $resapan_deposito,
+                        );
+
+                        $this->Deposito_model->update($data->deposito_id, $change_data);
+                    }
+                }
             }
 
             //Tambah Riwayat Pembayaran Baru
