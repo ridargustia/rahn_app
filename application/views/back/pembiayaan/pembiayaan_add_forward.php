@@ -108,8 +108,17 @@
                                 <?php echo form_input($instansi_id, $this->session->instansi) ?>
                                 <?php echo form_input($cabang_id, $this->session->cabang) ?>
                                 <div class="card-footer">
-                                    <button type="reset" class="btn btn-warning"><?php echo $btn_reset ?></button>
-                                    <button type="submit" class="btn btn-primary"><?php echo $btn_submit ?></button>
+                                    <?php if ($status_sumber_dana == 1) { ?>
+                                        <button type="submit" class="btn btn-primary"><?php echo $btn_submit ?></button>
+                                    <?php } elseif ($status_sumber_dana == 2) { ?>
+                                        <?php if ($this->session->total_pinjaman == 0) { ?>
+                                            <button type="submit" class="btn btn-primary"><?php echo $btn_submit ?></button>
+                                        <?php } else { ?>
+                                            <button type="submit" class="btn btn-primary" style="cursor: not-allowed;" disabled><?php echo $btn_submit ?></button>
+                                        <?php } ?>
+                                    <?php } elseif ($status_sumber_dana == 3) { ?>
+                                        <button type="submit" class="btn btn-primary"><?php echo $btn_submit ?></button>
+                                    <?php } ?>
                                 </div>
                                 <?php echo form_close() ?>
                             </div>
@@ -199,6 +208,9 @@
         }
 
         $('#persentase_deposito').on('keyup', function() {
+            $("#persentase_deposito").removeClass("is-valid");
+            $("#persentase_deposito").removeClass("is-invalid");
+
             persentase_deposito = document.getElementById("persentase_deposito").value;
 
             $.ajax({
@@ -207,6 +219,16 @@
                     var myObj = JSON.parse(response);
 
                     $('#konversi_nominal').val(formatRupiah(myObj.hasil_konversi));
+
+                    if (persentase_deposito == '') {
+                        $("#button").html('<button type="submit" class="btn btn-primary" style="cursor: not-allowed;" disabled>Simpan</button>');
+                    } else if (myObj.is_valid == 0) {
+                        $("#persentase_deposito").addClass("is-invalid");
+                        $("#button").html('<button type="submit" class="btn btn-primary" style="cursor: not-allowed;" disabled>Simpan</button>');
+                    } else if (myObj.is_valid == 1) {
+                        $("#persentase_deposito").addClass("is-valid");
+                        $("#button").html('<button type="submit" class="btn btn-primary">Simpan</button>');
+                    }
                 }
             });
         });

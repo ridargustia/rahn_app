@@ -16,6 +16,7 @@
                         <div class="input-group-append">
                             <span class="input-group-text">%</span>
                         </div>
+                        <div class="invalid-feedback">Persentase tidak boleh melebihi jumlah pinjaman. Silahkan ubah persentase.</div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -33,7 +34,7 @@
             </div>
             <?php echo form_input($id_deposito) ?>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <div id="button"></div>
             </div>
             <?php echo form_close() ?>
         </div>

@@ -1233,13 +1233,31 @@ class Pembiayaan extends CI_Controller
 
                 if ($persentase_tabungan > 0) {
                     $this->session->set_userdata('persentase_tabungan', $persentase_tabungan);
+
+                    $this->session->set_userdata('total_pinjaman', $result);
+
+                    $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Dari pembagian deposito tersisa Rp. ' . number_format($result, 0, ',', '.') . ' setelah berkurang sebesar ' . $this->session->persentase_deposito[count($this->session->persentase_deposito) - 1] . '% dengan nominal Rp. ' . $this->input->post('konversi_nominal') . '</b></h6></div>');
+
+                    redirect('admin/pembiayaan/sumber_dana_tabungan_deposito');
+                } else {
+                    $new_array_deposito = $this->session->id_deposito;
+                    $new_array_persentase = $this->session->persentase_deposito;
+                    $new_array_deposan = $this->session->nama_deposan;
+                    $new_array_nominal = $this->session->nominal_deposito;
+                    unset($new_array_deposito[count($new_array_deposito) - 1]);
+                    unset($new_array_persentase[count($new_array_persentase) - 1]);
+                    unset($new_array_deposan[count($new_array_deposan) - 1]);
+                    unset($new_array_nominal[count($new_array_nominal) - 1]);
+                    $this->session->set_userdata('id_deposito', $new_array_deposito);
+                    $this->session->set_userdata('persentase_deposito', $new_array_persentase);
+                    $this->session->set_userdata('nama_deposan', $new_array_deposan);
+                    $this->session->set_userdata('nominal_deposito', $new_array_nominal);
+
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-ban"></i><b> Persentase Tabungan Tidak Boleh Kosong</b></h6></div>');
+
+                    redirect('admin/pembiayaan/sumber_dana_tabungan_deposito');
                 }
 
-                $this->session->set_userdata('total_pinjaman', $result);
-
-                $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Dari pembagian deposito tersisa Rp. ' . number_format($result, 0, ',', '.') . ' setelah berkurang sebesar ' . $this->session->persentase_deposito[count($this->session->persentase_deposito) - 1] . '% dengan nominal Rp. ' . $this->input->post('konversi_nominal') . '</b></h6></div>');
-
-                redirect('admin/pembiayaan/sumber_dana_tabungan_deposito');
             }
         } else {
             if ($this->session->status_sumber_dana == 2) {
@@ -1491,11 +1509,20 @@ class Pembiayaan extends CI_Controller
 
     function konversi_nominal($persentase = '')
     {
-        $total_pinjaman = $this->session->total_pinjaman;
+        $jml_pinjaman = $this->session->jml_pinjaman;
 
-        $hasil_konversi = $persentase * $total_pinjaman / 100;
+        $hasil_konversi = $persentase * $jml_pinjaman / 100;
+
+        if (!empty($persentase)) {
+            if ($hasil_konversi > $this->session->total_pinjaman) {
+                $is_valid = 0;
+            } elseif ($hasil_konversi <= $this->session->total_pinjaman) {
+                $is_valid = 1;
+            }
+        }
 
         $output['hasil_konversi']    = $hasil_konversi;
+        $output['is_valid']    = $is_valid;
 
         echo json_encode($output);
     }
