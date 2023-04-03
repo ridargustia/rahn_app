@@ -1495,98 +1495,100 @@ class Pembiayaan extends CI_Controller
                 unlink($dir);
             }
 
-            // UPDATE MASING-MASING SUMBER DANA
-            if ($delete->sumber_dana == 1) {
-                // MANIPULASI DATA CABANG
-                $cabang = $this->Cabang_model->get_by_id($delete->cabang_id);
+            if ($delete->status_pembayaran == 0) {
+                // UPDATE MASING-MASING SUMBER DANA
+                if ($delete->sumber_dana == 1) {
+                    // MANIPULASI DATA CABANG
+                    $cabang = $this->Cabang_model->get_by_id($delete->cabang_id);
 
-                $resapan_tabungan = $cabang->resapan_tabungan - $delete->jml_pinjaman;
-                $saldo_tabungan = $cabang->saldo_tabungan + $delete->jml_pinjaman;
-
-                $change_data = array(
-                    'resapan_tabungan'  => $resapan_tabungan,
-                    'saldo_tabungan'    => $saldo_tabungan,
-                );
-
-                $this->Cabang_model->update($delete->cabang_id, $change_data);
-
-                // MANIPULASI DATA INSTANSI
-                $instansi = $this->Instansi_model->get_by_id($delete->instansi_id);
-
-                $resapan_tabungan = $instansi->resapan_tabungan - $delete->jml_pinjaman;
-                $saldo_tabungan = $instansi->saldo_tabungan + $delete->jml_pinjaman;
-
-                $change_data = array(
-                    'resapan_tabungan'  => $resapan_tabungan,
-                    'saldo_tabungan'    => $saldo_tabungan,
-                );
-
-                $this->Instansi_model->update($delete->instansi_id, $change_data);
-
-            } elseif ($delete->sumber_dana == 2) {
-                // MANIPULASI DATA DEPOSITO
-                $sumber_dana = $this->Sumberdana_model->get_deposan_by_pembiayaan($id);
-
-                foreach ($sumber_dana as $data) {
-                    $deposito = $this->Deposito_model->get_by_id($data->deposito_id);
-
-                    $resapan_deposito = $deposito->resapan_deposito - $data->nominal;
-                    $saldo_deposito = $deposito->saldo_deposito + $data->nominal;
+                    $resapan_tabungan = $cabang->resapan_tabungan - $delete->jml_pinjaman;
+                    $saldo_tabungan = $cabang->saldo_tabungan + $delete->jml_pinjaman;
 
                     $change_data = array(
-                        'resapan_deposito'  => $resapan_deposito,
-                        'saldo_deposito'    => $saldo_deposito,
+                        'resapan_tabungan'  => $resapan_tabungan,
+                        'saldo_tabungan'    => $saldo_tabungan,
                     );
 
-                    $this->Deposito_model->update($data->deposito_id, $change_data);
-                }
-            } elseif ($delete->sumber_dana == 3) {
-                // MANIPULASI DATA TABUNGAN
-                $sumber_dana_tabungan = $this->Sumberdana_model->get_tabungan_by_pembiayaan($id);
+                    $this->Cabang_model->update($delete->cabang_id, $change_data);
 
-                foreach ($sumber_dana_tabungan as $data) {
                     // MANIPULASI DATA INSTANSI
                     $instansi = $this->Instansi_model->get_by_id($delete->instansi_id);
 
-                    $resapan_tabungan = $instansi->resapan_tabungan - $data->nominal;
-                    $saldo_tabungan = $instansi->saldo_tabungan + $data->nominal;
+                    $resapan_tabungan = $instansi->resapan_tabungan - $delete->jml_pinjaman;
+                    $saldo_tabungan = $instansi->saldo_tabungan + $delete->jml_pinjaman;
 
                     $change_data = array(
-                        'saldo_tabungan'    => $saldo_tabungan,
                         'resapan_tabungan'  => $resapan_tabungan,
+                        'saldo_tabungan'    => $saldo_tabungan,
                     );
 
                     $this->Instansi_model->update($delete->instansi_id, $change_data);
 
-                    // MANIPULASI DATA CABANG
-                    $cabang = $this->Cabang_model->get_by_id($delete->cabang_id);
+                } elseif ($delete->sumber_dana == 2) {
+                    // MANIPULASI DATA DEPOSITO
+                    $sumber_dana = $this->Sumberdana_model->get_deposan_by_pembiayaan($id);
 
-                    $resapan_tabungan = $cabang->resapan_tabungan - $data->nominal;
-                    $saldo_tabungan = $cabang->saldo_tabungan + $data->nominal;
+                    foreach ($sumber_dana as $data) {
+                        $deposito = $this->Deposito_model->get_by_id($data->deposito_id);
 
-                    $change_data = array(
-                        'saldo_tabungan'    => $saldo_tabungan,
-                        'resapan_tabungan'  => $resapan_tabungan,
-                    );
+                        $resapan_deposito = $deposito->resapan_deposito - $data->nominal;
+                        $saldo_deposito = $deposito->saldo_deposito + $data->nominal;
 
-                    $this->Cabang_model->update($delete->cabang_id, $change_data);
-                }
+                        $change_data = array(
+                            'resapan_deposito'  => $resapan_deposito,
+                            'saldo_deposito'    => $saldo_deposito,
+                        );
 
-                // MANIPULASI DATA DEPOSITO
-                $sumber_dana_deposito = $this->Sumberdana_model->get_deposan_by_pembiayaan($id);
+                        $this->Deposito_model->update($data->deposito_id, $change_data);
+                    }
+                } elseif ($delete->sumber_dana == 3) {
+                    // MANIPULASI DATA TABUNGAN
+                    $sumber_dana_tabungan = $this->Sumberdana_model->get_tabungan_by_pembiayaan($id);
 
-                foreach ($sumber_dana_deposito as $data) {
-                    $deposito = $this->Deposito_model->get_by_id($data->deposito_id);
+                    foreach ($sumber_dana_tabungan as $data) {
+                        // MANIPULASI DATA INSTANSI
+                        $instansi = $this->Instansi_model->get_by_id($delete->instansi_id);
 
-                    $resapan_deposito = $deposito->resapan_deposito - $data->nominal;
-                    $saldo_deposito = $deposito->saldo_deposito + $data->nominal;
+                        $resapan_tabungan = $instansi->resapan_tabungan - $data->nominal;
+                        $saldo_tabungan = $instansi->saldo_tabungan + $data->nominal;
 
-                    $change_data = array(
-                        'resapan_deposito'  => $resapan_deposito,
-                        'saldo_deposito'    => $saldo_deposito,
-                    );
+                        $change_data = array(
+                            'saldo_tabungan'    => $saldo_tabungan,
+                            'resapan_tabungan'  => $resapan_tabungan,
+                        );
 
-                    $this->Deposito_model->update($data->deposito_id, $change_data);
+                        $this->Instansi_model->update($delete->instansi_id, $change_data);
+
+                        // MANIPULASI DATA CABANG
+                        $cabang = $this->Cabang_model->get_by_id($delete->cabang_id);
+
+                        $resapan_tabungan = $cabang->resapan_tabungan - $data->nominal;
+                        $saldo_tabungan = $cabang->saldo_tabungan + $data->nominal;
+
+                        $change_data = array(
+                            'saldo_tabungan'    => $saldo_tabungan,
+                            'resapan_tabungan'  => $resapan_tabungan,
+                        );
+
+                        $this->Cabang_model->update($delete->cabang_id, $change_data);
+                    }
+
+                    // MANIPULASI DATA DEPOSITO
+                    $sumber_dana_deposito = $this->Sumberdana_model->get_deposan_by_pembiayaan($id);
+
+                    foreach ($sumber_dana_deposito as $data) {
+                        $deposito = $this->Deposito_model->get_by_id($data->deposito_id);
+
+                        $resapan_deposito = $deposito->resapan_deposito - $data->nominal;
+                        $saldo_deposito = $deposito->saldo_deposito + $data->nominal;
+
+                        $change_data = array(
+                            'resapan_deposito'  => $resapan_deposito,
+                            'saldo_deposito'    => $saldo_deposito,
+                        );
+
+                        $this->Deposito_model->update($data->deposito_id, $change_data);
+                    }
                 }
             }
 
