@@ -30,6 +30,9 @@ class Dashboard extends CI_Controller
 			$this->data['get_biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa();
 			$this->data['get_total_deposan'] = $this->Auth_model->get_total_deposan();
 			$this->data['get_total_anggota'] = $this->Auth_model->get_total_anggota();
+			$this->data['get_total_tabungan_deposito'] = $this->data['get_total_tabungan'] + $this->data['get_total_deposito'][0]->total_deposito;
+			$this->data['get_total_serapan'] = $this->data['get_serapan_tabungan'][0]->resapan_tabungan + $this->data['get_serapan_deposito'][0]->resapan_deposito;
+			$this->data['get_total_saldo'] = $this->data['get_saldo_tabungan'][0]->saldo_tabungan + $this->data['get_saldo_deposito'][0]->saldo_deposito;
 		} elseif (is_masteradmin()) {
 			$this->data['get_total_deposito'] = $this->Deposito_model->total_deposito_by_instansi();
             $this->data['get_serapan_deposito'] = $this->Deposito_model->serapan_deposito_by_instansi();
@@ -41,6 +44,9 @@ class Dashboard extends CI_Controller
 			$this->data['get_biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa_by_instansi();
 			$this->data['get_total_deposan'] = $this->Auth_model->get_total_deposan_by_instansi();
 			$this->data['get_total_anggota'] = $this->Auth_model->get_total_anggota_by_instansi();
+			$this->data['get_total_tabungan_deposito'] = $this->data['get_total_tabungan'] + $this->data['get_total_deposito'][0]->total_deposito;
+			$this->data['get_total_serapan'] = $this->data['get_serapan_tabungan'][0]->resapan_tabungan + $this->data['get_serapan_deposito'][0]->resapan_deposito;
+			$this->data['get_total_saldo'] = $this->data['get_saldo_tabungan'][0]->saldo_tabungan + $this->data['get_saldo_deposito'][0]->saldo_deposito;
 		} elseif (is_superadmin()) {
 			$this->data['get_total_deposito'] = $this->Deposito_model->total_deposito_by_cabang();
             $this->data['get_serapan_deposito'] = $this->Deposito_model->serapan_deposito_by_cabang();
@@ -51,6 +57,9 @@ class Dashboard extends CI_Controller
 			$this->data['get_biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa_by_cabang();
 			$this->data['get_total_deposan'] = $this->Auth_model->get_total_deposan_by_cabang();
 			$this->data['get_total_anggota'] = $this->Auth_model->get_total_anggota_by_cabang();
+			$this->data['get_total_tabungan_deposito'] = $this->data['get_total_tabungan'] + $this->data['get_total_deposito'][0]->total_deposito;
+			$this->data['get_total_serapan'] = $this->data['get_tabungan']->resapan_tabungan + $this->data['get_serapan_deposito'][0]->resapan_deposito;
+			$this->data['get_total_saldo'] = $this->data['get_tabungan']->saldo_tabungan + $this->data['get_saldo_deposito'][0]->saldo_deposito;
 		} elseif (is_admin()) {
 			$this->data['get_deposito'] = $this->Deposito_model->get_deposito_by_deposan();
 			$this->data['get_basil'] = $this->Sumberdana_model->get_basil_for_deposan($this->data['get_deposito']->id_deposito);

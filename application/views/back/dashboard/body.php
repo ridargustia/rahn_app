@@ -290,6 +290,57 @@
                         </div>
 
                         <div class="row mb-2">
+                            <!-- Card Total Tabungan -->
+                            <div class="col-xl-4 col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-uppercase mb-1">Total Tabungan Dan Deposito</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">RP <?php echo number_format($get_total_tabungan_deposito, 0, ',', '.') ?></div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-money-check fa-2x text-success"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Card Serapan Tabungan -->
+                            <div class="col-xl-4 col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-uppercase mb-1">Total Serapan</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">RP <?php echo number_format($get_total_serapan, 0, ',', '.') ?></div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-handshake fa-2x text-info"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Card Saldo Tabungan -->
+                            <div class="col-xl-4 col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-uppercase mb-1">Total Saldo</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">RP <?php echo number_format($get_total_saldo, 0, ',', '.') ?></div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-wallet fa-2x text-warning"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
                             <!-- Card Total Pinjaman -->
                             <div class="col-xl-6 col-md-6 mb-4">
                                 <div class="card h-100">
