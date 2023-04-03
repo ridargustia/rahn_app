@@ -47,11 +47,12 @@
                                 Total Tabungan : <b>Rp <?php echo number_format($get_total_tabungan, 0, ',', '.') ?></b><br>
                                 <?php if (is_superadmin()) { ?>
                                     Serapan Tabungan : <b>Rp <?php echo number_format($get_tabungan->resapan_tabungan, 0, ',', '.') ?></b><br>
-                                    Saldo Tabungan : <b>Rp <?php echo number_format($get_tabungan->saldo_tabungan, 0, ',', '.') ?></b>
+                                    Saldo Tabungan : <b>Rp <?php echo number_format($get_tabungan->saldo_tabungan, 0, ',', '.') ?></b><br>
                                 <?php } else { ?>
                                     Serapan Tabungan : <b>Rp <?php echo number_format($get_serapan_tabungan[0]->resapan_tabungan, 0, ',', '.') ?></b><br>
-                                    Saldo Tabungan : <b>Rp <?php echo number_format($get_saldo_tabungan[0]->saldo_tabungan, 0, ',', '.') ?></b>
+                                    Saldo Tabungan : <b>Rp <?php echo number_format($get_saldo_tabungan[0]->saldo_tabungan, 0, ',', '.') ?></b><br>
                                 <?php } ?>
+                                Basil Tabungan Berjalan : <b>Rp <?php echo number_format($get_basil_berjalan, 0, ',', '.') ?></b>
                             </div>
 
                             <!-- Content -->

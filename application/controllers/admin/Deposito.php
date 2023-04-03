@@ -477,6 +477,7 @@ class Deposito extends CI_Controller
 
         if ($delete) {
             $this->Deposito_model->delete($id);
+            $this->Auth_model->delete($delete->user_id);
 
             write_log();
 

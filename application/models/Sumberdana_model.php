@@ -121,6 +121,45 @@ class Sumberdana_model extends CI_Model
         return $this->db->query('SELECT sum(basil_for_deposan_berjalan) AS basil_for_deposan_berjalan from sumber_dana where deposito_id = ' . $id_deposito)->row();
     }
 
+    function get_basil_tabungan_for_lembaga_berjalan()
+    {
+        return $this->db->query('SELECT sum(basil_for_lembaga_berjalan) AS basil_for_lembaga_berjalan from sumber_dana where basil_for_deposan = 0')->row()->basil_for_lembaga_berjalan;
+    }
+
+    function get_basil_tabungan_for_lembaga_berjalan_by_instansi()
+    {
+        $this->db->where('instansi_id', $this->session->instansi_id);
+        $this->db->where('is_delete_pembiayaan', 0);
+
+        $data = $this->db->get('pembiayaan');
+
+        if ($data->num_rows() > 0) {
+            $count=0;
+            foreach ($data->result() as $row) {
+                $sum = $this->db->query('SELECT sum(basil_for_lembaga_berjalan) AS basil_for_lembaga_berjalan from sumber_dana where basil_for_deposan = 0 AND pembiayaan_id = ' . $row->id_pembiayaan)->row()->basil_for_lembaga_berjalan;
+                $count = $count + $sum;
+            }
+            return $count;
+        }
+    }
+
+    function get_basil_tabungan_for_lembaga_berjalan_by_cabang()
+    {
+        $this->db->where('cabang_id', $this->session->cabang_id);
+        $this->db->where('is_delete_pembiayaan', 0);
+
+        $data = $this->db->get('pembiayaan');
+
+        if ($data->num_rows() > 0) {
+            $count=0;
+            foreach ($data->result() as $row) {
+                $sum = $this->db->query('SELECT sum(basil_for_lembaga_berjalan) AS basil_for_lembaga_berjalan from sumber_dana where basil_for_deposan = 0 AND pembiayaan_id = ' . $row->id_pembiayaan)->row()->basil_for_lembaga_berjalan;
+                $count = $count + $sum;
+            }
+            return $count;
+        }
+    }
+
     function update($id,$data)
     {
         $this->db->where($this->id, $id);

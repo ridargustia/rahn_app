@@ -13,7 +13,7 @@
                 <td><b>Rp. <?php echo number_format($data_deposito->saldo_deposito, 0, ',', '.') ?></b></td>
             </tr>
             <tr>
-                <td>Basil Berjalan</td>
+                <td>Basil Deposan</td>
                 <td>:</td>
                 <td><b>Rp. <?php echo number_format($basil_berjalan, 0, ',', '.') ?></b></td>
             </tr>

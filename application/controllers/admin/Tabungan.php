@@ -36,15 +36,18 @@ class Tabungan extends CI_Controller
             $this->data['get_total_tabungan'] = $this->Instansi_model->total_tabungan();
             $this->data['get_serapan_tabungan'] = $this->Instansi_model->serapan_tabungan();
             $this->data['get_saldo_tabungan'] = $this->Instansi_model->saldo_tabungan();
+            $this->data['get_basil_berjalan'] = $this->Sumberdana_model->get_basil_tabungan_for_lembaga_berjalan();
         } elseif (is_masteradmin()) {
             $this->data['get_all'] = $this->Sumberdana_model->get_all_by_instansi();
             $this->data['get_total_tabungan'] = $this->Instansi_model->total_tabungan_by_instansi();
             $this->data['get_serapan_tabungan'] = $this->Instansi_model->serapan_tabungan_by_instansi();
             $this->data['get_saldo_tabungan'] = $this->Instansi_model->saldo_tabungan_by_instansi();
+            $this->data['get_basil_berjalan'] = $this->Sumberdana_model->get_basil_tabungan_for_lembaga_berjalan_by_instansi();
         } elseif (is_superadmin()) {
             $this->data['get_all'] = $this->Sumberdana_model->get_all_by_cabang();
             $this->data['get_tabungan'] = $this->Cabang_model->get_by_id($this->session->cabang_id);
 			$this->data['get_total_tabungan'] = $this->data['get_tabungan']->saldo_tabungan + $this->data['get_tabungan']->resapan_tabungan;
+            $this->data['get_basil_berjalan'] = $this->Sumberdana_model->get_basil_tabungan_for_lembaga_berjalan_by_cabang();
         }
 
         $this->load->view('back/tabungan/tabungan_list', $this->data);
