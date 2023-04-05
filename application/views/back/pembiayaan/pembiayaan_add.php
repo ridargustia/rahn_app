@@ -256,26 +256,11 @@
                 min: 0,
                 max: 100,
                 postfix: 'Bulan',
-                initval: 0,
+                // initval: 0,
                 boostat: 5,
                 maxboostedstep: 10
             });
 
-            $('#waktu_gadai').datepicker({
-                startView: 2,
-                format: 'yyyy/mm/dd',
-                autoclose: true,
-                todayHighlight: true,
-                todayBtn: 'linked',
-            });
-
-            $('#jatuh_tempo_gadai').datepicker({
-                startView: 2,
-                format: 'yyyy/mm/dd',
-                autoclose: true,
-                todayHighlight: true,
-                todayBtn: 'linked',
-            });
         });
 
         function photoPreview(customFile,idpreview) {
@@ -313,6 +298,21 @@
             });
             return false;
         }
+
+        $('#jangka_waktu_pinjam').on('change', function() {
+
+            jangka_waktu_pinjam = document.getElementById("jangka_waktu_pinjam").value;
+
+            $.ajax({
+                url: "<?php echo base_url('admin/pembiayaan/konversi_jangka_waktu_gadai/') ?>" + jangka_waktu_pinjam,
+                success: function(response) {
+                    var myObj = JSON.parse(response);
+
+                    $('#waktu_gadai').val(myObj.today);
+                    $('#jatuh_tempo_gadai').val(myObj.hasil_konversi);
+                }
+            });
+        });
     </script>
 </body>
 

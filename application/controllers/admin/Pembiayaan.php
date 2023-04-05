@@ -228,7 +228,7 @@ class Pembiayaan extends CI_Controller
             'class'         => 'form-control',
             'autocomplete'  => 'off',
             'required'      => '',
-            'placeholder'   => '8xxxxxxxxxx',
+            'placeholder'   => '8XXXXXXXXXX',
             'value'         => $this->form_validation->set_value('phone'),
             'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
         ];
@@ -273,6 +273,7 @@ class Pembiayaan extends CI_Controller
             'autocomplete'  => 'off',
             'required'      => '',
             'value'         => $this->form_validation->set_value('waktu_gadai'),
+            'readonly'      => '',
         ];
         $this->data['jatuh_tempo_gadai'] = [
             'name'          => 'jatuh_tempo_gadai',
@@ -281,6 +282,7 @@ class Pembiayaan extends CI_Controller
             'autocomplete'  => 'off',
             'required'      => '',
             'value'         => $this->form_validation->set_value('jatuh_tempo_gadai'),
+            'readonly'      => '',
         ];
         $this->data['sistem_pembayaran_sewa'] = [
             'name'          => 'sistem_pembayaran_sewa',
@@ -368,19 +370,22 @@ class Pembiayaan extends CI_Controller
                     $urutan++;
                     $no_pinjaman = $kode_huruf . sprintf("%05s", $urutan);
 
-                    //Menentukan jangka waktu gadai
-                    $waktu_gadai = strtotime($this->input->post('waktu_gadai'));
-                    $jatuh_tempo_gadai = strtotime($this->input->post('jatuh_tempo_gadai'));
-                    // Hitung semua bulan pada tahun sebelumnya
-                    $jangka_waktu_gadai = (date("Y", $jatuh_tempo_gadai) - date("Y", $waktu_gadai)) * 12;
-                    // menghitung selisih bulan
-                    $jangka_waktu_gadai += date("m", $jatuh_tempo_gadai) - date("m", $waktu_gadai);
+                    // Ubah format tanggal
+                    $waktu_gadai = date("Y-m-d", strtotime($this->input->post('waktu_gadai')));
+                    $jatuh_tempo_gadai = date("Y-m-d", strtotime($this->input->post('jatuh_tempo_gadai')));
+                    // //Menentukan jangka waktu gadai
+                    // $waktu_gadai = strtotime($this->input->post('waktu_gadai'));
+                    // $jatuh_tempo_gadai = strtotime($this->input->post('jatuh_tempo_gadai'));
+                    // // Hitung semua bulan pada tahun sebelumnya
+                    // $jangka_waktu_gadai = (date("Y", $jatuh_tempo_gadai) - date("Y", $waktu_gadai)) * 12;
+                    // // menghitung selisih bulan
+                    // $jangka_waktu_gadai += date("m", $jatuh_tempo_gadai) - date("m", $waktu_gadai);
 
                     //Menentukan sewa tempat perbulan
                     $sewa_tempat_perbulan = 10000 * $this->input->post('berat_barang_gadai');
 
                     //Menentukan total biaya sewa
-                    $total_biaya_sewa = $sewa_tempat_perbulan * $jangka_waktu_gadai;
+                    $total_biaya_sewa = $sewa_tempat_perbulan * $this->input->post('jangka_waktu_pinjam');
 
                     //Ubah tipe data jml pinjaman
                     $string = $this->input->post('jml_pinjaman');
@@ -443,9 +448,9 @@ class Pembiayaan extends CI_Controller
                         'jangka_waktu_pinjam'       => $this->input->post('jangka_waktu_pinjam'),
                         'jenis_barang_gadai'        => $this->input->post('jenis_barang_gadai'),
                         'berat_barang_gadai'        => $this->input->post('berat_barang_gadai'),
-                        'waktu_gadai'               => $this->input->post('waktu_gadai'),
-                        'jatuh_tempo_gadai'         => $this->input->post('jatuh_tempo_gadai'),
-                        'jangka_waktu_gadai'        => $jangka_waktu_gadai,
+                        'waktu_gadai'               => $waktu_gadai,
+                        'jatuh_tempo_gadai'         => $jatuh_tempo_gadai,
+                        'jangka_waktu_gadai'        => $this->input->post('jangka_waktu_pinjam'),
                         'sewa_tempat_perbulan'      => $sewa_tempat_perbulan,
                         'total_biaya_sewa'          => $total_biaya_sewa,
                         'sistem_pembayaran_sewa'    => $this->input->post('sistem_pembayaran_sewa'),
@@ -1963,5 +1968,18 @@ class Pembiayaan extends CI_Controller
         $this->data['kekurangan_bayar'] = $this->data['tanggungan'] - $this->data['pinjaman']->jml_terbayar;
 
         $this->load->view('back/pembayaran/v_pinjaman', $this->data);
+    }
+
+    function konversi_jangka_waktu_gadai()
+    {
+        $today             = date("Y/m/d");
+        $bulan             = $this->uri->segment(4);
+        $konversi          = mktime(0,0,0,date("n")+$bulan,date("j"),date("Y"));
+        $bulan_depan       = date("Y/m/d", $konversi);
+
+        $output['hasil_konversi'] = $bulan_depan;
+        $output['today'] = $today;
+
+        echo json_encode($output);
     }
 }
