@@ -1111,6 +1111,19 @@ class Auth extends CI_Controller
     $this->load->view('back/auth/v_anggota', $this->data);
   }
 
+  function pilih_detail_anggota()
+  {
+    $detail_anggota = $this->Pembiayaan_model->get_by_user_id($this->uri->segment(4));
+
+    $output['name'] = $detail_anggota->name;
+    $output['nik'] = $detail_anggota->nik;
+    $output['address'] = $detail_anggota->address;
+    $output['email'] = $detail_anggota->email;
+    $output['phone'] = $detail_anggota->phone;
+
+    echo json_encode($output);
+  }
+
   function check_username()
   {
     $username = $this->input->post('username');

@@ -138,6 +138,12 @@ class Pembiayaan_model extends CI_Model
         return $this->db->get($this->table)->row();
     }
 
+    function get_by_user_id($user_id)
+    {
+        $this->db->where('user_id', $user_id);
+        return $this->db->get($this->table)->row();
+    }
+
     function get_by_id($id)
     {
         $this->db->where($this->id, $id);

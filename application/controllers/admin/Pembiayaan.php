@@ -168,146 +168,17 @@ class Pembiayaan extends CI_Controller
         $this->data['page_title'] = 'Tambah Data ' . $this->data['module'];
         $this->data['action']     = 'admin/pembiayaan/create_forward';
 
-        if (is_grandadmin()) {
-            $this->data['get_all_combobox_instansi']     = $this->Instansi_model->get_all_combobox();
-        } elseif (is_masteradmin()) {
-            $this->data['get_all_combobox_cabang']       = $this->Cabang_model->get_all_combobox_by_instansi($this->session->instansi_id);
-        }
-
-        $this->data['instansi_id'] = [
-            'name'          => 'instansi_id',
-            'id'            => 'instansi_id',
+        $this->data['pilih_pinjaman'] = [
+            'name'          => 'pilih_pinjaman',
+            'id'            => 'pilih_pinjaman',
             'class'         => 'form-control',
             'required'      => '',
-            'onChange'      => 'tampilCabang()',
-            'value'         => $this->form_validation->set_value('instansi_id'),
+            'onChange'      => 'tampilForm()',
         ];
-        $this->data['cabang_id'] = [
-            'name'          => 'cabang_id',
-            'id'            => 'cabang_id',
-            'class'         => 'form-control',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('cabang_id'),
-        ];
-        $this->data['name'] = [
-            'name'          => 'name',
-            'id'            => 'name',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('name'),
-        ];
-        $this->data['nik'] = [
-            'name'          => 'nik',
-            'id'            => 'nik',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('nik'),
-            'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
-        ];
-        $this->data['address'] = [
-            'name'          => 'address',
-            'id'            => 'address',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('address'),
-        ];
-        $this->data['email'] = [
-            'name'          => 'email',
-            'id'            => 'email',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('email'),
-        ];
-        $this->data['phone'] = [
-            'name'          => 'phone',
-            'id'            => 'phone',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'placeholder'   => '8XXXXXXXXXX',
-            'value'         => $this->form_validation->set_value('phone'),
-            'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
-        ];
-        $this->data['jml_pinjaman'] = [
-            'name'          => 'jml_pinjaman',
-            'id'            => 'jml_pinjaman',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('jml_pinjaman'),
-        ];
-        $this->data['jangka_waktu_pinjam'] = [
-            'name'          => 'jangka_waktu_pinjam',
-            'id'            => 'jangka_waktu_pinjam',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('jangka_waktu_pinjam'),
-            'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
-        ];
-        $this->data['jenis_barang_gadai'] = [
-            'name'          => 'jenis_barang_gadai',
-            'id'            => 'jenis_barang_gadai',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('jenis_barang_gadai'),
-        ];
-        $this->data['berat_barang_gadai'] = [
-            'name'          => 'berat_barang_gadai',
-            'id'            => 'berat_barang_gadai',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('berat_barang_gadai'),
-            'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
-        ];
-        $this->data['waktu_gadai'] = [
-            'name'          => 'waktu_gadai',
-            'id'            => 'waktu_gadai',
-            'class'         => 'input-sm form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('waktu_gadai'),
-            'readonly'      => '',
-        ];
-        $this->data['jatuh_tempo_gadai'] = [
-            'name'          => 'jatuh_tempo_gadai',
-            'id'            => 'jatuh_tempo_gadai',
-            'class'         => 'input-sm form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('jatuh_tempo_gadai'),
-            'readonly'      => '',
-        ];
-        $this->data['sistem_pembayaran_sewa'] = [
-            'name'          => 'sistem_pembayaran_sewa',
-            'id'            => 'sistem_pembayaran_sewa',
-            'class'         => 'form-control',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('sistem_pembayaran_sewa'),
-        ];
-        $this->data['sistem_pembayaran_sewa_value'] = [
-            ''              => '- Pilih Sistem Pembayaran -',
-            '1'             => 'Bulanan',
-            '2'             => 'Jatuh Tempo',
-        ];
-        $this->data['sumber_dana'] = [
-            'name'          => 'sumber_dana',
-            'id'            => 'sumber_dana',
-            'class'         => 'form-control',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('sumber_dana'),
-        ];
-        $this->data['sumber_dana_value'] = [
-            ''              => '- Pilih Sumber Dana -',
-            '1'             => 'Tabungan',
-            '2'             => 'Deposito',
-            '3'             => 'Tabungan dan Deposito',
+        $this->data['pilih_pinjaman_value'] = [
+            ''              => '- Buat Pinjaman -',
+            '1'             => 'Anggota Baru',
+            '2'             => 'Anggota Lama',
         ];
 
         $this->load->view('back/pembiayaan/pembiayaan_add', $this->data);
@@ -1981,5 +1852,315 @@ class Pembiayaan extends CI_Controller
         $output['today'] = $today;
 
         echo json_encode($output);
+    }
+
+    function form_component()
+    {
+        if ($this->uri->segment(4) == 1) {
+            // Anggota Baru
+            if (is_grandadmin()) {
+                $this->data['get_all_combobox_instansi']     = $this->Instansi_model->get_all_combobox();
+            } elseif (is_masteradmin()) {
+                $this->data['get_all_combobox_cabang']       = $this->Cabang_model->get_all_combobox_by_instansi($this->session->instansi_id);
+            }
+
+            $this->data['instansi_id'] = [
+                'name'          => 'instansi_id',
+                'id'            => 'instansi_id',
+                'class'         => 'form-control',
+                'required'      => '',
+                'onChange'      => 'tampilCabang()',
+                'value'         => $this->form_validation->set_value('instansi_id'),
+            ];
+            $this->data['cabang_id'] = [
+                'name'          => 'cabang_id',
+                'id'            => 'cabang_id',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('cabang_id'),
+            ];
+            $this->data['name'] = [
+                'name'          => 'name',
+                'id'            => 'name',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('name'),
+            ];
+            $this->data['nik'] = [
+                'name'          => 'nik',
+                'id'            => 'nik',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('nik'),
+                'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
+            ];
+            $this->data['address'] = [
+                'name'          => 'address',
+                'id'            => 'address',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('address'),
+            ];
+            $this->data['email'] = [
+                'name'          => 'email',
+                'id'            => 'email',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('email'),
+            ];
+            $this->data['phone'] = [
+                'name'          => 'phone',
+                'id'            => 'phone',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'placeholder'   => '8XXXXXXXXXX',
+                'value'         => $this->form_validation->set_value('phone'),
+                'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
+            ];
+            $this->data['jml_pinjaman'] = [
+                'name'          => 'jml_pinjaman',
+                'id'            => 'jml_pinjaman',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('jml_pinjaman'),
+            ];
+            $this->data['jangka_waktu_pinjam'] = [
+                'name'          => 'jangka_waktu_pinjam',
+                'id'            => 'jangka_waktu_pinjam',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('jangka_waktu_pinjam'),
+                'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
+            ];
+            $this->data['jenis_barang_gadai'] = [
+                'name'          => 'jenis_barang_gadai',
+                'id'            => 'jenis_barang_gadai',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('jenis_barang_gadai'),
+            ];
+            $this->data['berat_barang_gadai'] = [
+                'name'          => 'berat_barang_gadai',
+                'id'            => 'berat_barang_gadai',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('berat_barang_gadai'),
+                'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
+            ];
+            $this->data['waktu_gadai'] = [
+                'name'          => 'waktu_gadai',
+                'id'            => 'waktu_gadai',
+                'class'         => 'input-sm form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('waktu_gadai'),
+                'readonly'      => '',
+            ];
+            $this->data['jatuh_tempo_gadai'] = [
+                'name'          => 'jatuh_tempo_gadai',
+                'id'            => 'jatuh_tempo_gadai',
+                'class'         => 'input-sm form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('jatuh_tempo_gadai'),
+                'readonly'      => '',
+            ];
+            $this->data['sistem_pembayaran_sewa'] = [
+                'name'          => 'sistem_pembayaran_sewa',
+                'id'            => 'sistem_pembayaran_sewa',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('sistem_pembayaran_sewa'),
+            ];
+            $this->data['sistem_pembayaran_sewa_value'] = [
+                ''              => '- Pilih Sistem Pembayaran -',
+                '1'             => 'Bulanan',
+                '2'             => 'Jatuh Tempo',
+            ];
+            $this->data['sumber_dana'] = [
+                'name'          => 'sumber_dana',
+                'id'            => 'sumber_dana',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('sumber_dana'),
+            ];
+            $this->data['sumber_dana_value'] = [
+                ''              => '- Pilih Sumber Dana -',
+                '1'             => 'Tabungan',
+                '2'             => 'Deposito',
+                '3'             => 'Tabungan dan Deposito',
+            ];
+
+            $this->load->view('back/pembiayaan/v_pembiayaan_anggota_baru', $this->data);
+        } elseif ($this->uri->segment(4) == 2) {
+            // Anggota Lama
+            if (is_grandadmin()) {
+                $this->data['get_all_combobox_instansi']     = $this->Instansi_model->get_all_combobox();
+            } elseif (is_masteradmin()) {
+                $this->data['get_all_combobox_cabang']       = $this->Cabang_model->get_all_combobox_by_instansi($this->session->instansi_id);
+            } elseif (is_superadmin()) {
+                $this->data['get_all_combobox_user']         = $this->Auth_model->get_all_combobox_anggota_by_cabang($this->session->cabang_id);
+            }
+
+            $this->data['instansi_id'] = [
+                'name'          => 'instansi_id',
+                'id'            => 'instansi_id',
+                'class'         => 'form-control',
+                'required'      => '',
+                'onChange'      => 'tampilCabang()',
+                'value'         => $this->form_validation->set_value('instansi_id'),
+            ];
+            $this->data['cabang_id'] = [
+                'name'          => 'cabang_id',
+                'id'            => 'cabang_id',
+                'class'         => 'form-control',
+                'required'      => '',
+                'onChange'      => 'tampilUser()',
+                'value'         => $this->form_validation->set_value('cabang_id'),
+            ];
+            $this->data['user_id'] = [
+                'name'          => 'user_id',
+                'id'            => 'user_id',
+                'class'         => 'form-control',
+                'required'      => '',
+                'onChange'      => 'tampilDetailUser()',
+                'value'         => $this->form_validation->set_value('user_id'),
+            ];
+            $this->data['name'] = [
+                'name'          => 'name',
+                'id'            => 'name',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('name'),
+                'readonly'      => '',
+            ];
+            $this->data['nik'] = [
+                'name'          => 'nik',
+                'id'            => 'nik',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('nik'),
+                'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57',
+                'readonly'      => '',
+            ];
+            $this->data['address'] = [
+                'name'          => 'address',
+                'id'            => 'address',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('address'),
+                'readonly'      => '',
+            ];
+            $this->data['email'] = [
+                'name'          => 'email',
+                'id'            => 'email',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('email'),
+                'readonly'      => '',
+            ];
+            $this->data['phone'] = [
+                'name'          => 'phone',
+                'id'            => 'phone',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('phone'),
+                'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57',
+                'readonly'      => '',
+            ];
+            $this->data['jml_pinjaman'] = [
+                'name'          => 'jml_pinjaman',
+                'id'            => 'jml_pinjaman',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('jml_pinjaman'),
+            ];
+            $this->data['jangka_waktu_pinjam'] = [
+                'name'          => 'jangka_waktu_pinjam',
+                'id'            => 'jangka_waktu_pinjam',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('jangka_waktu_pinjam'),
+                'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
+            ];
+            $this->data['jenis_barang_gadai'] = [
+                'name'          => 'jenis_barang_gadai',
+                'id'            => 'jenis_barang_gadai',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('jenis_barang_gadai'),
+            ];
+            $this->data['berat_barang_gadai'] = [
+                'name'          => 'berat_barang_gadai',
+                'id'            => 'berat_barang_gadai',
+                'class'         => 'form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('berat_barang_gadai'),
+                'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
+            ];
+            $this->data['waktu_gadai'] = [
+                'name'          => 'waktu_gadai',
+                'id'            => 'waktu_gadai',
+                'class'         => 'input-sm form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('waktu_gadai'),
+                'readonly'      => '',
+            ];
+            $this->data['jatuh_tempo_gadai'] = [
+                'name'          => 'jatuh_tempo_gadai',
+                'id'            => 'jatuh_tempo_gadai',
+                'class'         => 'input-sm form-control',
+                'autocomplete'  => 'off',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('jatuh_tempo_gadai'),
+                'readonly'      => '',
+            ];
+            $this->data['sistem_pembayaran_sewa'] = [
+                'name'          => 'sistem_pembayaran_sewa',
+                'id'            => 'sistem_pembayaran_sewa',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('sistem_pembayaran_sewa'),
+            ];
+            $this->data['sistem_pembayaran_sewa_value'] = [
+                ''              => '- Pilih Sistem Pembayaran -',
+                '1'             => 'Bulanan',
+                '2'             => 'Jatuh Tempo',
+            ];
+            $this->data['sumber_dana'] = [
+                'name'          => 'sumber_dana',
+                'id'            => 'sumber_dana',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('sumber_dana'),
+            ];
+            $this->data['sumber_dana_value'] = [
+                ''              => '- Pilih Sumber Dana -',
+                '1'             => 'Tabungan',
+                '2'             => 'Deposito',
+                '3'             => 'Tabungan dan Deposito',
+            ];
+
+            $this->load->view('back/pembiayaan/v_pembiayaan_anggota_lama', $this->data);
+        }
     }
 }
