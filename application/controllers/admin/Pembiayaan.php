@@ -262,9 +262,6 @@ class Pembiayaan extends CI_Controller
                     $string = $this->input->post('jml_pinjaman');
                     $jml_pinjaman = preg_replace("/[^0-9]/", "", $string);
 
-                    //Format no telephone
-                    $phone = '62' . $this->input->post('phone');
-
                     if (is_grandadmin()) {
                         $instansi = $this->input->post('instansi_id');
                         $cabang = $this->input->post('cabang_id');
@@ -276,63 +273,101 @@ class Pembiayaan extends CI_Controller
                         $cabang = $this->session->cabang_id;
                     }
 
-                    //Tambah User
-                    //Format penulisan username
-                    $username = str_replace(' ', '', strtolower($this->input->post('name')));
+                    if ($this->input->post('pilih_pinjaman') == 1) {
+                        //Format no telephone
+                        $phone = '62' . $this->input->post('phone');
 
-                    $password = password_hash('12345678', PASSWORD_BCRYPT);
+                        //Tambah User
+                        //Format penulisan username
+                        $username = str_replace(' ', '', strtolower($this->input->post('name')));
 
-                    $data = array(
-                        'name'              => $this->input->post('name'),
-                        'gender'            => 1,
-                        'birthdate'         => '',
-                        'birthplace'        => '',
-                        'address'           => $this->input->post('address'),
-                        'phone'             => $phone,
-                        'email'             => $this->input->post('email'),
-                        'username'          => $username,
-                        'password'          => $password,
-                        'instansi_id'       => $instansi,
-                        'cabang_id'         => $cabang,
-                        'usertype_id'       => 4,
-                        'created_by'        => $this->session->username,
-                        'ip_add_reg'        => $this->input->ip_address(),
-                        'photo'             => 'noimage.jpg',
-                    );
+                        $password = password_hash('12345678', PASSWORD_BCRYPT);
 
-                    $this->Auth_model->insert($data);
+                        $data = array(
+                            'name'              => $this->input->post('name'),
+                            'gender'            => 1,
+                            'birthdate'         => '',
+                            'birthplace'        => '',
+                            'address'           => $this->input->post('address'),
+                            'phone'             => $phone,
+                            'email'             => $this->input->post('email'),
+                            'username'          => $username,
+                            'password'          => $password,
+                            'instansi_id'       => $instansi,
+                            'cabang_id'         => $cabang,
+                            'usertype_id'       => 4,
+                            'created_by'        => $this->session->username,
+                            'ip_add_reg'        => $this->input->ip_address(),
+                            'photo'             => 'noimage.jpg',
+                        );
 
-                    $user_id = $this->db->insert_id();
+                        $this->Auth_model->insert($data);
 
-                    //Tambah Pembiayaan
-                    $data = array(
-                        'no_pinjaman'               => $no_pinjaman,
-                        'name'                      => $this->input->post('name'),
-                        'nik'                       => $this->input->post('nik'),
-                        'address'                   => $this->input->post('address'),
-                        'email'                     => $this->input->post('email'),
-                        'phone'                     => $phone,
-                        'user_id'                   => $user_id,
-                        'instansi_id'               => $instansi,
-                        'cabang_id'                 => $cabang,
-                        'jml_pinjaman'              => (int) $jml_pinjaman,
-                        'jangka_waktu_pinjam'       => $this->input->post('jangka_waktu_pinjam'),
-                        'jenis_barang_gadai'        => $this->input->post('jenis_barang_gadai'),
-                        'berat_barang_gadai'        => $this->input->post('berat_barang_gadai'),
-                        'waktu_gadai'               => $waktu_gadai,
-                        'jatuh_tempo_gadai'         => $jatuh_tempo_gadai,
-                        'jangka_waktu_gadai'        => $this->input->post('jangka_waktu_pinjam'),
-                        'sewa_tempat_perbulan'      => $sewa_tempat_perbulan,
-                        'total_biaya_sewa'          => $total_biaya_sewa,
-                        'sistem_pembayaran_sewa'    => $this->input->post('sistem_pembayaran_sewa'),
-                        'sumber_dana'               => $this->input->post('sumber_dana'),
-                        'image'                     => $this->upload->data('file_name'),
-                        'created_by'                => $this->session->username,
-                    );
+                        $user_id = $this->db->insert_id();
 
-                    $this->Pembiayaan_model->insert($data);
+                        //Tambah Pembiayaan
+                        $data = array(
+                            'no_pinjaman'               => $no_pinjaman,
+                            'name'                      => $this->input->post('name'),
+                            'nik'                       => $this->input->post('nik'),
+                            'address'                   => $this->input->post('address'),
+                            'email'                     => $this->input->post('email'),
+                            'phone'                     => $phone,
+                            'user_id'                   => $user_id,
+                            'instansi_id'               => $instansi,
+                            'cabang_id'                 => $cabang,
+                            'jml_pinjaman'              => (int) $jml_pinjaman,
+                            'jangka_waktu_pinjam'       => $this->input->post('jangka_waktu_pinjam'),
+                            'jenis_barang_gadai'        => $this->input->post('jenis_barang_gadai'),
+                            'berat_barang_gadai'        => $this->input->post('berat_barang_gadai'),
+                            'waktu_gadai'               => $waktu_gadai,
+                            'jatuh_tempo_gadai'         => $jatuh_tempo_gadai,
+                            'jangka_waktu_gadai'        => $this->input->post('jangka_waktu_pinjam'),
+                            'sewa_tempat_perbulan'      => $sewa_tempat_perbulan,
+                            'total_biaya_sewa'          => $total_biaya_sewa,
+                            'sistem_pembayaran_sewa'    => $this->input->post('sistem_pembayaran_sewa'),
+                            'sumber_dana'               => $this->input->post('sumber_dana'),
+                            'image'                     => $this->upload->data('file_name'),
+                            'created_by'                => $this->session->username,
+                        );
 
-                    $id_anggota = $this->db->insert_id();
+                        $this->Pembiayaan_model->insert($data);
+
+                        $id_anggota = $this->db->insert_id();
+                    } elseif ($this->input->post('pilih_pinjaman') == 2) {
+                        //Format no telephone
+                        $phone = $this->input->post('phone');
+
+                        //Tambah Pembiayaan
+                        $data = array(
+                            'no_pinjaman'               => $no_pinjaman,
+                            'name'                      => $this->input->post('name'),
+                            'nik'                       => $this->input->post('nik'),
+                            'address'                   => $this->input->post('address'),
+                            'email'                     => $this->input->post('email'),
+                            'phone'                     => $phone,
+                            'user_id'                   => $this->input->post('user_id'),
+                            'instansi_id'               => $instansi,
+                            'cabang_id'                 => $cabang,
+                            'jml_pinjaman'              => (int) $jml_pinjaman,
+                            'jangka_waktu_pinjam'       => $this->input->post('jangka_waktu_pinjam'),
+                            'jenis_barang_gadai'        => $this->input->post('jenis_barang_gadai'),
+                            'berat_barang_gadai'        => $this->input->post('berat_barang_gadai'),
+                            'waktu_gadai'               => $waktu_gadai,
+                            'jatuh_tempo_gadai'         => $jatuh_tempo_gadai,
+                            'jangka_waktu_gadai'        => $this->input->post('jangka_waktu_pinjam'),
+                            'sewa_tempat_perbulan'      => $sewa_tempat_perbulan,
+                            'total_biaya_sewa'          => $total_biaya_sewa,
+                            'sistem_pembayaran_sewa'    => $this->input->post('sistem_pembayaran_sewa'),
+                            'sumber_dana'               => $this->input->post('sumber_dana'),
+                            'image'                     => $this->upload->data('file_name'),
+                            'created_by'                => $this->session->username,
+                        );
+
+                        $this->Pembiayaan_model->insert($data);
+
+                        $id_anggota = $this->db->insert_id();
+                    }
 
                     write_log();
 
