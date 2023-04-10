@@ -235,7 +235,7 @@ class Pembiayaan extends CI_Controller
 
                     //SIMPAN DATA ANGGOTA PEMINJAM
                     //Generate kode/no pinjaman
-                    $kode_huruf = 'A';
+                    $kode_huruf = 'P';
                     $get_no_urut = $this->db->query('SELECT max(no_pinjaman) as kodeTerbesar FROM pembiayaan')->result();
                     $urutan = (int) substr($get_no_urut[0]->kodeTerbesar, 1, 5);
                     $urutan++;
@@ -274,6 +274,13 @@ class Pembiayaan extends CI_Controller
                     }
 
                     if ($this->input->post('pilih_pinjaman') == 1) {
+                        //Generate kode/no anggota
+                        $kode_huruf = 'A';
+                        $get_no_urut = $this->db->query('SELECT max(no_anggota) as kodeTerbesar FROM users')->result();
+                        $urutan = (int) substr($get_no_urut[0]->kodeTerbesar, 1, 5);
+                        $urutan++;
+                        $no_anggota = $kode_huruf . sprintf("%05s", $urutan);
+
                         //Format no telephone
                         $phone = '62' . $this->input->post('phone');
 
@@ -284,6 +291,7 @@ class Pembiayaan extends CI_Controller
                         $password = password_hash('12345678', PASSWORD_BCRYPT);
 
                         $data = array(
+                            'no_anggota'        => $no_anggota,
                             'name'              => $this->input->post('name'),
                             'gender'            => 1,
                             'birthdate'         => '',
