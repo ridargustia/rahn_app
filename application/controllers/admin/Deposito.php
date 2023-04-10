@@ -252,6 +252,13 @@ class Deposito extends CI_Controller
         if ($this->form_validation->run() === FALSE) {
             $this->create();
         } else {
+            //Generate kode/no anggota
+            $kode_huruf = 'A';
+            $get_no_urut = $this->db->query('SELECT max(no_anggota) as kodeTerbesar FROM users')->result();
+            $urutan = (int) substr($get_no_urut[0]->kodeTerbesar, 1, 5);
+            $urutan++;
+            $no_anggota = $kode_huruf . sprintf("%05s", $urutan);
+
             //Ubah tipe data total deposito
             $string = $this->input->post('total_deposito');
             $total_deposito = preg_replace("/[^0-9]/", "", $string);
@@ -282,6 +289,7 @@ class Deposito extends CI_Controller
             $password = password_hash('12345678', PASSWORD_BCRYPT);
 
             $data = array(
+                'no_anggota'        => $no_anggota,
                 'name'              => $this->input->post('name'),
                 'gender'            => 1,
                 'birthdate'         => '',
