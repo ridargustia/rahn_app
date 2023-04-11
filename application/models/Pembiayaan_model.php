@@ -87,6 +87,113 @@ class Pembiayaan_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function get_all_anggota_from_pembiayaan()
+    {
+        $this->db->select('pembiayaan.user_id');
+
+        $this->db->where('is_delete_pembiayaan', '0');
+
+        $this->db->order_by($this->id, $this->order);
+
+        $data = $this->db->get($this->table);
+
+        if ($data->num_rows() > 0) {
+            $id_user = array();
+            $result_id_user = array();
+
+            foreach ($data->result() as $row) {
+                if(!in_array($row->user_id, $id_user, true)){
+                    array_push($id_user, $row->user_id);
+                }
+            }
+
+            for ($i = 0; $i < count($id_user); $i++) {
+                $this->db->select('users.id_users, users.no_anggota, users.name, users.created_by');
+
+                $this->db->where('id_users', $id_user[$i]);
+                $this->db->where('is_delete', '0');
+
+                $data_user = $this->db->get('users')->row();
+
+                array_push($result_id_user, $data_user);
+            }
+
+            return (object) $result_id_user;
+        }
+    }
+
+    function get_all_anggota_from_pembiayaan_by_instansi()
+    {
+        $this->db->select('pembiayaan.user_id');
+
+        $this->db->where('instansi_id', $this->session->instansi_id);
+        $this->db->where('is_delete_pembiayaan', '0');
+
+        $this->db->order_by($this->id, $this->order);
+
+        $data = $this->db->get($this->table);
+
+        if ($data->num_rows() > 0) {
+            $id_user = array();
+            $result_id_user = array();
+
+            foreach ($data->result() as $row) {
+                if(!in_array($row->user_id, $id_user, true)){
+                    array_push($id_user, $row->user_id);
+                }
+            }
+
+            for ($i = 0; $i < count($id_user); $i++) {
+                $this->db->select('users.id_users, users.no_anggota, users.name, users.created_by');
+
+                $this->db->where('id_users', $id_user[$i]);
+                $this->db->where('is_delete', '0');
+
+                $data_user = $this->db->get('users')->row();
+
+                array_push($result_id_user, $data_user);
+            }
+
+            return (object) $result_id_user;
+        }
+    }
+
+    function get_all_anggota_from_pembiayaan_by_cabang()
+    {
+        $this->db->select('pembiayaan.user_id');
+
+        $this->db->where('cabang_id', $this->session->cabang_id);
+        $this->db->where('is_delete_pembiayaan', '0');
+
+        $this->db->order_by($this->id, $this->order);
+
+        $data = $this->db->get($this->table);
+
+        if ($data->num_rows() > 0) {
+            $id_user = array();
+            $result_id_user = array();
+
+            foreach ($data->result() as $row) {
+                if(!in_array($row->user_id, $id_user, true)){
+                    array_push($id_user, $row->user_id);
+                }
+            }
+
+            for ($i = 0; $i < count($id_user); $i++) {
+                $this->db->select('users.id_users, users.no_anggota, users.name, users.created_by');
+
+                $this->db->where('id_users', $id_user[$i]);
+                $this->db->where('is_delete', '0');
+
+                $data_user = $this->db->get('users')->row();
+
+                array_push($result_id_user, $data_user);
+            }
+
+            return (object) $result_id_user;
+        }
+    }
+
     function total_rows()
     {
         $this->db->where('is_delete_pembiayaan', '0');

@@ -60,7 +60,6 @@
                                             <tr>
                                                 <th>No Anggota</th>
                                                 <th>Nama</th>
-                                                <th>Jumlah Pinjaman</th>
                                                 <th>Dibuat Oleh</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -88,9 +87,8 @@
                                                 $detail = '<a href="#" id="detailPembiayaan" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#detailModal" data-id_pembiayaan="' . $data->id_pembiayaan . '" data-no_pinjaman="' . $data->no_pinjaman . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-jml_pinjaman="' . number_format($data->jml_pinjaman, 0, ',', '.') . '" data-jangka_waktu_pinjam="' . $data->jangka_waktu_pinjam . '" data-jenis_barang_gadai="' . $data->jenis_barang_gadai . '" data-berat_barang_gadai="' . $data->berat_barang_gadai . '" data-waktu_gadai="' . date_indonesian_only($data->waktu_gadai) . '" data-jatuh_tempo_gadai="' . date_indonesian_only($data->jatuh_tempo_gadai) . '" data-jangka_waktu_gadai="' . $data->jangka_waktu_gadai . '" data-sewa_tempat_perbulan="' . number_format($data->sewa_tempat_perbulan, 0, ',', '.') . '" data-total_biaya_sewa="' . number_format($data->total_biaya_sewa, 0, ',', '.') . '" data-sistem_pembayaran_sewa="' . $sistem_pembayaran_sewa . '" data-sumber_dana="' . $sumber_dana . '" data-image="' . $data->image . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '"><i class="fas fa-info-circle"></i></a>';
                                             ?>
                                                 <tr>
-                                                    <td><?php echo $data->no_pinjaman ?></td>
+                                                    <td><?php echo $data->no_anggota ?></td>
                                                     <td><?php echo $data->name ?></td>
-                                                    <td>Rp. <?php echo number_format($data->jml_pinjaman, 0, ',', '.') ?></td>
                                                     <td><?php echo $data->created_by ?></td>
                                                     <td><?php echo $detail ?> <?php echo $edit ?> <?php echo $delete ?></td>
                                                 </tr>
