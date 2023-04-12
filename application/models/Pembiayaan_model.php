@@ -196,9 +196,8 @@ class Pembiayaan_model extends CI_Model
 
     function get_all_pembiayaan_by_user($id_user)
     {
-        $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, pembiayaan.jenis_barang_gadai, pembiayaan.berat_barang_gadai, pembiayaan.waktu_gadai, pembiayaan.jatuh_tempo_gadai, pembiayaan.sewa_tempat_perbulan, pembiayaan.total_biaya_sewa, pembiayaan.jml_terbayar, pembiayaan.status_pembayaran, pembiayaan.sistem_pembayaran_sewa, pembiayaan.sumber_dana, pembiayaan.image, pembiayaan.created_by, pembiayaan.created_at, users.name, instansi.instansi_name, cabang.cabang_name');
+        $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, pembiayaan.jenis_barang_gadai, pembiayaan.berat_barang_gadai, pembiayaan.waktu_gadai, pembiayaan.jatuh_tempo_gadai, pembiayaan.jangka_waktu_gadai, pembiayaan.sewa_tempat_perbulan, pembiayaan.total_biaya_sewa, pembiayaan.jml_terbayar, pembiayaan.status_pembayaran, pembiayaan.sistem_pembayaran_sewa, pembiayaan.sumber_dana, pembiayaan.image, pembiayaan.created_by, pembiayaan.created_at, instansi.instansi_name, cabang.cabang_name');
 
-        $this->db->join('users', 'pembiayaan.user_id = users.id_users');
         $this->db->join('instansi', 'pembiayaan.instansi_id = instansi.id_instansi');
         $this->db->join('cabang', 'pembiayaan.cabang_id = cabang.id_cabang');
 

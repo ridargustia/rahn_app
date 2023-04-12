@@ -87,3 +87,12 @@ function time_only($string)
 
   return $string;
 }
+
+function time_only2($string)
+{
+  $datetime = $string;
+  $dt       = strtotime($datetime); //make timestamp with datetime string
+  $string   = date("G:i", $dt); //echo the year of the datestamp just created
+
+  return $string;
+}

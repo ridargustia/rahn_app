@@ -1,8 +1,8 @@
-<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="detailPembiayaanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" style="max-width: 80%;" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Detail <?php echo $page_title ?></h5>
+                <h5 class="modal-title" id="exampleModalLabel"><?php echo $page_title ?></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="location.reload()">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -13,46 +13,9 @@
                     <table class="table align-items-center table-flush">
                         <tbody>
                             <tr>
-                                <td width="240px">No Anggota</td>
+                                <td width="240px">No Pinjaman</td>
                                 <td width="5px">:</td>
                                 <td><b><span class="no_pinjaman"></span></b></td>
-                            </tr>
-                            <tr>
-                                <td width="240px">Nama Anggota</td>
-                                <td width="5px">:</td>
-                                <td><b><span class="name"></span></b></td>
-                            </tr>
-                            <tr>
-                                <td>NIK</td>
-                                <td>:</td>
-                                <td><b><span class="nik"></span></b></td>
-                            </tr>
-                            <tr>
-                                <td>Alamat</td>
-                                <td>:</td>
-                                <td><b><span class="address"></span></b></td>
-                            </tr>
-                            <tr>
-                                <td>Email</td>
-                                <td>:</td>
-                                <td><b><span class="email"></span></b></td>
-                            </tr>
-                            <tr>
-                                <td>No. HP/Telephone/WA</td>
-                                <td>:</td>
-                                <td><b>+<span class="phone"></span></b></td>
-                            </tr>
-                            <?php if (is_grandadmin()) { ?>
-                            <tr>
-                                <td>Instansi</td>
-                                <td>:</td>
-                                <td><b><span class="instansi_name"></span></b></td>
-                            </tr>
-                            <?php } ?>
-                            <tr>
-                                <td>Cabang</td>
-                                <td>:</td>
-                                <td><b><span class="cabang_name"></span></b></td>
                             </tr>
                             <tr>
                                 <td>Jumlah Pinjaman</td>
@@ -103,6 +66,16 @@
                                 <td>Sistem Pembayaran Sewa</td>
                                 <td>:</td>
                                 <td><b><span class="sistem_pembayaran_sewa"></span></b></td>
+                            </tr>
+                            <tr>
+                                <td>Dibuat Oleh</td>
+                                <td>:</td>
+                                <td><b><span class="created_by"></span></b></td>
+                            </tr>
+                            <tr>
+                                <td>Dibuat Pada</td>
+                                <td>:</td>
+                                <td><b><span class="created_at"></span></b></td>
                             </tr>
                             <tr>
                                 <td>Sumber Dana</td>
