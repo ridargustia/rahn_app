@@ -67,30 +67,15 @@
                                         <tbody>
                                             <?php
                                             foreach ($get_all as $data) {
-                                                if ($data->sistem_pembayaran_sewa == 1) {
-                                                    $sistem_pembayaran_sewa = 'Bulanan';
-                                                } elseif ($data->sistem_pembayaran_sewa == 2) {
-                                                    $sistem_pembayaran_sewa = 'Jatuh Tempo';
-                                                }
-
-                                                if ($data->sumber_dana == 1) {
-                                                    $sumber_dana = 'Tabungan';
-                                                } elseif ($data->sumber_dana == 2) {
-                                                    $sumber_dana = 'Deposito';
-                                                } elseif ($data->sumber_dana == 3) {
-                                                    $sumber_dana = 'Tabungan dan Deposito';
-                                                }
-
                                                 // Action
-                                                $edit = '<a href="#" id="editPembiayaan" class="btn btn-sm btn-warning" title="Edit Data" data-toggle="modal" data-target="#exampleModal" data-id_pembiayaan="' . $data->id_pembiayaan . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-jml_pinjaman="' . $data->jml_pinjaman . '" data-jangka_waktu_pinjam="' . $data->jangka_waktu_pinjam . '" data-jenis_barang_gadai="' . $data->jenis_barang_gadai . '" data-berat_barang_gadai="' . $data->berat_barang_gadai . '" data-waktu_gadai="' . $data->waktu_gadai . '" data-jatuh_tempo_gadai="' . $data->jatuh_tempo_gadai . '" data-sistem_pembayaran_sewa="' . $data->sistem_pembayaran_sewa . '" data-sumber_dana="' . $data->sumber_dana . '" data-image="' . $data->image . '"><i class="fas fa-pen"></i></a>';
-                                                $delete = '<a href="' . base_url('admin/pembiayaan/delete/' . $data->id_pembiayaan) . '" id="delete-button" class="btn btn-sm btn-danger" title="Hapus Data"><i class="fas fa-trash"></i></a>';
-                                                $detail = '<a href="#" id="detailPembiayaan" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#detailModal" data-id_pembiayaan="' . $data->id_pembiayaan . '" data-no_pinjaman="' . $data->no_pinjaman . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-jml_pinjaman="' . number_format($data->jml_pinjaman, 0, ',', '.') . '" data-jangka_waktu_pinjam="' . $data->jangka_waktu_pinjam . '" data-jenis_barang_gadai="' . $data->jenis_barang_gadai . '" data-berat_barang_gadai="' . $data->berat_barang_gadai . '" data-waktu_gadai="' . date_indonesian_only($data->waktu_gadai) . '" data-jatuh_tempo_gadai="' . date_indonesian_only($data->jatuh_tempo_gadai) . '" data-jangka_waktu_gadai="' . $data->jangka_waktu_gadai . '" data-sewa_tempat_perbulan="' . number_format($data->sewa_tempat_perbulan, 0, ',', '.') . '" data-total_biaya_sewa="' . number_format($data->total_biaya_sewa, 0, ',', '.') . '" data-sistem_pembayaran_sewa="' . $sistem_pembayaran_sewa . '" data-sumber_dana="' . $sumber_dana . '" data-image="' . $data->image . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '"><i class="fas fa-info-circle"></i></a>';
+                                                $delete = '<a href="' . base_url('admin/pembiayaan/delete_by_user/' . $data->id_users) . '" id="delete-button" class="btn btn-sm btn-danger" title="Hapus Data"><i class="fas fa-trash"></i></a>';
+                                                $detail = '<a href="' . base_url('admin/pembiayaan/detail/' . $data->id_users) . '" class="btn btn-sm btn-info" title="Detail Data"><i class="fas fa-info-circle"></i></a>';
                                             ?>
                                                 <tr>
                                                     <td><?php echo $data->no_anggota ?></td>
                                                     <td><?php echo $data->name ?></td>
                                                     <td><?php echo $data->created_by ?></td>
-                                                    <td><?php echo $detail ?> <?php echo $edit ?> <?php echo $delete ?></td>
+                                                    <td><?php echo $detail ?> <?php echo $delete ?></td>
                                                 </tr>
                                             <?php } ?>
                                         </tbody>

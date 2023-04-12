@@ -194,6 +194,22 @@ class Pembiayaan_model extends CI_Model
         }
     }
 
+    function get_all_pembiayaan_by_user($id_user)
+    {
+        $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, pembiayaan.jenis_barang_gadai, pembiayaan.berat_barang_gadai, pembiayaan.waktu_gadai, pembiayaan.jatuh_tempo_gadai, pembiayaan.sewa_tempat_perbulan, pembiayaan.total_biaya_sewa, pembiayaan.jml_terbayar, pembiayaan.status_pembayaran, pembiayaan.sistem_pembayaran_sewa, pembiayaan.sumber_dana, pembiayaan.image, pembiayaan.created_by, pembiayaan.created_at, users.name, instansi.instansi_name, cabang.cabang_name');
+
+        $this->db->join('users', 'pembiayaan.user_id = users.id_users');
+        $this->db->join('instansi', 'pembiayaan.instansi_id = instansi.id_instansi');
+        $this->db->join('cabang', 'pembiayaan.cabang_id = cabang.id_cabang');
+
+        $this->db->where('pembiayaan.user_id', $id_user);
+        $this->db->where('is_delete_pembiayaan', '0');
+
+        $this->db->order_by($this->id, $this->order);
+
+        return $this->db->get($this->table)->result();
+    }
+
     function total_rows()
     {
         $this->db->where('is_delete_pembiayaan', '0');
@@ -215,6 +231,11 @@ class Pembiayaan_model extends CI_Model
         return $this->db->query('SELECT sum(jml_pinjaman) AS total_pinjaman from pembiayaan where is_delete_pembiayaan = 0 AND cabang_id = ' . $this->session->cabang_id)->result();
     }
 
+    function total_pinjaman_by_user($id_user)
+    {
+        return $this->db->query('SELECT sum(jml_pinjaman) AS jml_pinjaman from pembiayaan where is_delete_pembiayaan = 0 AND user_id = ' . $id_user)->result();
+    }
+
     function biaya_sewa()
     {
         return $this->db->query('SELECT sum(total_biaya_sewa) AS biaya_sewa from pembiayaan where is_delete_pembiayaan = 0')->result();
@@ -230,9 +251,19 @@ class Pembiayaan_model extends CI_Model
         return $this->db->query('SELECT sum(total_biaya_sewa) AS biaya_sewa from pembiayaan where is_delete_pembiayaan = 0 AND cabang_id = ' . $this->session->cabang_id)->result();
     }
 
+    function biaya_sewa_by_user($id_user)
+    {
+        return $this->db->query('SELECT sum(total_biaya_sewa) AS biaya_sewa from pembiayaan where is_delete_pembiayaan = 0 AND user_id = ' . $id_user)->result();
+    }
+
     function total_pembiayaan()
     {
         return $this->db->query('SELECT sum(jml_pinjaman) AS jml_pinjaman from pembiayaan where is_delete_pembiayaan = 0')->result();
+    }
+
+    function total_terbayar_by_user($id_user)
+    {
+        return $this->db->query('SELECT sum(jml_terbayar) AS jml_terbayar from pembiayaan where is_delete_pembiayaan = 0 AND user_id = ' . $id_user)->result();
     }
 
     function get_detail_by_id($id)

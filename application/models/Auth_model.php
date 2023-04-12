@@ -358,6 +358,19 @@ class Auth_model extends CI_Model
     return $this->db->get($this->table)->row();
   }
 
+  function get_anggota_by_id($id)
+  {
+    $this->db->select('users.id_users, users.no_anggota, users.name, users.address, users.email, users.phone, users.username, pembiayaan.nik, instansi.instansi_name, cabang.cabang_name');
+
+    $this->db->join('pembiayaan', 'users.id_users = pembiayaan.user_id');
+    $this->db->join('instansi', 'users.instansi_id = instansi.id_instansi');
+    $this->db->join('cabang', 'users.cabang_id = cabang.id_cabang');
+
+    $this->db->where($this->id, $id);
+
+    return $this->db->get($this->table)->row();
+  }
+
   function get_user_by_instansi($id)
   {
     $this->db->join('instansi', 'users.instansi_id = instansi.id_instansi');

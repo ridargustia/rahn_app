@@ -161,6 +161,27 @@ class Pembiayaan extends CI_Controller
         $this->load->view('back/pembiayaan/pembiayaan_list', $this->data);
     }
 
+    function detail($id_user)
+    {
+        $this->data['page_title'] = 'Detail ' . $this->data['module'];
+
+        $this->data['pembiayaan'] = $this->Pembiayaan_model->get_all_pembiayaan_by_user($id_user);
+
+        $this->data['anggota'] = $this->Auth_model->get_anggota_by_id($id_user);
+
+        $this->data['total_pinjaman'] = $this->Pembiayaan_model->total_pinjaman_by_user($id_user);
+
+        $this->data['biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa_by_user($id_user);
+
+        $this->data['tanggungan'] = $this->data['biaya_sewa'][0]->biaya_sewa + $this->data['total_pinjaman'][0]->jml_pinjaman;
+
+        $this->data['terbayar'] = $this->Pembiayaan_model->total_terbayar_by_user($id_user);
+
+        $this->data['kekurangan_bayar'] = $this->data['tanggungan'] - $this->data['terbayar'][0]->jml_terbayar;
+
+        $this->load->view('back/pembiayaan/pembiayaan_detail', $this->data);
+    }
+
     function create()
     {
         is_create();
