@@ -40,9 +40,8 @@
                                     <table class="table align-items-center table-flush table-hover" id="dataTableHover">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>Nama Anggota</th>
-                                                <th>NIK</th>
-                                                <th>Jumlah Pinjaman</th>
+                                                <th>No Anggota</th>
+                                                <th>Nama</th>
                                                 <th>Dibuat Oleh</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -55,9 +54,8 @@
                                                 $delete = '<a href="' . base_url('admin/pembiayaan/delete_permanent/' . $data->id_pembiayaan) . '" id="delete-button-permanent" class="btn btn-sm btn-danger" title="Hapus Permanen"><i class="fas fa-trash"></i></a>';
                                             ?>
                                                 <tr>
+                                                    <td><?php echo $data->no_anggota ?></td>
                                                     <td><?php echo $data->name ?></td>
-                                                    <td><?php echo $data->nik ?></td>
-                                                    <td>Rp. <?php echo number_format($data->jml_pinjaman, 0, ',', '.') ?></td>
                                                     <td><?php echo $data->created_by ?></td>
                                                     <td><?php echo $restore ?> <?php echo $delete ?></td>
                                                 </tr>

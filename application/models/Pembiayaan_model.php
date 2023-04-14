@@ -54,37 +54,110 @@ class Pembiayaan_model extends CI_Model
 
     function get_all_deleted()
     {
-        $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.name, pembiayaan.nik, pembiayaan.jml_pinjaman, pembiayaan.created_by');
+        $this->db->select('pembiayaan.user_id');
 
         $this->db->where('is_delete_pembiayaan', '1');
 
         $this->db->order_by($this->id, $this->order);
 
-        return $this->db->get($this->table)->result();
+        $data = $this->db->get($this->table);
+
+        if ($data->num_rows() > 0) {
+            $id_user = array();
+            $result_id_user = array();
+
+            foreach ($data->result() as $row) {
+                if(!in_array($row->user_id, $id_user, true)){
+                    array_push($id_user, $row->user_id);
+                }
+            }
+
+            for ($i = 0; $i < count($id_user); $i++) {
+                $this->db->select('users.id_users, users.no_anggota, users.name, users.created_by');
+
+                $this->db->where('id_users', $id_user[$i]);
+                $this->db->where('is_delete', '1');
+
+                $data_user = $this->db->get('users')->row();
+
+                array_push($result_id_user, $data_user);
+            }
+
+            return (object) $result_id_user;
+        }
+
     }
 
     function get_all_deleted_by_instansi()
     {
-        $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.name, pembiayaan.nik, pembiayaan.jml_pinjaman, pembiayaan.created_by');
+        $this->db->select('pembiayaan.user_id');
 
-        $this->db->where('is_delete_pembiayaan', '1');
         $this->db->where('pembiayaan.instansi_id', $this->session->instansi_id);
+        $this->db->where('is_delete_pembiayaan', '1');
 
         $this->db->order_by($this->id, $this->order);
 
-        return $this->db->get($this->table)->result();
+        $data = $this->db->get($this->table);
+
+        if ($data->num_rows() > 0) {
+            $id_user = array();
+            $result_id_user = array();
+
+            foreach ($data->result() as $row) {
+                if(!in_array($row->user_id, $id_user, true)){
+                    array_push($id_user, $row->user_id);
+                }
+            }
+
+            for ($i = 0; $i < count($id_user); $i++) {
+                $this->db->select('users.id_users, users.no_anggota, users.name, users.created_by');
+
+                $this->db->where('id_users', $id_user[$i]);
+                $this->db->where('is_delete', '1');
+
+                $data_user = $this->db->get('users')->row();
+
+                array_push($result_id_user, $data_user);
+            }
+
+            return (object) $result_id_user;
+        }
     }
 
     function get_all_deleted_by_cabang()
     {
-        $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.name, pembiayaan.nik, pembiayaan.jml_pinjaman, pembiayaan.created_by');
+        $this->db->select('pembiayaan.user_id');
 
-        $this->db->where('is_delete_pembiayaan', '1');
         $this->db->where('pembiayaan.cabang_id', $this->session->cabang_id);
+        $this->db->where('is_delete_pembiayaan', '1');
 
         $this->db->order_by($this->id, $this->order);
 
-        return $this->db->get($this->table)->result();
+        $data = $this->db->get($this->table);
+
+        if ($data->num_rows() > 0) {
+            $id_user = array();
+            $result_id_user = array();
+
+            foreach ($data->result() as $row) {
+                if(!in_array($row->user_id, $id_user, true)){
+                    array_push($id_user, $row->user_id);
+                }
+            }
+
+            for ($i = 0; $i < count($id_user); $i++) {
+                $this->db->select('users.id_users, users.no_anggota, users.name, users.created_by');
+
+                $this->db->where('id_users', $id_user[$i]);
+                $this->db->where('is_delete', '1');
+
+                $data_user = $this->db->get('users')->row();
+
+                array_push($result_id_user, $data_user);
+            }
+
+            return (object) $result_id_user;
+        }
     }
 
     function get_all_anggota_from_pembiayaan()
