@@ -1352,20 +1352,32 @@ class Pembiayaan extends CI_Controller
         $this->load->view('back/pembiayaan/pembiayaan_deleted_list', $this->data);
     }
 
-    function restore($id)
+    function restore($id_user)
     {
         is_restore();
 
-        $row = $this->Pembiayaan_model->get_by_id($id);
+        $row = $this->Pembiayaan_model->get_all_deleted_pembiayaan_by_user($id_user);
 
         if ($row) {
+            foreach ($row as $data) {
+                $changeData = array(
+                    'is_delete_pembiayaan' => '0',
+                    'deleted_by'           => NULL,
+                    'deleted_at'           => NULL,
+                );
+
+                $this->Pembiayaan_model->soft_delete($data->id_pembiayaan, $changeData);
+
+                write_log();
+            }
+
             $data = array(
-                'is_delete_pembiayaan' => '0',
+                'is_delete'            => '0',
                 'deleted_by'           => NULL,
                 'deleted_at'           => NULL,
             );
 
-            $this->Pembiayaan_model->update($id, $data);
+            $this->Auth_model->soft_delete($id_user, $data);
 
             write_log();
 
