@@ -1,8 +1,8 @@
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="editPembiayaanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" style="max-width: 80%;" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit <?php echo $page_title ?></h5>
+                <h5 class="modal-title" id="exampleModalLabel">Edit Pinjaman</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="location.reload()">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -10,33 +10,6 @@
             <?php echo form_open_multipart($action) ?>
             <div class="modal-body">
                 <!-- Content -->
-                <?php if (is_grandadmin() or is_masteradmin()) { ?>
-                <div id="showComponent"></div>
-                <hr><br>
-                <?php } ?>
-                <div class="form-group">
-                    <label>Nama Anggota</label>
-                    <?php echo form_input($name) ?>
-                    <small class="form-text text-muted">Isikan nama lengkap Anggota.</small>
-                </div>
-                <div class="form-group">
-                    <label>NIK</label>
-                    <?php echo form_input($nik) ?>
-                    <small class="form-text text-muted">Isikan nomor induk kependudukan sesuai KTP.</small>
-                </div>
-                <div class="form-group">
-                    <label>Alamat</label>
-                    <?php echo form_input($address) ?>
-                    <small class="form-text text-muted">Isikan alamat lengkap sesuai KTP.</small>
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <?php echo form_input($email) ?>
-                </div>
-                <div class="form-group">
-                    <label>No HP/Telephone/WhatsApp</label>
-                    <?php echo form_input($phone) ?>
-                </div>
                 <div class="form-group">
                     <label>Jumlah Pinjaman</label>
                     <div class="input-group mb-3">

@@ -45,55 +45,33 @@ class Pembiayaan extends CI_Controller
 			$this->data['get_biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa_by_cabang();
         }
 
+        $this->load->view('back/pembiayaan/pembiayaan_list', $this->data);
+    }
+
+    function detail($id_user)
+    {
+        $this->data['page_title'] = 'Detail ' . $this->data['module'];
+
+        $this->data['pembiayaan'] = $this->Pembiayaan_model->get_all_pembiayaan_by_user($id_user);
+
+        $this->data['anggota'] = $this->Auth_model->get_anggota_by_id($id_user);
+
+        $this->data['total_pinjaman'] = $this->Pembiayaan_model->total_pinjaman_by_user($id_user);
+
+        $this->data['biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa_by_user($id_user);
+
+        $this->data['tanggungan'] = $this->data['biaya_sewa'][0]->biaya_sewa + $this->data['total_pinjaman'][0]->jml_pinjaman;
+
+        $this->data['terbayar'] = $this->Pembiayaan_model->total_terbayar_by_user($id_user);
+
+        $this->data['kekurangan_bayar'] = $this->data['tanggungan'] - $this->data['terbayar'][0]->jml_terbayar;
+
         $this->data['action']     = 'admin/pembiayaan/update_action';
 
         $this->data['id_pembiayaan'] = [
             'name'          => 'id_pembiayaan',
             'id'            => 'id_pembiayaan',
             'type'          => 'hidden',
-        ];
-        $this->data['name'] = [
-            'name'          => 'name',
-            'id'            => 'name',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('name'),
-        ];
-        $this->data['nik'] = [
-            'name'          => 'nik',
-            'id'            => 'nik',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('nik'),
-            'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
-        ];
-        $this->data['address'] = [
-            'name'          => 'address',
-            'id'            => 'address',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('address'),
-        ];
-        $this->data['email'] = [
-            'name'          => 'email',
-            'id'            => 'email',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'value'         => $this->form_validation->set_value('email'),
-        ];
-        $this->data['phone'] = [
-            'name'          => 'phone',
-            'id'            => 'phone',
-            'class'         => 'form-control',
-            'autocomplete'  => 'off',
-            'required'      => '',
-            'placeholder'   => '8xxxxxxxxxx',
-            'value'         => $this->form_validation->set_value('phone'),
-            'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
         ];
         $this->data['jml_pinjaman'] = [
             'name'          => 'jml_pinjaman',
@@ -136,6 +114,7 @@ class Pembiayaan extends CI_Controller
             'autocomplete'  => 'off',
             'required'      => '',
             'value'         => $this->form_validation->set_value('waktu_gadai'),
+            'readonly'      => '',
         ];
         $this->data['jatuh_tempo_gadai'] = [
             'name'          => 'jatuh_tempo_gadai',
@@ -144,6 +123,7 @@ class Pembiayaan extends CI_Controller
             'autocomplete'  => 'off',
             'required'      => '',
             'value'         => $this->form_validation->set_value('jatuh_tempo_gadai'),
+            'readonly'      => '',
         ];
         $this->data['sistem_pembayaran_sewa'] = [
             'name'          => 'sistem_pembayaran_sewa',
@@ -157,27 +137,6 @@ class Pembiayaan extends CI_Controller
             '1'             => 'Bulanan',
             '2'             => 'Jatuh Tempo',
         ];
-
-        $this->load->view('back/pembiayaan/pembiayaan_list', $this->data);
-    }
-
-    function detail($id_user)
-    {
-        $this->data['page_title'] = 'Detail ' . $this->data['module'];
-
-        $this->data['pembiayaan'] = $this->Pembiayaan_model->get_all_pembiayaan_by_user($id_user);
-
-        $this->data['anggota'] = $this->Auth_model->get_anggota_by_id($id_user);
-
-        $this->data['total_pinjaman'] = $this->Pembiayaan_model->total_pinjaman_by_user($id_user);
-
-        $this->data['biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa_by_user($id_user);
-
-        $this->data['tanggungan'] = $this->data['biaya_sewa'][0]->biaya_sewa + $this->data['total_pinjaman'][0]->jml_pinjaman;
-
-        $this->data['terbayar'] = $this->Pembiayaan_model->total_terbayar_by_user($id_user);
-
-        $this->data['kekurangan_bayar'] = $this->data['tanggungan'] - $this->data['terbayar'][0]->jml_terbayar;
 
         $this->load->view('back/pembiayaan/pembiayaan_detail', $this->data);
     }
@@ -1215,17 +1174,6 @@ class Pembiayaan extends CI_Controller
 
     function update_action()
     {
-        if (is_grandadmin()) {
-            $this->form_validation->set_rules('instansi_id', 'Instansi', 'required');
-            $this->form_validation->set_rules('cabang_id', 'Cabang', 'required');
-        } elseif (is_masteradmin()) {
-            $this->form_validation->set_rules('cabang_id', 'Cabang', 'required');
-        }
-        $this->form_validation->set_rules('name', 'Nama Anggota', 'trim|required');
-        $this->form_validation->set_rules('nik', 'NIK', 'is_numeric|required');
-        $this->form_validation->set_rules('address', 'Alamat', 'required');
-        $this->form_validation->set_rules('email', 'Email', 'valid_email|required');
-        $this->form_validation->set_rules('phone', 'No. HP/Telephone', 'is_numeric|required');
         $this->form_validation->set_rules('jml_pinjaman', 'Jumlah Pinjaman', 'required');
         $this->form_validation->set_rules('jangka_waktu_pinjam', 'Jangka Waktu Pinjaman', 'is_numeric|required');
         $this->form_validation->set_rules('jenis_barang_gadai', 'Jenis Barang Yang Digadaikan', 'required');
@@ -1236,44 +1184,31 @@ class Pembiayaan extends CI_Controller
 
         $this->form_validation->set_message('required', '{field} wajib diisi');
         $this->form_validation->set_message('is_numeric', '{field} harus angka');
-        $this->form_validation->set_message('valid_email', '{field} format email tidak benar');
 
         $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
         if ($this->form_validation->run() === FALSE) {
             $this->index();
         } else {
-            //Menentukan jangka waktu gadai
-            $waktu_gadai = strtotime($this->input->post('waktu_gadai'));
-            $jatuh_tempo_gadai = strtotime($this->input->post('jatuh_tempo_gadai'));
-            // Hitung semua bulan pada tahun sebelumnya
-            $jangka_waktu_gadai = (date("Y", $jatuh_tempo_gadai) - date("Y", $waktu_gadai)) * 12;
-            // menghitung selisih bulan
-            $jangka_waktu_gadai += date("m", $jatuh_tempo_gadai) - date("m", $waktu_gadai);
+            // Get current data pembiayaan
+            $pembiayaan = $this->Pembiayaan_model->get_by_id($this->input->post('id_pembiayaan'));
+
+            // Ubah format tanggal
+            $waktu_gadai = date("Y-m-d", strtotime($this->input->post('waktu_gadai')));
+            $jatuh_tempo_gadai = date("Y-m-d", strtotime($this->input->post('jatuh_tempo_gadai')));
 
             //Menentukan sewa tempat perbulan
             $sewa_tempat_perbulan = 10000 * $this->input->post('berat_barang_gadai');
 
             //Menentukan total biaya sewa
-            $total_biaya_sewa = $sewa_tempat_perbulan * $jangka_waktu_gadai;
+            $total_biaya_sewa = $sewa_tempat_perbulan * $this->input->post('jangka_waktu_pinjam');
 
             //Ubah tipe data jml pinjaman
             $string = $this->input->post('jml_pinjaman');
             $jml_pinjaman = preg_replace("/[^0-9]/", "", $string);
 
-            if (is_grandadmin()) {
-                $instansi = $this->input->post('instansi_id');
-                $cabang = $this->input->post('cabang_id');
-            } elseif (is_masteradmin()) {
-                $instansi = $this->session->instansi_id;
-                $cabang = $this->input->post('cabang_id');
-            } elseif (is_superadmin()) {
-                $instansi = $this->session->instansi_id;
-                $cabang = $this->session->cabang_id;
-            }
-
             if ($_FILES['photo']['error'] <> 4) {
-                $nmfile = strtolower(url_title($this->input->post('name'))) . date('YmdHis');
+                $nmfile = strtolower(url_title($pembiayaan->name)) . date('YmdHis');
 
                 $config['upload_path']      = './assets/images/barang_gadai/';
                 $config['allowed_types']    = 'jpg|jpeg|png';
@@ -1283,9 +1218,7 @@ class Pembiayaan extends CI_Controller
                 $this->load->library('upload', $config);
 
                 //Hapus file di direktori images
-                $delete = $this->Pembiayaan_model->get_by_id($this->input->post('id_pembiayaan'));
-
-                $dir        = "./assets/images/barang_gadai/" . $delete->image;
+                $dir        = "./assets/images/barang_gadai/" . $pembiayaan->image;
 
                 if (is_file($dir)) {
                     unlink($dir);
@@ -1300,20 +1233,13 @@ class Pembiayaan extends CI_Controller
                     $photo = $this->upload->data();
 
                     $data = array(
-                        'name'                      => $this->input->post('name'),
-                        'nik'                       => $this->input->post('nik'),
-                        'address'                   => $this->input->post('address'),
-                        'email'                     => $this->input->post('email'),
-                        'phone'                     => $this->input->post('phone'),
-                        'instansi_id'               => $instansi,
-                        'cabang_id'                 => $cabang,
                         'jml_pinjaman'              => (int) $jml_pinjaman,
                         'jangka_waktu_pinjam'       => $this->input->post('jangka_waktu_pinjam'),
                         'jenis_barang_gadai'        => $this->input->post('jenis_barang_gadai'),
                         'berat_barang_gadai'        => $this->input->post('berat_barang_gadai'),
-                        'waktu_gadai'               => $this->input->post('waktu_gadai'),
-                        'jatuh_tempo_gadai'         => $this->input->post('jatuh_tempo_gadai'),
-                        'jangka_waktu_gadai'        => $jangka_waktu_gadai,
+                        'waktu_gadai'               => $waktu_gadai,
+                        'jatuh_tempo_gadai'         => $jatuh_tempo_gadai,
+                        'jangka_waktu_gadai'        => $this->input->post('jangka_waktu_pinjam'),
                         'sewa_tempat_perbulan'      => $sewa_tempat_perbulan,
                         'total_biaya_sewa'          => $total_biaya_sewa,
                         'sistem_pembayaran_sewa'    => $this->input->post('sistem_pembayaran_sewa'),
@@ -1324,20 +1250,13 @@ class Pembiayaan extends CI_Controller
 
             } else {
                 $data = array(
-                    'name'                      => $this->input->post('name'),
-                    'nik'                       => $this->input->post('nik'),
-                    'address'                   => $this->input->post('address'),
-                    'email'                     => $this->input->post('email'),
-                    'phone'                     => $this->input->post('phone'),
-                    'instansi_id'               => $instansi,
-                    'cabang_id'                 => $cabang,
                     'jml_pinjaman'              => (int) $jml_pinjaman,
                     'jangka_waktu_pinjam'       => $this->input->post('jangka_waktu_pinjam'),
                     'jenis_barang_gadai'        => $this->input->post('jenis_barang_gadai'),
                     'berat_barang_gadai'        => $this->input->post('berat_barang_gadai'),
-                    'waktu_gadai'               => $this->input->post('waktu_gadai'),
-                    'jatuh_tempo_gadai'         => $this->input->post('jatuh_tempo_gadai'),
-                    'jangka_waktu_gadai'        => $jangka_waktu_gadai,
+                    'waktu_gadai'               => $waktu_gadai,
+                    'jatuh_tempo_gadai'         => $jatuh_tempo_gadai,
+                    'jangka_waktu_gadai'        => $this->input->post('jangka_waktu_pinjam'),
                     'sewa_tempat_perbulan'      => $sewa_tempat_perbulan,
                     'total_biaya_sewa'          => $total_biaya_sewa,
                     'sistem_pembayaran_sewa'    => $this->input->post('sistem_pembayaran_sewa'),

@@ -1,6 +1,12 @@
 <!-- Meta -->
 <?php $this->load->view('back/template/meta'); ?>
 
+<!-- Bootstrap DatePicker -->
+<link href="<?php echo base_url('assets/bootstrap-datepicker/css/bootstrap-datepicker.min.css') ?>" rel="stylesheet">
+<!-- Bootstrap DatePicker -->
+<!-- Bootstrap Touchspin -->
+<link href="<?php echo base_url('assets/bootstrap-touchspin/css/jquery.bootstrap-touchspin.css') ?>" rel="stylesheet">
+<!-- Bootstrap Touchspin -->
 </head>
 <!-- Meta -->
 
@@ -208,6 +214,11 @@
                     <?php $this->load->view('back/pembiayaan/modal_detail'); ?>
                     <!-- Modal detail -->
 
+                    <!-- Modal Edit -->
+                    <?php $this->load->view('back/pembiayaan/modal_edit');
+                    ?>
+                    <!-- Modal Edit -->
+
                 </div>
                 <!--Container Fluid-->
             </div>
@@ -226,9 +237,90 @@
     <!-- Footer -->
     <?php $this->load->view('back/template/footer'); ?>
     <!-- Footer -->
+    <!-- maskMoney -->
+    <script src="<?php echo base_url('assets/') ?>maskMoney/jquery.maskMoney.min.js"></script>
+    <!-- maskMoney -->
+    <!-- Bootstrap Touchspin -->
+    <script src="<?php echo base_url('assets/') ?>bootstrap-touchspin/js/jquery.bootstrap-touchspin.js"></script>
+    <!-- Bootstrap Touchspin -->
+    <!-- Bootstrap Datepicker -->
+    <script src="<?php echo base_url('assets/bootstrap-datepicker/js/bootstrap-datepicker.min.js') ?>"></script>
+    <!-- Bootstrap Datepicker -->
 
     <script>
         $(document).ready(function() {
+            $('#jml_pinjaman').maskMoney({
+                thousands: '.',
+                decimal: ',',
+                precision: 0
+            });
+
+            $('#jangka_waktu_pinjam').TouchSpin({
+                min: 0,
+                max: 100,
+                postfix: 'Bulan',
+                initval: 0,
+                boostat: 5,
+                maxboostedstep: 10
+            });
+
+        });
+
+        $(document).ready(function() {
+            $(document).on('click', '#editPembiayaan', function() {
+                const id_pembiayaan = $(this).data('id_pembiayaan');
+                const name = $(this).data('name');
+                const nik = $(this).data('nik');
+                const address = $(this).data('address');
+                const email = $(this).data('email');
+                const phone = $(this).data('phone');
+                const jml_pinjaman = $(this).data('jml_pinjaman');
+                const jangka_waktu_pinjam = $(this).data('jangka_waktu_pinjam');
+                const jenis_barang_gadai = $(this).data('jenis_barang_gadai');
+                const berat_barang_gadai = $(this).data('berat_barang_gadai');
+                const waktu_gadai = $(this).data('waktu_gadai');
+                const jatuh_tempo_gadai = $(this).data('jatuh_tempo_gadai');
+                const sistem_pembayaran_sewa = $(this).data('sistem_pembayaran_sewa');
+                const sumber_dana = $(this).data('sumber_dana');
+                const image = $(this).data('image');
+                $('#id_pembiayaan').val(id_pembiayaan);
+                $('#name').val(name);
+                $('#nik').val(nik);
+                $('#address').val(address);
+                $('#email').val(email);
+                $('#phone').val(phone);
+                $('#jml_pinjaman').val(jml_pinjaman);
+                $('#jangka_waktu_pinjam').val(jangka_waktu_pinjam);
+                $('#jenis_barang_gadai').val(jenis_barang_gadai);
+                $('#berat_barang_gadai').val(berat_barang_gadai);
+                $('#waktu_gadai').val(waktu_gadai);
+                $('#jatuh_tempo_gadai').val(jatuh_tempo_gadai);
+                $('#sistem_pembayaran_sewa').val(sistem_pembayaran_sewa);
+                $('#sumber_dana').val(sumber_dana);
+
+                jQuery.ajax({
+                    url: "<?php echo base_url('admin/pembiayaan/current_image_for_edit_pembiayaan/') ?>" + image,
+                    success: function(data) {
+                        $("#currentImage").html(data);
+                    },
+                });
+
+                jQuery.ajax({
+                    url: "<?php echo base_url('admin/pembiayaan/get_sumber_dana/') ?>" + id_pembiayaan,
+                    success: function(data) {
+                        $("#showDeposanForUpdate").html(data);
+                    },
+                });
+
+                jQuery.ajax({
+                    url: "<?php echo base_url('admin/pembiayaan/button_component/') ?>" + id_pembiayaan,
+                    success: function(data) {
+                        $("#buttonComponent").html(data);
+                    },
+                });
+
+            });
+
             $(document).on('click', '#detailPembiayaan', function() {
                 const id_pembiayaan = $(this).data('id_pembiayaan');
                 const no_pinjaman = $(this).data('no_pinjaman');
@@ -304,6 +396,46 @@
                         $("#showBarangGadai").html(data);
                     },
                 });
+            });
+        });
+
+        function photoPreview(customFile,idpreview) {
+            var gb = customFile.files;
+            for (var i = 0; i < gb.length; i++) {
+                var gbPreview = gb[i];
+                var imageType = /image.*/;
+                var preview=document.getElementById(idpreview);
+                var reader = new FileReader();
+                if (gbPreview.type.match(imageType)) {
+                    //jika tipe data sesuai
+                    preview.file = gbPreview;
+                    reader.onload = (function(element) {
+                        return function(e) {
+                            element.src = e.target.result;
+                        };
+                    })(preview);
+                    //membaca data URL gambar
+                    reader.readAsDataURL(gbPreview);
+                    $("#currentImage").hide();
+                } else {
+                    //jika tipe data tidak sesuai
+                    alert("Tipe file tidak sesuai. Gambar harus bertipe .png, .gif atau .jpg.");
+                }
+            }
+        }
+
+        $('#jangka_waktu_pinjam').on('change', function() {
+
+            jangka_waktu_pinjam = document.getElementById("jangka_waktu_pinjam").value;
+
+            $.ajax({
+                url: "<?php echo base_url('admin/pembiayaan/konversi_jangka_waktu_gadai/') ?>" + jangka_waktu_pinjam,
+                success: function(response) {
+                    var myObj = JSON.parse(response);
+
+                    $('#waktu_gadai').val(myObj.today);
+                    $('#jatuh_tempo_gadai').val(myObj.hasil_konversi);
+                }
             });
         });
     </script>
