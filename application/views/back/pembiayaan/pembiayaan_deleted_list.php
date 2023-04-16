@@ -51,7 +51,7 @@
                                             foreach ($get_all_deleted as $data) {
                                                 // Action
                                                 $restore = '<a href="' . base_url('admin/pembiayaan/restore/' . $data->id_users) . '" class="btn btn-sm btn-info" title="Restore Data"><i class="fas fa-retweet"></i></a>';
-                                                $delete = '<a href="' . base_url('admin/pembiayaan/delete_permanent/' . $data->id_users) . '" id="delete-button-permanent" class="btn btn-sm btn-danger" title="Hapus Permanen"><i class="fas fa-trash"></i></a>';
+                                                $delete = '<a href="' . base_url('admin/pembiayaan/delete_permanent_by_user/' . $data->id_users) . '" id="delete-button-permanent" class="btn btn-sm btn-danger" title="Hapus Permanen"><i class="fas fa-trash"></i></a>';
                                             ?>
                                                 <tr>
                                                     <td><?php echo $data->no_anggota ?></td>

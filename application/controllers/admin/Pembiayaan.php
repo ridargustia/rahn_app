@@ -1513,6 +1513,133 @@ class Pembiayaan extends CI_Controller
         }
     }
 
+    function delete_permanent_by_user($id_user)
+    {
+        is_delete();
+
+        $delete = $this->Pembiayaan_model->get_all_deleted_pembiayaan_by_user($id_user);
+
+        if ($delete) {
+            foreach ($delete as $pembiayaan) {
+                //Hapus file di direktori images
+                $dir        = "./assets/images/barang_gadai/" . $pembiayaan->image;
+
+                if (is_file($dir)) {
+                    unlink($dir);
+                }
+
+                if ($pembiayaan->status_pembayaran == 0) {
+                    // UPDATE MASING-MASING SUMBER DANA
+                    if ($pembiayaan->sumber_dana == 1) {
+                        // MANIPULASI DATA CABANG
+                        $cabang = $this->Cabang_model->get_by_id($pembiayaan->cabang_id);
+
+                        $resapan_tabungan = $cabang->resapan_tabungan - $pembiayaan->jml_pinjaman;
+                        $saldo_tabungan = $cabang->saldo_tabungan + $pembiayaan->jml_pinjaman;
+
+                        $change_data = array(
+                            'resapan_tabungan'  => $resapan_tabungan,
+                            'saldo_tabungan'    => $saldo_tabungan,
+                        );
+
+                        $this->Cabang_model->update($pembiayaan->cabang_id, $change_data);
+
+                        // MANIPULASI DATA INSTANSI
+                        $instansi = $this->Instansi_model->get_by_id($pembiayaan->instansi_id);
+
+                        $resapan_tabungan = $instansi->resapan_tabungan - $pembiayaan->jml_pinjaman;
+                        $saldo_tabungan = $instansi->saldo_tabungan + $pembiayaan->jml_pinjaman;
+
+                        $change_data = array(
+                            'resapan_tabungan'  => $resapan_tabungan,
+                            'saldo_tabungan'    => $saldo_tabungan,
+                        );
+
+                        $this->Instansi_model->update($pembiayaan->instansi_id, $change_data);
+
+                    } elseif ($pembiayaan->sumber_dana == 2) {
+                        // MANIPULASI DATA DEPOSITO
+                        $sumber_dana = $this->Sumberdana_model->get_deposan_by_pembiayaan($pembiayaan->id_pembiayaan);
+
+                        foreach ($sumber_dana as $data) {
+                            $deposito = $this->Deposito_model->get_by_id($data->deposito_id);
+
+                            $resapan_deposito = $deposito->resapan_deposito - $data->nominal;
+                            $saldo_deposito = $deposito->saldo_deposito + $data->nominal;
+
+                            $change_data = array(
+                                'resapan_deposito'  => $resapan_deposito,
+                                'saldo_deposito'    => $saldo_deposito,
+                            );
+
+                            $this->Deposito_model->update($data->deposito_id, $change_data);
+                        }
+                    } elseif ($pembiayaan->sumber_dana == 3) {
+                        // MANIPULASI DATA TABUNGAN
+                        $sumber_dana_tabungan = $this->Sumberdana_model->get_tabungan_by_pembiayaan($pembiayaan->id_pembiayaan);
+
+                        foreach ($sumber_dana_tabungan as $data) {
+                            // MANIPULASI DATA INSTANSI
+                            $instansi = $this->Instansi_model->get_by_id($pembiayaan->instansi_id);
+
+                            $resapan_tabungan = $instansi->resapan_tabungan - $data->nominal;
+                            $saldo_tabungan = $instansi->saldo_tabungan + $data->nominal;
+
+                            $change_data = array(
+                                'saldo_tabungan'    => $saldo_tabungan,
+                                'resapan_tabungan'  => $resapan_tabungan,
+                            );
+
+                            $this->Instansi_model->update($pembiayaan->instansi_id, $change_data);
+
+                            // MANIPULASI DATA CABANG
+                            $cabang = $this->Cabang_model->get_by_id($pembiayaan->cabang_id);
+
+                            $resapan_tabungan = $cabang->resapan_tabungan - $data->nominal;
+                            $saldo_tabungan = $cabang->saldo_tabungan + $data->nominal;
+
+                            $change_data = array(
+                                'saldo_tabungan'    => $saldo_tabungan,
+                                'resapan_tabungan'  => $resapan_tabungan,
+                            );
+
+                            $this->Cabang_model->update($pembiayaan->cabang_id, $change_data);
+                        }
+
+                        // MANIPULASI DATA DEPOSITO
+                        $sumber_dana_deposito = $this->Sumberdana_model->get_deposan_by_pembiayaan($pembiayaan->id_pembiayaan);
+
+                        foreach ($sumber_dana_deposito as $data) {
+                            $deposito = $this->Deposito_model->get_by_id($data->deposito_id);
+
+                            $resapan_deposito = $deposito->resapan_deposito - $data->nominal;
+                            $saldo_deposito = $deposito->saldo_deposito + $data->nominal;
+
+                            $change_data = array(
+                                'resapan_deposito'  => $resapan_deposito,
+                                'saldo_deposito'    => $saldo_deposito,
+                            );
+
+                            $this->Deposito_model->update($data->deposito_id, $change_data);
+                        }
+                    }
+                }
+
+                $this->Pembiayaan_model->delete($pembiayaan->id_pembiayaan);
+            }
+
+            $this->Auth_model->delete($id_user);
+
+            write_log();
+
+            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Berhasil Dihapus Secara Permanen!</b></h6></div>');
+            redirect('admin/pembiayaan/deleted_list');
+        } else {
+            $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-ban"></i><b> Data Tidak Ditemukan!</b></h6></div>');
+            redirect('admin/pembiayaan');
+        }
+    }
+
     function konversi_nominal($persentase = '')
     {
         $jml_pinjaman = $this->session->jml_pinjaman;
