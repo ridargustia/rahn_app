@@ -1501,12 +1501,20 @@ class Pembiayaan extends CI_Controller
             }
 
             $this->Pembiayaan_model->delete($id);
-            $this->Auth_model->delete($delete->user_id);
+
+            $existing_data = $this->Pembiayaan_model->get_all_pembiayaan_by_user($delete->user_id);
 
             write_log();
 
             $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Berhasil Dihapus Secara Permanen!</b></h6></div>');
-            redirect('admin/pembiayaan/deleted_list');
+
+            if ($existing_data) {
+                redirect('admin/pembiayaan/detail/' . $delete->user_id);
+            } else {
+                $this->Auth_model->delete($delete->user_id);
+
+                redirect('admin/pembiayaan');
+            }
         } else {
             $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-ban"></i><b> Data Tidak Ditemukan!</b></h6></div>');
             redirect('admin/pembiayaan');
