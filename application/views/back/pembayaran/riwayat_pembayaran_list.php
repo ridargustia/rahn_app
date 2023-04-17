@@ -45,10 +45,9 @@
                                     <table class="table align-items-center table-flush table-hover" id="dataTableHover">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>No</th>
+                                                <th>No Pinjaman</th>
                                                 <th>No Anggota</th>
                                                 <th>Nama</th>
-                                                <th>NIK</th>
                                                 <?php if (is_grandadmin()) { ?>
                                                     <th>Cabang</th>
                                                     <th>Instansi</th>
@@ -60,16 +59,14 @@
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $no=1;
                                             foreach ($get_all as $data) {
                                                 // Action
                                                 $detail = '<a href="' . base_url('admin/pembayaran/detail/' . $data->id_pembiayaan) . '" class="btn btn-sm btn-info" title="Detail Data"><i class="fas fa-info-circle"></i></a>';
                                             ?>
                                                 <tr>
-                                                    <td><?php echo $no++ ?></td>
-                                                    <td><?php echo $data->no_pinjaman ?></td>
+                                                    <td class="text-primary"><?php echo $data->no_pinjaman ?></td>
+                                                    <td class="text-primary"><?php echo $data->no_anggota ?></td>
                                                     <td><?php echo $data->name ?></td>
-                                                    <td><?php echo $data->nik ?></td>
                                                     <?php if (is_grandadmin()) { ?>
                                                         <td><?php echo $data->cabang_name ?></td>
                                                         <td><?php echo $data->instansi_name ?></td>

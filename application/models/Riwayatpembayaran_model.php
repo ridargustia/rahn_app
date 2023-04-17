@@ -40,10 +40,11 @@ class Riwayatpembayaran_model extends CI_Model
             }
 
             for ($i = 0; $i < count($id_pembiayaan); $i++) {
-                $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, instansi.instansi_name, cabang.cabang_name');
+                $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, instansi.instansi_name, cabang.cabang_name, users.no_anggota');
 
                 $this->db->join('instansi', 'pembiayaan.instansi_id = instansi.id_instansi');
                 $this->db->join('cabang', 'pembiayaan.cabang_id = cabang.id_cabang');
+                $this->db->join('users', 'pembiayaan.user_id = users.id_users');
 
                 $this->db->where('id_pembiayaan', $id_pembiayaan[$i]);
                 $this->db->where('is_delete_pembiayaan', '0');
@@ -79,9 +80,10 @@ class Riwayatpembayaran_model extends CI_Model
             }
 
             for ($i = 0; $i < count($id_pembiayaan); $i++) {
-                $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, cabang.cabang_name');
+                $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, cabang.cabang_name, users.no_anggota');
 
                 $this->db->join('cabang', 'pembiayaan.cabang_id = cabang.id_cabang');
+                $this->db->join('users', 'pembiayaan.user_id = users.id_users');
 
                 $this->db->where('id_pembiayaan', $id_pembiayaan[$i]);
                 $this->db->where('is_delete_pembiayaan', '0');
@@ -117,7 +119,9 @@ class Riwayatpembayaran_model extends CI_Model
             }
 
             for ($i = 0; $i < count($id_pembiayaan); $i++) {
-                $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik');
+                $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, users.no_anggota');
+
+                $this->db->join('users', 'pembiayaan.user_id = users.id_users');
 
                 $this->db->where('id_pembiayaan', $id_pembiayaan[$i]);
                 $this->db->where('is_delete_pembiayaan', '0');

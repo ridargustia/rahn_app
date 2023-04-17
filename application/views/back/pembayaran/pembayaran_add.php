@@ -64,8 +64,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="showPinjaman"></div>
                                     </div>
+                                    <div id="showPinjaman"></div>
                                 <?php } elseif (is_masteradmin()) { ?>
                                     <div class="card mb-4">
                                         <div class="card-body">
@@ -90,8 +90,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="showPinjaman"></div>
                                     </div>
+                                    <div id="showPinjaman"></div>
                                 <?php } elseif (is_superadmin()) { ?>
                                     <div class="card mb-4">
                                         <div class="card-body">
@@ -104,8 +104,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="showPinjaman"></div>
                                     </div>
+                                    <div id="showPinjaman"></div>
                                 <?php } ?>
                             <?php echo form_close() ?>
                             <!-- Content -->
