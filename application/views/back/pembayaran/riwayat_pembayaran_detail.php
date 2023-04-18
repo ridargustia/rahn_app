@@ -77,9 +77,14 @@
                                             <table class="table align-items-center table-flush">
                                                 <tbody>
                                                     <tr>
+                                                        <td style="width: 120px; padding-right: 5px">No Pinjaman</td>
+                                                        <td style="padding-right: 7px; padding-left: 7px" class="text-center">:</td>
+                                                        <td style="padding-right: 5px; padding-left: 5px" class="text-primary"><b><?php echo $pembiayaan->no_pinjaman ?></b></td>
+                                                    </tr>
+                                                    <tr>
                                                         <td style="width: 120px; padding-right: 5px">No Anggota</td>
                                                         <td style="padding-right: 7px; padding-left: 7px" class="text-center">:</td>
-                                                        <td style="padding-right: 5px; padding-left: 5px"><b><?php echo $pembiayaan->no_pinjaman ?></b></td>
+                                                        <td style="padding-right: 5px; padding-left: 5px" class="text-primary"><b><?php echo $pembiayaan->no_anggota ?></b></td>
                                                     </tr>
                                                     <tr>
                                                         <td style="width: 120px; padding-right: 5px">Nama</td>
