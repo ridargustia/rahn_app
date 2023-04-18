@@ -118,7 +118,7 @@
                                         <div class="row align-items-center">
                                             <div class="col mr-2">
                                                 <div class="text-xs font-weight-bold text-uppercase mb-1">Jumlah Pinjaman</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">RP <?php echo number_format($get_pembiayaan->jml_pinjaman, 0, ',', '.') ?></div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">RP <?php echo number_format($total_pinjaman[0]->jml_pinjaman, 0, ',', '.') ?></div>
                                             </div>
                                             <div class="col-auto">
                                                 <i class="fas fa-money-check fa-2x text-primary"></i>
@@ -150,7 +150,7 @@
                                         <div class="row no-gutters align-items-center">
                                             <div class="col mr-2">
                                                 <div class="text-xs font-weight-bold text-uppercase mb-1">Jumlah Terbayar</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">RP <?php echo number_format($get_pembiayaan->jml_terbayar, 0, ',', '.') ?></div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">RP <?php echo number_format($terbayar[0]->jml_terbayar, 0, ',', '.') ?></div>
                                             </div>
                                             <div class="col-auto">
                                                 <i class="fas fa-wallet fa-2x text-success"></i>

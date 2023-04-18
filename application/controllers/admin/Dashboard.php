@@ -65,9 +65,11 @@ class Dashboard extends CI_Controller
 			$this->data['get_basil'] = $this->Sumberdana_model->get_basil_for_deposan($this->data['get_deposito']->id_deposito);
 			$this->data['get_basil_berjalan'] = $this->Sumberdana_model->get_basil_for_deposan_berjalan($this->data['get_deposito']->id_deposito);
 		} elseif (is_pegawai()) {
-			$this->data['get_pembiayaan'] = $this->Pembiayaan_model->get_pembiayaan_by_anggota();
-			$this->data['get_tanggungan'] = $this->data['get_pembiayaan']->jml_pinjaman + $this->data['get_pembiayaan']->total_biaya_sewa;
-			$this->data['kekurangan_bayar'] = $this->data['get_tanggungan'] - $this->data['get_pembiayaan']->jml_terbayar;
+			$this->data['total_pinjaman'] = $this->Pembiayaan_model->total_pinjaman_by_user($this->session->id_users);
+			$biaya_sewa = $this->Pembiayaan_model->biaya_sewa_by_user($this->session->id_users);
+			$this->data['get_tanggungan'] = $this->data['total_pinjaman'][0]->jml_pinjaman + $biaya_sewa[0]->biaya_sewa;
+			$this->data['terbayar'] = $this->Pembiayaan_model->total_terbayar_by_user($this->session->id_users);
+			$this->data['kekurangan_bayar'] = $this->data['get_tanggungan'] - $this->data['terbayar'][0]->jml_terbayar;
 		}
 
 		$this->load->view('back/dashboard/body', $this->data);
