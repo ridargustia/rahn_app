@@ -10,6 +10,8 @@ class Pembiayaan extends CI_Controller
         $this->data['module'] = 'Pinjaman';
 
         $this->data['instansi'] = $this->Instansi_model->get_by_id($this->session->instansi_id);
+        $this->data['notifikasi'] = $this->Riwayatpembayaran_model->get_all_non_is_paid()->result();
+        $this->data['notifikasi_counter'] = $this->Riwayatpembayaran_model->get_all_non_is_paid()->num_rows();
 
         $this->data['btn_submit'] = 'Save';
         $this->data['btn_reset']  = 'Reset';

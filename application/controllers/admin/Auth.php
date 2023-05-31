@@ -17,6 +17,11 @@ class Auth extends CI_Controller
     $this->data['module'] = 'User';
 
     $this->data['instansi'] = $this->Instansi_model->get_by_id($this->session->instansi_id);
+    $this->data['notifikasi'] = $this->Riwayatpembayaran_model->get_all_non_is_paid()->result();
+    $this->data['notifikasi_counter'] = $this->Riwayatpembayaran_model->get_all_non_is_paid()->num_rows();
+
+    $this->data['notifikasi_for_anggota'] = $this->Riwayatpembayaran_model->get_all_non_is_read_anggota();
+		$this->data['notifikasi_counter_for_anggota'] = $this->Riwayatpembayaran_model->counter_non_is_read_anggota();
 
     $this->data['btn_submit'] = 'Save';
     $this->data['btn_reset']  = 'Reset';

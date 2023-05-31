@@ -12,7 +12,7 @@
             <span>Dashboard</span>
         </a>
     </li>
-    <?php if (!is_admin() and !is_pegawai()) { ?>
+    <?php if (!is_admin()) { ?>
         <hr class="sidebar-divider">
         <div class="sidebar-heading">
             Menu Transaksi

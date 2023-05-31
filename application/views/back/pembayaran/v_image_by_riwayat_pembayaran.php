@@ -1,0 +1,1 @@
+<img src="<?php echo base_url('assets/images/bukti_tf/' . $image) ?>" width="100%">

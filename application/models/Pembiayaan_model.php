@@ -297,6 +297,18 @@ class Pembiayaan_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function get_all_pembiayaan_by_anggota()
+    {
+        $this->db->select('pembiayaan.id_pembiayaan, pembiayaan.no_pinjaman, pembiayaan.jml_pinjaman, pembiayaan.created_at');
+
+        $this->db->where('pembiayaan.user_id', $this->session->id_users);
+        $this->db->where('pembiayaan.is_delete_pembiayaan', 0);
+
+        $this->db->order_by($this->id, $this->order);
+
+        return $this->db->get($this->table)->result();
+    }
+
     function total_rows()
     {
         $this->db->where('is_delete_pembiayaan', '0');
