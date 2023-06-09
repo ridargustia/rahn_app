@@ -64,7 +64,11 @@
                                 </div>
                                 <div>
                                     <div class="small text-gray-500"><?php echo date_indonesian_only($data->created_at) . ', ' . time_only2($data->created_at) ?></div>
-                                    <span class="<?php echo ($data->is_read_anggota == 0) ? 'font-weight-bold' : '' ?>">Pembayaran INVOICE #<?php echo $data->no_invoice ?> telah berhasil diverifikasi.</span>
+                                    <?php if($data->bukti_tf != NULL) { ?>
+                                        <span class="<?php echo ($data->is_read_anggota == 0) ? 'font-weight-bold' : '' ?>">Pembayaran INVOICE #<?php echo $data->no_invoice ?> telah berhasil diverifikasi.</span>
+                                    <?php } elseif ($data->bukti_tf == NULL) { ?>
+                                        <span class="<?php echo ($data->is_read_anggota == 0) ? 'font-weight-bold' : '' ?>">Pembayaran INVOICE #<?php echo $data->no_invoice ?> telah berhasil.</span>
+                                    <?php } ?>
                                 </div>
                             </a>
                         <?php } ?>

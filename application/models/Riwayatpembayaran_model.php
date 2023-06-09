@@ -232,7 +232,7 @@ class Riwayatpembayaran_model extends CI_Model
 
     function get_all_non_is_read_anggota()
     {
-        $this->db->select('riwayat_pembayaran.id_riwayat_pembayaran, riwayat_pembayaran.is_read_anggota, riwayat_pembayaran.created_at, riwayat_pembayaran.no_invoice, riwayat_pembayaran.pembiayaan_id');
+        $this->db->select('riwayat_pembayaran.id_riwayat_pembayaran, riwayat_pembayaran.is_read_anggota, riwayat_pembayaran.created_at, riwayat_pembayaran.no_invoice, riwayat_pembayaran.pembiayaan_id, riwayat_pembayaran.bukti_tf');
 
         $this->db->join('pembiayaan', 'riwayat_pembayaran.pembiayaan_id = pembiayaan.id_pembiayaan');
 

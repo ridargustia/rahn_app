@@ -349,6 +349,8 @@ class Pembayaran extends CI_Controller
                         'nominal'           => $nominal_cicilan,
                         'terbayar'          => $jml_terbayar_now,
                         'kekurangan_bayar'  => $kekurangan,
+                        'verificated_by'    => $this->session->username,
+                        'verificated_at'    => date('Y-m-d H:i:a'),
                         'created_by'        => $this->session->username,
                     );
 
@@ -856,9 +858,13 @@ class Pembayaran extends CI_Controller
         $this->load->view('back/pembayaran/detail_riwayat_pembayaran_anggota', $this->data);
     }
 
-    function get_image($image)
+    function get_image($image='')
     {
-        $this->data['image'] = $image;
+        if ($image) {
+            $this->data['image'] = $image;
+        } else {
+            $this->data['image'] = 'noimage.jpg';
+        }
 
         $this->load->view('back/pembayaran/v_image_by_riwayat_pembayaran', $this->data);
     }

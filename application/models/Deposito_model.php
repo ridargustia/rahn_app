@@ -160,6 +160,76 @@ class Deposito_model extends CI_Model
         return $this->db->get($this->table)->row();
     }
 
+    function check_activated()
+    {
+        $this->db->select('deposito.id_deposito, deposito.jatuh_tempo, deposito.is_active');
+
+        $this->db->where('is_delete_deposito', 0);
+
+        $result = $this->db->get($this->table)->result();
+
+        foreach ($result as $data) {
+            if ($data->is_active == 1) {
+                if (date('Y-m-d', strtotime($data->jatuh_tempo)) < date('Y-m-d')) {
+                    $this->Deposito_model->update($data->id_deposito, array('is_active' => 0));
+
+                    $data_sumber_dana = $this->Sumberdana_model->get_all_by_deposito($data->id_deposito);
+
+                    foreach ($data_sumber_dana as $sumber_dana) {
+                        $waktu_gadai = new DateTime($sumber_dana->waktu_gadai);
+                        $today = new DateTime(date('Y-m-d'));
+
+                        $different_time = $today->diff($waktu_gadai);
+
+                        if ($different_time->m > 0) {
+                            // BASIL FOR DEPOSAN BERJALAN
+                            $biaya_sewa_for_deposan_perbulan = $sumber_dana->basil_for_deposan / $sumber_dana->jangka_waktu_pinjam;
+                            $basil_for_deposan_bulan_berjalan = $biaya_sewa_for_deposan_perbulan * $different_time->m;
+
+                            // BASIL FOR LEMBAGA BERJALAN
+                            $biaya_sewa_for_lembaga_perbulan = $sumber_dana->basil_for_lembaga / $sumber_dana->jangka_waktu_pinjam;
+                            $basil_for_lembaga_bulan_berjalan = $biaya_sewa_for_lembaga_perbulan * $different_time->m;
+
+                            // UPDATE TOTAL BASIL, BASIL FOR DEPOSAN, BASIL FOR LEMBAGA
+                            $basil_perbulan = $sumber_dana->total_basil / $sumber_dana->jangka_waktu_pinjam;
+                            $total_basil_bulan_berjalan = $basil_perbulan * $different_time->m;
+
+                            $new_sumber_dana_deposito = array(
+                                'total_basil'                   => $total_basil_bulan_berjalan,
+                                'basil_for_deposan'             => $basil_for_deposan_bulan_berjalan,
+                                'basil_for_lembaga'             => $basil_for_lembaga_bulan_berjalan,
+                                'basil_for_deposan_berjalan'    => $basil_for_deposan_bulan_berjalan,
+                                'basil_for_lembaga_berjalan'    => $basil_for_lembaga_bulan_berjalan,
+                                'status_pembayaran'             => 1,
+                            );
+
+                            // UPDATE DATA SUMBER DANA BY ID
+                            $this->Sumberdana_model->update($sumber_dana->id_sumber_dana, $new_sumber_dana_deposito);
+                        }
+
+                        // TAMBAH DATA SUMBER DANA DARI TABUNGAN
+                        $total_basil_sisa = $sumber_dana->total_basil - $total_basil_bulan_berjalan;
+
+                        $new_sumber_dana_tabungan = array(
+                            'pembiayaan_id'     => $sumber_dana->pembiayaan_id,
+                            'deposito_id'       => NULL,
+                            'persentase'        => $sumber_dana->persentase,
+                            'nominal'           => $sumber_dana->nominal,
+                            'total_basil'       => $total_basil_sisa,
+                            'basil_for_lembaga' => $total_basil_sisa,
+                            'created_by'        => $this->session->username,
+                        );
+
+                        $this->Sumberdana_model->insert($new_sumber_dana_tabungan);
+                    }
+
+                } elseif (date('Y-m-d', strtotime($data->jatuh_tempo)) >= date('Y-m-d')) {
+                    $this->Deposito_model->update($data->id_deposito, array('is_active' => 1));
+                }
+            }
+        }
+    }
+
     function get_by_id($id)
     {
         $this->db->where($this->id, $id);

@@ -7,6 +7,7 @@
                     <th>Nominal</th>
                     <th>Total Basil</th>
                     <th>Basil Deposan</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -16,6 +17,13 @@
                         <td>Rp. <?php echo number_format($data->nominal, 0, ',', '.') ?></td>
                         <td>Rp. <?php echo number_format($data->total_basil, 0, ',', '.') ?></td>
                         <td>Rp. <?php echo number_format($data->basil_for_deposan, 0, ',', '.') ?></td>
+                        <td>
+                            <?php if ($data->status_pembayaran == 0) { ?>
+                                <span class="badge badge-danger">BELUM LUNAS</span>
+                            <?php } elseif ($data->status_pembayaran == 1) { ?>
+                                <span class="badge badge-success">LUNAS</span>
+                            <?php } ?>
+                        </td>
                     </tr>
                 <?php } ?>
             </tbody>

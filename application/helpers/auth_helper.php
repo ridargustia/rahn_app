@@ -146,3 +146,11 @@ function is_restore()
     redirect('admin/dashboard');
   }
 }
+
+function check_active_deposan()
+{
+  $CI = &get_instance();
+
+  $CI->Deposito_model->check_activated();
+
+}

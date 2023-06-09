@@ -15,6 +15,8 @@ class Auth extends CI_Controller
     $this->data['btn_submit'] = 'Save';
     $this->data['btn_reset']  = 'Reset';
     $this->data['btn_add']    = 'Tambah Data';
+
+    check_active_deposan();
   }
 
   function login()
