@@ -162,7 +162,10 @@ class Deposito_model extends CI_Model
 
     function check_activated()
     {
-        $this->db->select('deposito.id_deposito, deposito.jatuh_tempo, deposito.is_active');
+        $this->db->select('deposito.id_deposito, deposito.instansi_id, deposito.cabang_id, deposito.jatuh_tempo, deposito.is_active, deposito.saldo_deposito, deposito.resapan_deposito, instansi.resapan_tabungan as instansi_resapan_tabungan, instansi.saldo_tabungan as instansi_saldo_tabungan, cabang.resapan_tabungan as cabang_resapan_tabungan, cabang.saldo_tabungan as cabang_saldo_tabungan');
+
+        $this->db->join('instansi', 'deposito.instansi_id = instansi.id_instansi');
+        $this->db->join('cabang', 'deposito.cabang_id = cabang.id_cabang');
 
         $this->db->where('is_delete_deposito', 0);
 
@@ -221,6 +224,39 @@ class Deposito_model extends CI_Model
                         );
 
                         $this->Sumberdana_model->insert($new_sumber_dana_tabungan);
+
+                        //MANIPULASI DATA INSTANSI
+                        $resapan_tabungan_instansi = $data->instansi_resapan_tabungan + $sumber_dana->nominal;
+                        $saldo_tabungan_instansi = $data->instansi_saldo_tabungan - $sumber_dana->nominal;
+
+                        $data_baru = array(
+                            'saldo_tabungan'    => $saldo_tabungan_instansi,
+                            'resapan_tabungan'  => $resapan_tabungan_instansi,
+                        );
+
+                        $this->Instansi_model->update($data->instansi_id, $data_baru);
+
+                        //MANIPULASI DATA CABANG
+                        $resapan_tabungan_cabang = $data->cabang_resapan_tabungan + $sumber_dana->nominal;
+                        $saldo_tabungan_cabang = $data->cabang_saldo_tabungan - $sumber_dana->nominal;
+
+                        $data_baru = array(
+                            'saldo_tabungan'    => $saldo_tabungan_cabang,
+                            'resapan_tabungan'  => $resapan_tabungan_cabang,
+                        );
+
+                        $this->Cabang_model->update($data->cabang_id, $data_baru);
+
+                        // MANIPULASI DATA DEPOSITO
+                        $saldo_deposito = $data->saldo_deposito + $sumber_dana->nominal;
+                        $resapan_deposito = $data->resapan_deposito - $sumber_dana->nominal;
+
+                        $data_deposito_baru = array(
+                            'saldo_deposito'    => $saldo_deposito,
+                            'resapan_deposito'  => $resapan_deposito,
+                        );
+
+                        $this->Deposito_model->update($data->id_deposito, $data_deposito_baru);
                     }
 
                 } elseif (date('Y-m-d', strtotime($data->jatuh_tempo)) >= date('Y-m-d')) {

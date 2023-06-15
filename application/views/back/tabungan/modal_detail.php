@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Detail <?php echo $page_title ?></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="location.reload()">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -65,16 +65,6 @@
                                 <td><b><span class="jangka_waktu_pinjam"></span> Bulan</b></td>
                             </tr>
                             <tr>
-                                <td>Persentase Pinjam Tabungan</td>
-                                <td>:</td>
-                                <td><b><span class="persentase"></span>%</b></td>
-                            </tr>
-                            <tr>
-                                <td>Nominal Pinjam Tabungan</td>
-                                <td>:</td>
-                                <td><b>Rp. <span class="nominal"></span></b></td>
-                            </tr>
-                            <tr>
                                 <td>Dibuat Oleh</td>
                                 <td>:</td>
                                 <td><b><span class="created_by"></span></b></td>
@@ -83,9 +73,42 @@
                     </table>
                 </div>
                 <!-- Content -->
+                <br>
+                <h6 class="ml-2 font-weight-bold text-primary">INFORMASI PENGGUNAAN TABUNGAN</h6>
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <tbody>
+                            <tr>
+                                <td width="250px">Persentase</td>
+                                <td width="5px">:</td>
+                                <td><b><span class="persentase"></span>%</b></td>
+                            </tr>
+                            <tr>
+                                <td>Nominal Pinjaman</td>
+                                <td>:</td>
+                                <td><b>Rp. <span class="nominal"></span></b></td>
+                            </tr>
+                            <tr>
+                                <td>Total Basil</td>
+                                <td>:</td>
+                                <td><b>Rp. <span class="basil_for_lembaga"></span></b></td>
+                            </tr>
+                            <tr>
+                                <td>Basil Berjalan</td>
+                                <td>:</td>
+                                <td><b>Rp. <span class="basil_for_lembaga_berjalan"></span></b></td>
+                            </tr>
+                            <tr>
+                                <td>Status Pinjaman</td>
+                                <td>:</td>
+                                <td><div id="status_pembayaran"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="location.reload()">Close</button>
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

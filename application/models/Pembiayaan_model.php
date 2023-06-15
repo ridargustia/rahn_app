@@ -355,6 +355,33 @@ class Pembiayaan_model extends CI_Model
         return $this->db->query('SELECT sum(total_biaya_sewa) AS biaya_sewa from pembiayaan where is_delete_pembiayaan = 0 AND user_id = ' . $id_user)->result();
     }
 
+    function biaya_sewa_berjalan()
+    {
+        $basil_for_deposan_berjalan = $this->db->query('SELECT sum(basil_for_deposan_berjalan) AS basil_for_deposan_berjalan from sumber_dana where is_delete_sumber_dana = 0')->result();
+
+        $basil_for_lembaga_berjalan = $this->db->query('SELECT sum(basil_for_lembaga_berjalan) AS basil_for_lembaga_berjalan from sumber_dana where is_delete_sumber_dana = 0')->result();
+
+        return $basil_for_deposan_berjalan[0]->basil_for_deposan_berjalan + $basil_for_lembaga_berjalan[0]->basil_for_lembaga_berjalan;
+    }
+
+    function biaya_sewa_berjalan_by_instansi()
+    {
+        $basil_for_deposan_berjalan = $this->db->query('SELECT sum(basil_for_deposan_berjalan) AS basil_for_deposan_berjalan from sumber_dana INNER JOIN pembiayaan ON sumber_dana.pembiayaan_id = pembiayaan.id_pembiayaan where is_delete_sumber_dana = 0 AND instansi_id = ' . $this->session->instansi_id)->result();
+
+        $basil_for_lembaga_berjalan = $this->db->query('SELECT sum(basil_for_lembaga_berjalan) AS basil_for_lembaga_berjalan from sumber_dana INNER JOIN pembiayaan ON sumber_dana.pembiayaan_id = pembiayaan.id_pembiayaan where is_delete_sumber_dana = 0 AND instansi_id = ' . $this->session->instansi_id)->result();
+
+        return $basil_for_deposan_berjalan[0]->basil_for_deposan_berjalan + $basil_for_lembaga_berjalan[0]->basil_for_lembaga_berjalan;
+    }
+
+    function biaya_sewa_berjalan_by_cabang()
+    {
+        $basil_for_deposan_berjalan = $this->db->query('SELECT sum(basil_for_deposan_berjalan) AS basil_for_deposan_berjalan from sumber_dana where is_delete_sumber_dana = 0')->result();
+
+        $basil_for_lembaga_berjalan = $this->db->query('SELECT sum(basil_for_lembaga_berjalan) AS basil_for_lembaga_berjalan from sumber_dana where is_delete_sumber_dana = 0')->result();
+
+        return $basil_for_deposan_berjalan[0]->basil_for_deposan_berjalan + $basil_for_lembaga_berjalan[0]->basil_for_lembaga_berjalan;
+    }
+
     function total_pembiayaan()
     {
         return $this->db->query('SELECT sum(jml_pinjaman) AS jml_pinjaman from pembiayaan where is_delete_pembiayaan = 0')->result();

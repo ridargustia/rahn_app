@@ -39,8 +39,15 @@
                             <div class="alert alert-info" role="alert">
                                 <b>INFORMASI KESELURUHAN PEMBIAYAAN</b>
                                 <hr>
-                                Total Pembiayaan : <b>Rp <?php echo number_format($get_total_pinjaman[0]->total_pinjaman, 0, ',', '.') ?></b><br>
-                                Total Biaya Sewa : <b>Rp <?php echo number_format($get_biaya_sewa[0]->biaya_sewa, 0, ',', '.') ?></b>
+                                Total Pembiayaan Saat Ini&nbsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_total_pinjaman[0]->total_pinjaman, 0, ',', '.') ?></b><br>
+                                Total Biaya Sewa&emsp;&emsp;&emsp;&emsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_biaya_sewa[0]->biaya_sewa, 0, ',', '.') ?></b>
+                            </div>
+
+                            <div class="alert alert-success d-flex flex-row align-items-center justify-content-between" role="alert">
+                                <div>
+                                    Biaya Sewa Berjalan&ensp;&emsp;&emsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_biaya_sewa_berjalan, 0, ',', '.') ?></b>
+                                </div>
+                                <a href="#" class="btn btn-sm btn-primary" onclick="location.reload()"><i class="fas fa-retweet"></i> Refresh</a>
                             </div>
 
                             <!-- Content -->

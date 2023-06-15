@@ -44,15 +44,20 @@
                             <div class="alert alert-info" role="alert">
                                 <b>INFORMASI KESELURUHAN TABUNGAN</b>
                                 <hr>
-                                Total Tabungan : <b>Rp <?php echo number_format($get_total_tabungan, 0, ',', '.') ?></b><br>
+                                Total Tabungan&ensp;&emsp;&emsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_total_tabungan, 0, ',', '.') ?></b><br>
                                 <?php if (is_superadmin()) { ?>
-                                    Serapan Tabungan : <b>Rp <?php echo number_format($get_tabungan->resapan_tabungan, 0, ',', '.') ?></b><br>
-                                    Saldo Tabungan : <b>Rp <?php echo number_format($get_tabungan->saldo_tabungan, 0, ',', '.') ?></b><br>
+                                    Serapan Tabungan&emsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_tabungan->resapan_tabungan, 0, ',', '.') ?></b><br>
+                                    Saldo Tabungan&nbsp;&emsp;&emsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_tabungan->saldo_tabungan, 0, ',', '.') ?></b>
                                 <?php } else { ?>
-                                    Serapan Tabungan : <b>Rp <?php echo number_format($get_serapan_tabungan[0]->resapan_tabungan, 0, ',', '.') ?></b><br>
-                                    Saldo Tabungan : <b>Rp <?php echo number_format($get_saldo_tabungan[0]->saldo_tabungan, 0, ',', '.') ?></b><br>
+                                    Serapan Tabungan&emsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_serapan_tabungan[0]->resapan_tabungan, 0, ',', '.') ?></b><br>
+                                    Saldo Tabungan&nbsp;&emsp;&emsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_saldo_tabungan[0]->saldo_tabungan, 0, ',', '.') ?></b>
                                 <?php } ?>
-                                Basil Tabungan Berjalan : <b>Rp <?php echo number_format($get_basil_berjalan, 0, ',', '.') ?></b>
+                            </div>
+                            <div class="alert alert-success d-flex flex-row align-items-center justify-content-between" role="alert">
+                                <div>
+                                    Basil Tabungan Berjalan&emsp;:&emsp; <b>Rp <?php echo number_format($get_basil_berjalan, 0, ',', '.') ?></b>
+                                </div>
+                                <a href="#" class="btn btn-sm btn-primary" onclick="location.reload()"><i class="fas fa-retweet"></i> Refresh</a>
                             </div>
 
                             <!-- Content -->
@@ -68,22 +73,28 @@
                                                 <th>Nama Peminjam</th>
                                                 <th>Persentase</th>
                                                 <th>Nominal</th>
-                                                <th>Dibuat Oleh</th>
+                                                <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
                                             foreach ($get_all as $data) {
+                                                if ($data->status_pembayaran == 0) {
+                                                    $status_pembayaran = "<span class='badge badge-danger'>BELUM LUNAS</span>";
+                                                } elseif ($data->status_pembayaran == 1) {
+                                                    $status_pembayaran = "<span class='badge badge-success'>LUNAS</span>";
+                                                }
+
                                                 // Action
-                                                $detail = '<a href="#" id="detailTabungan" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#detailModal" data-id_sumber_dana="' . $data->id_sumber_dana . '" data-no_pinjaman="' . $data->no_pinjaman . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-jml_pinjaman="' . number_format($data->jml_pinjaman, 0, ',', '.') . '" data-jangka_waktu_pinjam="' . $data->jangka_waktu_pinjam . '" data-persentase="' . $data->persentase . '" data-nominal="' . number_format($data->nominal, 0, ',', '.') . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '" data-created_by="' . $data->created_by . '"><i class="fas fa-info-circle"></i></a>';
+                                                $detail = '<a href="#" id="detailTabungan" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#detailModal" data-id_sumber_dana="' . $data->id_sumber_dana . '" data-no_pinjaman="' . $data->no_pinjaman . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-jml_pinjaman="' . number_format($data->jml_pinjaman, 0, ',', '.') . '" data-jangka_waktu_pinjam="' . $data->jangka_waktu_pinjam . '" data-persentase="' . $data->persentase . '" data-nominal="' . number_format($data->nominal, 0, ',', '.') . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '" data-created_by="' . $data->created_by . '" data-basil_for_lembaga="' . number_format($data->basil_for_lembaga, 0, ',', '.') . '" data-basil_for_lembaga_berjalan="' . number_format($data->basil_for_lembaga_berjalan, 0, ',', '.') . '" data-status_pembayaran="' . $status_pembayaran . '"><i class="fas fa-info-circle"></i></a>';
                                             ?>
                                                 <tr>
                                                     <td><?php echo $data->no_pinjaman ?></td>
                                                     <td><?php echo $data->name ?></td>
                                                     <td><?php echo $data->persentase ?>%</td>
                                                     <td>Rp. <?php echo number_format($data->nominal, 0, ',', '.') ?></td>
-                                                    <td><?php echo $data->created_by ?></td>
+                                                    <td><?php echo $status_pembayaran ?></td>
                                                     <td><?php echo $detail ?></td>
                                                 </tr>
                                             <?php } ?>
@@ -150,6 +161,9 @@
                 const created_by = $(this).data('created_by');
                 const instansi_name = $(this).data('instansi_name');
                 const cabang_name = $(this).data('cabang_name');
+                const basil_for_lembaga = $(this).data('basil_for_lembaga');
+                const basil_for_lembaga_berjalan = $(this).data('basil_for_lembaga_berjalan');
+                const status_pembayaran = $(this).data('status_pembayaran');
                 $('.no_pinjaman').text(no_pinjaman);
                 $('.name').text(name);
                 $('.nik').text(nik);
@@ -163,6 +177,9 @@
                 $('.created_by').text(created_by);
                 $('.instansi_name').text(instansi_name);
                 $('.cabang_name').text(cabang_name);
+                $('.basil_for_lembaga').text(basil_for_lembaga);
+                $('.basil_for_lembaga_berjalan').text(basil_for_lembaga_berjalan);
+                $('#status_pembayaran').html(status_pembayaran);
             });
         });
     </script>

@@ -37,14 +37,17 @@ class Pembiayaan extends CI_Controller
             $this->data['get_all'] = $this->Pembiayaan_model->get_all_anggota_from_pembiayaan();
             $this->data['get_total_pinjaman'] = $this->Pembiayaan_model->total_pinjaman();
 			$this->data['get_biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa();
+            $this->data['get_biaya_sewa_berjalan'] = $this->Pembiayaan_model->biaya_sewa_berjalan();
         } elseif (is_masteradmin()) {
             $this->data['get_all'] = $this->Pembiayaan_model->get_all_anggota_from_pembiayaan_by_instansi();
             $this->data['get_total_pinjaman'] = $this->Pembiayaan_model->total_pinjaman_by_instansi();
 			$this->data['get_biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa_by_instansi();
+            $this->data['get_biaya_sewa_berjalan'] = $this->Pembiayaan_model->biaya_sewa_berjalan_by_instansi();
         } elseif (is_superadmin()) {
             $this->data['get_all'] = $this->Pembiayaan_model->get_all_anggota_from_pembiayaan_by_cabang();
             $this->data['get_total_pinjaman'] = $this->Pembiayaan_model->total_pinjaman_by_cabang();
 			$this->data['get_biaya_sewa'] = $this->Pembiayaan_model->biaya_sewa_by_cabang();
+            $this->data['get_biaya_sewa_berjalan'] = $this->Pembiayaan_model->biaya_sewa_berjalan_by_cabang();
         }
 
         $this->load->view('back/pembiayaan/pembiayaan_list', $this->data);

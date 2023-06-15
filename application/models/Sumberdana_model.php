@@ -9,7 +9,7 @@ class Sumberdana_model extends CI_Model
 
     function get_all()
     {
-        $this->db->select('sumber_dana.id_sumber_dana, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, sumber_dana.persentase, sumber_dana.nominal, pembiayaan.created_by, instansi.instansi_name, cabang.cabang_name');
+        $this->db->select('sumber_dana.id_sumber_dana, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, sumber_dana.persentase, sumber_dana.nominal, sumber_dana.basil_for_lembaga, sumber_dana.basil_for_lembaga_berjalan, sumber_dana.status_pembayaran, pembiayaan.created_by, instansi.instansi_name, cabang.cabang_name');
 
         $this->db->join('pembiayaan', 'sumber_dana.pembiayaan_id = pembiayaan.id_pembiayaan');
         $this->db->join('instansi', 'pembiayaan.instansi_id = instansi.id_instansi');
@@ -25,7 +25,7 @@ class Sumberdana_model extends CI_Model
 
     function get_all_by_instansi()
     {
-        $this->db->select('sumber_dana.id_sumber_dana, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, sumber_dana.persentase, sumber_dana.nominal, pembiayaan.created_by, instansi.instansi_name, cabang.cabang_name');
+        $this->db->select('sumber_dana.id_sumber_dana, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, sumber_dana.persentase, sumber_dana.nominal, sumber_dana.basil_for_lembaga, sumber_dana.basil_for_lembaga_berjalan, sumber_dana.status_pembayaran, pembiayaan.created_by, instansi.instansi_name, cabang.cabang_name');
 
         $this->db->join('pembiayaan', 'sumber_dana.pembiayaan_id = pembiayaan.id_pembiayaan');
         $this->db->join('instansi', 'pembiayaan.instansi_id = instansi.id_instansi');
@@ -42,7 +42,7 @@ class Sumberdana_model extends CI_Model
 
     function get_all_by_cabang()
     {
-        $this->db->select('sumber_dana.id_sumber_dana, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, sumber_dana.persentase, sumber_dana.nominal, pembiayaan.created_by, instansi.instansi_name, cabang.cabang_name');
+        $this->db->select('sumber_dana.id_sumber_dana, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, sumber_dana.persentase, sumber_dana.nominal, sumber_dana.basil_for_lembaga, sumber_dana.basil_for_lembaga_berjalan, sumber_dana.status_pembayaran, pembiayaan.created_by, instansi.instansi_name, cabang.cabang_name');
 
         $this->db->join('pembiayaan', 'sumber_dana.pembiayaan_id = pembiayaan.id_pembiayaan');
         $this->db->join('instansi', 'pembiayaan.instansi_id = instansi.id_instansi');

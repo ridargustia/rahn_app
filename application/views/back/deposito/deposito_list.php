@@ -47,9 +47,9 @@
                             <div class="alert alert-info" role="alert">
                                 <b>INFORMASI KESELURUHAN DEPOSITO</b>
                                 <hr>
-                                Total Deposito : <b>Rp <?php echo number_format($get_total_deposito[0]->total_deposito, 0, ',', '.') ?></b><br>
-                                Serapan Deposito : <b>Rp <?php echo number_format($get_serapan_deposito[0]->resapan_deposito, 0, ',', '.') ?></b><br>
-                                Saldo Deposito : <b>Rp <?php echo number_format($get_saldo_deposito[0]->saldo_deposito, 0, ',', '.') ?></b>
+                                Total Deposito&emsp;&emsp;&emsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_total_deposito[0]->total_deposito, 0, ',', '.') ?></b><br>
+                                Serapan Deposito&ensp;&emsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_serapan_deposito[0]->resapan_deposito, 0, ',', '.') ?></b><br>
+                                Saldo Deposito&nbsp;&ensp;&emsp;&emsp;&emsp;:&emsp; <b>Rp <?php echo number_format($get_saldo_deposito[0]->saldo_deposito, 0, ',', '.') ?></b>
                             </div>
 
                             <!-- Content -->
