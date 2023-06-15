@@ -20,4 +20,7 @@
         </tbody>
     </table>
 </div>
+<div class="alert alert-success" role="alert">
+    Basil Deposan Berjalan&emsp;:&emsp; <b>Rp. <?php echo number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') ?></b>
+</div>
 <!-- Content -->

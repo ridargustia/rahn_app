@@ -506,6 +506,8 @@ class Deposito extends CI_Controller
 
         $this->data['data_deposito'] = $this->Deposito_model->get_by_id($id_deposito);
 
+        $this->data['basil_deposan_berjalan'] = $this->Sumberdana_model->get_basil_for_deposan_berjalan($id_deposito);
+
         $this->load->view('back/deposito/v_basil_berjalan', $this->data);
     }
 
