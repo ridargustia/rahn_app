@@ -255,11 +255,11 @@ class Deposito extends CI_Controller
             $this->create();
         } else {
             //Generate kode/no anggota
-            $kode_huruf = 'A';
-            $get_no_urut = $this->db->query('SELECT max(no_anggota) as kodeTerbesar FROM users')->result();
-            $urutan = (int) substr($get_no_urut[0]->kodeTerbesar, 1, 5);
-            $urutan++;
-            $no_anggota = $kode_huruf . sprintf("%05s", $urutan);
+            $kode_huruf = 'DPS';
+            $get_last_id = (int) $this->db->query('SELECT max(id_users) as last_id FROM users')->row()->last_id;
+            $get_last_id++;
+            $random = mt_rand(10, 99);
+            $no_anggota = $kode_huruf . $random . sprintf("%04s", $get_last_id);
 
             //Ubah tipe data total deposito
             $string = $this->input->post('total_deposito');

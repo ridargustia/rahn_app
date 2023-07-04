@@ -8,6 +8,16 @@
     .display {
         display: inline;
     }
+
+    .width-modal {
+        max-width: 80%;
+    }
+
+    @media only screen and (max-width: 600px) {
+        .width-modal {
+            max-width: 100%;
+        }
+    }
 </style>
 </head>
 <!-- Meta -->
@@ -69,7 +79,7 @@
                                     <table class="table align-items-center table-flush table-hover" id="dataTableHover">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>No Anggota</th>
+                                                <th>No Pinjaman</th>
                                                 <th>Nama Peminjam</th>
                                                 <th>Persentase</th>
                                                 <th>Nominal</th>
@@ -90,7 +100,7 @@
                                                 $detail = '<a href="#" id="detailTabungan" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#detailModal" data-id_sumber_dana="' . $data->id_sumber_dana . '" data-no_pinjaman="' . $data->no_pinjaman . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-jml_pinjaman="' . number_format($data->jml_pinjaman, 0, ',', '.') . '" data-jangka_waktu_pinjam="' . $data->jangka_waktu_pinjam . '" data-persentase="' . $data->persentase . '" data-nominal="' . number_format($data->nominal, 0, ',', '.') . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '" data-created_by="' . $data->created_by . '" data-basil_for_lembaga="' . number_format($data->basil_for_lembaga, 0, ',', '.') . '" data-basil_for_lembaga_berjalan="' . number_format($data->basil_for_lembaga_berjalan, 0, ',', '.') . '" data-status_pembayaran="' . $status_pembayaran . '"><i class="fas fa-info-circle"></i></a>';
                                             ?>
                                                 <tr>
-                                                    <td><?php echo $data->no_pinjaman ?></td>
+                                                    <td class="text-primary"><?php echo $data->no_pinjaman ?></td>
                                                     <td><?php echo $data->name ?></td>
                                                     <td><?php echo $data->persentase ?>%</td>
                                                     <td>Rp. <?php echo number_format($data->nominal, 0, ',', '.') ?></td>

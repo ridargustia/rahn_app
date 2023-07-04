@@ -66,6 +66,7 @@ class Dashboard extends CI_Controller
 			$this->data['get_total_serapan'] = $this->data['get_tabungan']->resapan_tabungan + $this->data['get_serapan_deposito'][0]->resapan_deposito;
 			$this->data['get_total_saldo'] = $this->data['get_tabungan']->saldo_tabungan + $this->data['get_saldo_deposito'][0]->saldo_deposito;
 		} elseif (is_admin()) {
+			$this->data['deposito'] = $this->Deposito_model->get_by_user($this->session->id_users);
 			$this->data['get_deposito'] = $this->Deposito_model->get_deposito_by_deposan();
 			$this->data['get_basil'] = $this->Sumberdana_model->get_basil_for_deposan($this->data['get_deposito']->id_deposito);
 			$this->data['get_basil_berjalan'] = $this->Sumberdana_model->get_basil_for_deposan_berjalan($this->data['get_deposito']->id_deposito);

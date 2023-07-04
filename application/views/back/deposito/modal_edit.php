@@ -1,5 +1,5 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 70%;" role="document">
+    <div class="modal-dialog width-modal" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Edit <?php echo $page_title ?></h5>

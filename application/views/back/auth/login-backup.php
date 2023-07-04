@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link href="<?php echo base_url('assets/images/company/rahn_apps_thumb.PNG') ?>" rel="icon">
+    <link href="<?php echo base_url('assets/images/company/rahn_apps_thumb.png') ?>" rel="icon">
     <title><?php echo $page_title . ' | ' . $company_data->company_name ?></title>
     <link href="<?php echo base_url('assets/fontawesome-free/css/all.min.css') ?>" rel="stylesheet" type="text/css">
     <link href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet" type="text/css">
@@ -16,7 +16,6 @@
     <!-- Animate CSS (SweetAlert) -->
     <link rel="stylesheet" href="<?php echo base_url('assets/') ?>sweetalert/animate.min.css">
     <!-- Animate CSS (SweetAlert) -->
-    <link rel="stylesheet" href="<?php echo base_url('assets/') ?>css/mystyles.css">
     <style>
         .bg {
             /* The image used */
@@ -50,6 +49,9 @@
     <div class="container-login">
         <div class="row justify-content-center mt-5">
             <div class="col-xl-5 col-lg-6 col-md-9">
+                <div class="text-center">
+                    <img src="<?php echo base_url('assets/images/company/') . $company_data->company_photo ?>" width="200px" alt="company-logo" class="rounded-circle">
+                </div>
                 <div class="card shadow-sm my-3">
                     <div class="card-body p-0">
                         <div class="row">
@@ -59,9 +61,6 @@
                                         echo $this->session->flashdata('message');
                                     } ?>
                                     <div class="text-center">
-                                        <div class="pb-4">
-                                            <img src="<?php echo base_url('assets/images/company/') . $company_data->company_photo ?>" class="company-logo" alt="company-logo">
-                                        </div>
                                         <h6 class="h7 text-gray-600 mb-4">Silahkan Isi Username dan Password Anda untuk Masuk ke Sistem</h6>
                                     </div>
                                     <?php echo form_open($action, array('class' => 'user')) ?>

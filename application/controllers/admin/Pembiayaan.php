@@ -220,11 +220,11 @@ class Pembiayaan extends CI_Controller
 
                     //SIMPAN DATA ANGGOTA PEMINJAM
                     //Generate kode/no pinjaman
-                    $kode_huruf = 'P';
-                    $get_no_urut = $this->db->query('SELECT max(no_pinjaman) as kodeTerbesar FROM pembiayaan')->result();
-                    $urutan = (int) substr($get_no_urut[0]->kodeTerbesar, 1, 5);
-                    $urutan++;
-                    $no_pinjaman = $kode_huruf . sprintf("%05s", $urutan);
+                    $kode_huruf = 'PJ';
+                    $get_last_id = (int) $this->db->query('SELECT max(id_pembiayaan) as last_id FROM pembiayaan')->row()->last_id;
+                    $get_last_id++;
+                    $random = mt_rand(10, 99);
+                    $no_pinjaman = $kode_huruf . $random . sprintf("%04s", $get_last_id);
 
                     // Ubah format tanggal
                     $waktu_gadai = date("Y-m-d", strtotime($this->input->post('waktu_gadai')));
@@ -260,11 +260,11 @@ class Pembiayaan extends CI_Controller
 
                     if ($this->input->post('pilih_pinjaman') == 1) {
                         //Generate kode/no anggota
-                        $kode_huruf = 'A';
-                        $get_no_urut = $this->db->query('SELECT max(no_anggota) as kodeTerbesar FROM users')->result();
-                        $urutan = (int) substr($get_no_urut[0]->kodeTerbesar, 1, 5);
-                        $urutan++;
-                        $no_anggota = $kode_huruf . sprintf("%05s", $urutan);
+                        $kode_huruf = 'AGT';
+                        $get_last_id = (int) $this->db->query('SELECT max(id_users) as last_id FROM users')->row()->last_id;
+                        $get_last_id++;
+                        $random = mt_rand(10, 99);
+                        $no_anggota = $kode_huruf . $random . sprintf("%04s", $get_last_id);
 
                         //Format no telephone
                         $phone = '62' . $this->input->post('phone');
@@ -916,7 +916,7 @@ class Pembiayaan extends CI_Controller
             if (is_grandadmin() or is_masteradmin()) {
                 $this->data['get_all'] = $this->Deposito_model->get_all_by_cabang_for_grandadmin_masteradmin($this->session->cabang);
             } elseif (is_superadmin()) {
-                $this->data['get_all'] = $this->Deposito_model->get_all_by_cabang();
+                $this->data['get_all'] = $this->Deposito_model->get_all_by_cabang_for_superadmin();
             }
 
             $this->data['persentase_deposito'] = [
@@ -1025,7 +1025,7 @@ class Pembiayaan extends CI_Controller
             $this->data['deposito'] = $this->Deposito_model->get_all_by_cabang_for_grandadmin_masteradmin($this->session->cabang);
             $this->data['cabang'] = $this->Cabang_model->get_by_id($this->session->cabang);
         } elseif (is_superadmin()) {
-            $this->data['deposito'] = $this->Deposito_model->get_all_by_cabang();
+            $this->data['deposito'] = $this->Deposito_model->get_all_by_cabang_for_superadmin();
             $this->data['cabang'] = $this->Cabang_model->get_by_id($this->session->cabang_id);
         }
 
@@ -1679,17 +1679,17 @@ class Pembiayaan extends CI_Controller
         $this->data['id_pembiayaan'] = $id_pembiayaan;
 
         if ($pembiayaan->sumber_dana == 1) {
-            $this->data['tabungan'] = $this->Sumberdana_model->get_tabungan_by_pembiayaan($id_pembiayaan);
+            $this->data['tabungan'] = $this->Sumberdana_model->get_all_tabungan_by_pembiayaan($id_pembiayaan);
 
             $this->load->view('back/pembiayaan/v_tabungan_by_pembiayaan_list', $this->data);
         } elseif ($pembiayaan->sumber_dana == 2) {
-            $this->data['deposan'] = $this->Sumberdana_model->get_deposan_by_pembiayaan($id_pembiayaan);
+            $this->data['deposan'] = $this->Sumberdana_model->get_all_deposan_by_pembiayaan($id_pembiayaan);
 
             $this->load->view('back/pembiayaan/v_deposan_by_pembiayaan_list', $this->data);
         } elseif ($pembiayaan->sumber_dana == 3) {
-            $this->data['deposan'] = $this->Sumberdana_model->get_deposan_by_pembiayaan($id_pembiayaan);
+            $this->data['deposan'] = $this->Sumberdana_model->get_all_deposan_by_pembiayaan($id_pembiayaan);
 
-            $this->data['tabungan'] = $this->Sumberdana_model->get_tabungan_by_pembiayaan($id_pembiayaan);
+            $this->data['tabungan'] = $this->Sumberdana_model->get_all_tabungan_by_pembiayaan($id_pembiayaan);
 
             $this->load->view('back/pembiayaan/v_tabungan_deposan_by_pembiayaan_list', $this->data);
         }

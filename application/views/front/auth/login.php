@@ -19,7 +19,7 @@
   <style>
     .bg {
       /* The image used */
-      background-image: url("../assets/images/bg.jpg");      
+      background-image: url("../assets/images/bg.jpg");
 
       /* Center and scale the image nicely */
       background-position: center;
@@ -27,7 +27,7 @@
       background-size: cover;
     }
   </style>
-  
+
   <script src="<?php echo base_url('assets/jquery/') ?>jquery.js"></script>
   <script type="text/javascript">
     var $j = jQuery.noConflict();
@@ -45,7 +45,7 @@
 <body class="hold-transition login-page bg">
   <div class="login-box">
     <div class="login-logo">
-      <img src="<?php echo base_url('assets/images/company/'). $company_data->company_photo ?>" width="200px" class="img-circle" alt="company-logo">      
+      <img src="<?php echo base_url('assets/images/company/'). $company_data->company_photo ?>" width="200px" class="img-circle" alt="company-logo">
     </div>
     <div class="login-box-body">
     <p class="login-box-msg">Silahkan Isi Username dan Password Anda untuk Masuk ke Sistem</p>

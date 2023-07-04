@@ -73,7 +73,7 @@
                                                 $detail = '<a href="' . base_url('admin/pembiayaan/detail/' . $data->id_users) . '" class="btn btn-sm btn-info" title="Detail Data"><i class="fas fa-info-circle"></i></a>';
                                             ?>
                                                 <tr>
-                                                    <td><?php echo $data->no_anggota ?></td>
+                                                    <td class="text-primary"><?php echo $data->no_anggota ?></td>
                                                     <td><?php echo $data->name ?></td>
                                                     <td><?php echo $data->created_by ?></td>
                                                     <td><?php echo $detail ?> <?php echo $delete ?></td>

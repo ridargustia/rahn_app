@@ -7,6 +7,17 @@
 <!-- Bootstrap Touchspin -->
 <link href="<?php echo base_url('assets/bootstrap-touchspin/css/jquery.bootstrap-touchspin.css') ?>" rel="stylesheet">
 <!-- Bootstrap Touchspin -->
+<style>
+    .width-modal {
+        max-width: 80%;
+    }
+
+    @media only screen and (max-width: 600px) {
+        .width-modal {
+            max-width: 100%;
+        }
+    }
+</style>
 </head>
 <!-- Meta -->
 
@@ -107,7 +118,7 @@
                                                     <tr>
                                                         <td style="width: 120px; padding-right: 5px">No Anggota</td>
                                                         <td style="padding-right: 7px; padding-left: 7px" class="text-center">:</td>
-                                                        <td style="padding-right: 5px; padding-left: 5px"><b><?php echo $anggota->no_anggota ?></b></td>
+                                                        <td style="padding-right: 5px; padding-left: 5px" class="text-primary"><b><?php echo $anggota->no_anggota ?></b></td>
                                                     </tr>
                                                     <tr>
                                                         <td style="width: 120px; padding-right: 5px">Nama</td>

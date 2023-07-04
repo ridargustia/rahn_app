@@ -25,6 +25,15 @@
                     </div>
 
                     <?php if (is_admin()) { ?>
+                        <?php if ($deposito->is_active == 0) { ?>
+                            <div class="row mb-2">
+                                <div class="col-12">
+                                    <div class="alert alert-danger" role="alert">
+                                        <b>Masa aktif deposito anda telah habis.</b>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
                         <div class="row mb-2">
                             <!-- Card Total Deposito -->
                             <div class="col-xl-6 col-md-6 mb-4">
@@ -92,15 +101,15 @@
                             </div>
                             <!-- Card Saldo Bagi Hasil Berjalan -->
                             <div class="col-xl-12 col-md-12 mb-4">
-                                <div class="card h-100">
+                                <div class="card h-100 bg-success">
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
                                             <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-uppercase mb-1">Saldo Bagi Hasil Berjalan</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">RP <?php echo number_format($get_basil_berjalan->basil_for_deposan_berjalan, 0, ',', '.') ?></div>
+                                                <div class="text-xs font-weight-bold text-uppercase mb-1 text-white">Saldo Bagi Hasil Berjalan</div>
+                                                <div class="h5 mb-0 font-weight-bold text-white">RP <?php echo number_format($get_basil_berjalan->basil_for_deposan_berjalan, 0, ',', '.') ?></div>
                                             </div>
                                             <div class="col-auto">
-                                                <i class="fas fa-wallet fa-2x text-success"></i>
+                                                <i class="fas fa-wallet fa-2x text-white"></i>
                                             </div>
                                         </div>
                                     </div>

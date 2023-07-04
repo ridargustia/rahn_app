@@ -1,5 +1,5 @@
 <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 80%;" role="document">
+    <div class="modal-dialog width-modal" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Detail <?php echo $page_title ?></h5>
@@ -67,7 +67,12 @@
                             <tr>
                                 <td>Jatuh Tempo</td>
                                 <td>:</td>
-                                <td><b><span class="jatuh_tempo"></span></b></td>
+                                <td><b><span class="jatuh_tempo"></span></b> <span class="notif_is_active"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Dibuat Oleh</td>
+                                <td>:</td>
+                                <td><b><span class="created_by"></span></b></td>
                             </tr>
                         </tbody>
                     </table>

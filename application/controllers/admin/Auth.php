@@ -320,6 +320,13 @@ class Auth extends CI_Controller
       //Format penulisan username
       $username = str_replace(' ', '', strtolower($this->input->post('username')));
 
+      //Generate kode/no anggota
+      $kode_huruf = 'ADM';
+      $get_last_id = (int) $this->db->query('SELECT max(id_users) as last_id FROM users')->row()->last_id;
+      $get_last_id++;
+      $random = mt_rand(10, 99);
+      $no_anggota = $kode_huruf . $random . sprintf("%04s", $get_last_id);
+
       if ($_FILES['photo']['error'] <> 4) {
         $nmfile = strtolower(url_title($this->input->post('username'))) . date('YmdHis');
 
@@ -349,6 +356,7 @@ class Auth extends CI_Controller
           $this->image_lib->resize();
 
           $data = array(
+            'no_anggota'        => $no_anggota,
             'name'              => $this->input->post('name'),
             'gender'            => $this->input->post('gender'),
             'birthdate'         => $this->input->post('birthdate'),
@@ -393,6 +401,7 @@ class Auth extends CI_Controller
         }
       } else {
         $data = array(
+          'no_anggota'        => $no_anggota,
           'name'              => $this->input->post('name'),
           'gender'            => $this->input->post('gender'),
           'birthdate'         => $this->input->post('birthdate'),
@@ -934,8 +943,6 @@ class Auth extends CI_Controller
       $this->data['get_all_users']      = $this->Auth_model->get_all_combobox();
     } elseif (is_masteradmin()) {
       $this->data['get_all_users']      = $this->Auth_model->get_all_combobox_by_instansi($this->session->instansi_id);
-    } elseif (is_superadmin()) {
-      $this->data['get_all_users']      = $this->Auth_model->get_all_combobox_by_cabang($this->session->cabang_id);
     }
 
     $this->data['user_id'] = [
@@ -964,7 +971,7 @@ class Auth extends CI_Controller
 
   function change_password_action()
   {
-    if (is_grandadmin() or is_masteradmin() or is_superadmin()) {
+    if (is_grandadmin() or is_masteradmin()) {
       $this->form_validation->set_rules('user_id', 'User', 'required');
     }
     $this->form_validation->set_rules('new_password', 'Password', 'min_length[8]|required');
@@ -980,7 +987,7 @@ class Auth extends CI_Controller
     } else {
       $password = password_hash($this->input->post('new_password'), PASSWORD_BCRYPT);
 
-      if (is_admin() or is_pegawai()) {
+      if (is_superadmin() or is_admin() or is_pegawai()) {
         $id_user = $this->session->id_users;
       } else {
         $id_user = $this->input->post('user_id');

@@ -11,6 +11,16 @@
     .display {
         display: inline;
     }
+
+    .width-modal {
+        max-width: 80%;
+    }
+
+    @media only screen and (max-width: 600px) {
+        .width-modal {
+            max-width: 100%;
+        }
+    }
 </style>
 </head>
 <!-- Meta -->
@@ -64,23 +74,32 @@
                                                 <th>Nama Deposan</th>
                                                 <th>NIK</th>
                                                 <th>Jumlah Deposito</th>
-                                                <th>Dibuat Oleh</th>
+                                                <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
                                             foreach ($get_all as $data) {
+                                                // CHECK STATUS DEPOSITO
+                                                if ($data->is_active == 0) {
+                                                    $is_active = "<span class='badge badge-danger'>INAKTIF</span>";
+                                                    $notif_is_active = "| <span class='badge badge-danger'>MASA AKTIF DEPOSITO TELAH HABIS</span>";
+                                                } elseif ($data->is_active == 1) {
+                                                    $is_active = "<span class='badge badge-success'>AKTIF</span>";
+                                                    $notif_is_active = "";
+                                                }
+
                                                 // Action
                                                 $edit = '<a href="#" id="editDeposito" class="btn btn-sm btn-warning" title="Edit Data" data-toggle="modal" data-target="#exampleModal" data-id_deposito="' . $data->id_deposito . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-total_deposito="' . $data->total_deposito . '" data-waktu_deposito="' . $data->waktu_deposito . '" data-jatuh_tempo="' . $data->jatuh_tempo . '"><i class="fas fa-pen"></i></a>';
                                                 $delete = '<a href="' . base_url('admin/deposito/delete/' . $data->id_deposito) . '" id="delete-button" class="btn btn-sm btn-danger" title="Hapus Data"><i class="fas fa-trash"></i></a>';
-                                                $detail = '<a href="#" id="detailDeposito" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#detailModal" data-id_deposito="' . $data->id_deposito . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-total_deposito="' . number_format($data->total_deposito, 0, ',', '.') . '" data-resapan_deposito="' . number_format($data->resapan_deposito, 0, ',', '.') . '" data-saldo_deposito="' . number_format($data->saldo_deposito, 0, ',', '.') . '" data-jangka_waktu="' . $data->jangka_waktu . '" data-waktu_deposito="' . date_indonesian_only($data->waktu_deposito) . '" data-jatuh_tempo="' . date_indonesian_only($data->jatuh_tempo) . '" data-bagi_hasil="' . $data->bagi_hasil . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '"><i class="fas fa-info-circle"></i></a>';
+                                                $detail = '<a href="#" id="detailDeposito" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#detailModal" data-id_deposito="' . $data->id_deposito . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-total_deposito="' . number_format($data->total_deposito, 0, ',', '.') . '" data-resapan_deposito="' . number_format($data->resapan_deposito, 0, ',', '.') . '" data-saldo_deposito="' . number_format($data->saldo_deposito, 0, ',', '.') . '" data-jangka_waktu="' . $data->jangka_waktu . '" data-waktu_deposito="' . date_indonesian_only($data->waktu_deposito) . '" data-jatuh_tempo="' . date_indonesian_only($data->jatuh_tempo) . '" data-bagi_hasil="' . $data->bagi_hasil . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '" data-created_by="' . $data->created_by . '" data-notif_is_active="' . $notif_is_active . '"><i class="fas fa-info-circle"></i></a>';
                                             ?>
                                                 <tr>
                                                     <td><?php echo $data->name ?></td>
                                                     <td><?php echo $data->nik ?></td>
                                                     <td>Rp. <?php echo number_format($data->total_deposito, 0, ',', '.') ?></td>
-                                                    <td><?php echo $data->created_by ?></td>
+                                                    <td><?php echo $is_active ?></td>
                                                     <td><?php echo $detail ?> <?php echo $edit ?> <?php echo $delete ?></td>
                                                 </tr>
                                             <?php } ?>
@@ -214,6 +233,8 @@
                 const bagi_hasil = $(this).data('bagi_hasil');
                 const cabang_name = $(this).data('cabang_name');
                 const instansi_name = $(this).data('instansi_name');
+                const created_by = $(this).data('created_by');
+                const notif_is_active = $(this).data('notif_is_active');
                 $('#showDaftar').val(id_deposito);
                 $('.name').text(name);
                 $('.nik').text(nik);
@@ -229,6 +250,8 @@
                 $('.bagi_hasil').text(bagi_hasil);
                 $('.cabang_name').text(cabang_name);
                 $('.instansi_name').text(instansi_name);
+                $('.created_by').text(created_by);
+                $('.notif_is_active').html(notif_is_active);
 
                 jQuery.ajax({
                     url: "<?php echo base_url('admin/deposito/count_basil_berjalan_by_deposan/') ?>" + id_deposito,

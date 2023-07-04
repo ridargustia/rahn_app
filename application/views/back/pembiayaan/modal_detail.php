@@ -1,5 +1,5 @@
 <div class="modal fade" id="detailPembiayaanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 80%;" role="document">
+    <div class="modal-dialog width-modal" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel"><?php echo $page_title ?></h5>
@@ -15,7 +15,7 @@
                             <tr>
                                 <td width="240px">No Pinjaman</td>
                                 <td width="5px">:</td>
-                                <td><b><span class="no_pinjaman"></span></b></td>
+                                <td class="text-primary"><b><span class="no_pinjaman"></span></b></td>
                             </tr>
                             <tr>
                                 <td>Jumlah Pinjaman</td>

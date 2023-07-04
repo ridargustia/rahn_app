@@ -51,8 +51,13 @@
                                                         <table class="table align-items-center table-flush">
                                                             <tbody>
                                                                 <tr>
-                                                                    <td width="230px">Nama</td>
+                                                                    <td width="230px">No ID</td>
                                                                     <td width="2px">:</td>
+                                                                    <td class="text-primary"><b><?php echo $this->session->no_anggota ?></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Nama</td>
+                                                                    <td>:</td>
                                                                     <td><b><?php echo $this->session->name ?></b></td>
                                                                 </tr>
                                                                 <tr>

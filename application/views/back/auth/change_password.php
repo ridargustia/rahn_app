@@ -39,7 +39,7 @@
                             <div class="card mb-4">
                                 <?php echo form_open($action) ?>
                                 <div class="card-body">
-                                    <?php if (is_grandadmin() or is_masteradmin() or is_superadmin()) { ?>
+                                    <?php if (is_grandadmin() or is_masteradmin()) { ?>
                                         <div class="form-group">
                                             <label>Pilih User</label>
                                             <?php echo form_dropdown('', $get_all_users, '', $user_id) ?>

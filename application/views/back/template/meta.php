@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link href="<?php echo base_url('assets/images/company/rahn_apps_thumb.png') ?>" rel="icon">
+  <link href="<?php echo base_url('assets/images/company/rahn_apps_thumb.PNG') ?>" rel="icon">
   <title><?php echo $page_title . ' | ' . $instansi->instansi_name ?></title>
   <link href="<?php echo base_url('assets/fontawesome-free/css/all.min.css') ?>" rel="stylesheet" type="text/css">
   <link href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet" type="text/css">

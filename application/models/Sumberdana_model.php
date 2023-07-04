@@ -57,9 +57,41 @@ class Sumberdana_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function get_all_sumberdana_by_pembiayaan($id_pembiayaan)
+    {
+        $this->db->select('sumber_dana.deposito_id, sumber_dana.basil_for_deposan_berjalan, sumber_dana.basil_for_lembaga_berjalan');
+
+        $this->db->where('sumber_dana.pembiayaan_id', $id_pembiayaan);
+        $this->db->where('sumber_dana.is_delete_sumber_dana', '0');
+
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_by_pembiayaan($id_pembiayaan)
+    {
+        $this->db->select('sumber_dana.deposito_id, sumber_dana.basil_for_deposan_berjalan, sumber_dana.basil_for_lembaga_berjalan');
+
+        $this->db->where('sumber_dana.pembiayaan_id', $id_pembiayaan);
+        $this->db->where('sumber_dana.status_pembayaran', 0);
+        $this->db->where('sumber_dana.is_delete_sumber_dana', '0');
+
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_by_pembiayaan_non_onchange($id_pembiayaan)
+    {
+        $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.basil_for_lembaga, sumber_dana.basil_for_deposan, sumber_dana.basil_for_deposan_berjalan, sumber_dana.basil_for_lembaga_berjalan');
+
+        $this->db->where('sumber_dana.pembiayaan_id', $id_pembiayaan);
+        $this->db->where('sumber_dana.status_pembayaran', 0);
+        $this->db->where('sumber_dana.is_change', 0);
+
+        return $this->db->get($this->table);
+    }
+
     function get_all_by_deposito($id_deposito)
     {
-        $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.basil_for_deposan, sumber_dana.basil_for_lembaga, sumber_dana.total_basil, sumber_dana.pembiayaan_id, sumber_dana.persentase, sumber_dana.nominal, pembiayaan.waktu_gadai, pembiayaan.total_biaya_sewa, pembiayaan.jangka_waktu_pinjam');
+        $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.basil_for_deposan, sumber_dana.basil_for_lembaga, sumber_dana.total_basil, sumber_dana.basil_for_deposan_berjalan, sumber_dana.basil_for_lembaga_berjalan, sumber_dana.pembiayaan_id, sumber_dana.persentase, sumber_dana.nominal, pembiayaan.waktu_gadai, pembiayaan.total_biaya_sewa, pembiayaan.jangka_waktu_pinjam');
 
         $this->db->join('pembiayaan', 'sumber_dana.pembiayaan_id = pembiayaan.id_pembiayaan');
 
@@ -78,7 +110,24 @@ class Sumberdana_model extends CI_Model
 
         $this->db->where('pembiayaan_id', $id_pembiayaan);
         $this->db->where('deposito_id !=', NULL);
+        $this->db->where('is_change', 0);
         $this->db->where('is_delete_sumber_dana', '0');
+
+        $this->db->order_by($this->id, $this->order);
+
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_deposan_by_pembiayaan($id_pembiayaan)
+    {
+        $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.persentase, sumber_dana.nominal, sumber_dana.total_basil, sumber_dana.basil_for_deposan, sumber_dana.basil_for_lembaga, deposito.name, sumber_dana.deposito_id');
+
+        $this->db->join('deposito', 'sumber_dana.deposito_id = deposito.id_deposito', 'left');
+
+        $this->db->where('pembiayaan_id', $id_pembiayaan);
+        $this->db->where('deposito_id !=', NULL);
+        $this->db->where('is_delete_sumber_dana', '0');
+        $this->db->where('is_change', '0');
 
         $this->db->order_by($this->id, $this->order);
 
@@ -92,6 +141,20 @@ class Sumberdana_model extends CI_Model
         $this->db->where('pembiayaan_id', $id_pembiayaan);
         $this->db->where('deposito_id', NULL);
         $this->db->where('is_delete_sumber_dana', '0');
+
+        $this->db->order_by($this->id, $this->order);
+
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_tabungan_by_pembiayaan($id_pembiayaan)
+    {
+        $this->db->select('sumber_dana.nominal, sumber_dana.total_basil, sumber_dana.persentase');
+
+        $this->db->where('pembiayaan_id', $id_pembiayaan);
+        $this->db->where('deposito_id', NULL);
+        $this->db->where('is_delete_sumber_dana', '0');
+        $this->db->where('is_change', '0');
 
         $this->db->order_by($this->id, $this->order);
 
@@ -171,6 +234,23 @@ class Sumberdana_model extends CI_Model
             }
             return $count;
         }
+    }
+
+    function get_by_pembiayaan_and_deposito_null($id_pembiayaan)
+    {
+        $this->db->where('pembiayaan_id', $id_pembiayaan);
+        $this->db->where('deposito_id', NULL);
+        $this->db->where('is_delete_sumber_dana', 0);
+
+        return $this->db->get($this->table)->row();
+    }
+
+    function change_status_pembayaran($id_pembiayaan, $data)
+    {
+        $this->db->where('pembiayaan_id', $id_pembiayaan);
+        $this->db->where('status_pembayaran', 0);
+
+        $this->db->update($this->table, $data);
     }
 
     function update($id,$data)

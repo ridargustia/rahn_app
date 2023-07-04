@@ -1,5 +1,5 @@
 <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 80%;" role="document">
+    <div class="modal-dialog width-modal" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Detail <?php echo $page_title ?></h5>
@@ -15,7 +15,7 @@
                             <tr>
                                 <td width="250px">No Anggota</td>
                                 <td width="5px">:</td>
-                                <td><b><span class="no_pinjaman"></span></b></td>
+                                <td class="text-primary"><b><span class="no_pinjaman"></span></b></td>
                             </tr>
                             <tr>
                                 <td>Nama Anggota</td>
@@ -94,17 +94,15 @@
                                 <td><b>Rp. <span class="basil_for_lembaga"></span></b></td>
                             </tr>
                             <tr>
-                                <td>Basil Berjalan</td>
-                                <td>:</td>
-                                <td><b>Rp. <span class="basil_for_lembaga_berjalan"></span></b></td>
-                            </tr>
-                            <tr>
                                 <td>Status Pinjaman</td>
                                 <td>:</td>
                                 <td><div id="status_pembayaran"></div></td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div class="alert alert-success" role="alert">
+                    Basil Berjalan&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;:&emsp; <b>Rp. <span class="basil_for_lembaga_berjalan"></span></b>
                 </div>
             </div>
             <div class="modal-footer">

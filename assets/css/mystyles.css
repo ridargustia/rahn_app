@@ -1,0 +1,9 @@
+.company-logo {
+  width: 180px;
+}
+
+@media only screen and (max-width: 600px) {
+  .company-logo {
+    width: 130px;
+  }
+}

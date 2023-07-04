@@ -13,8 +13,13 @@
                     <table class="table align-items-center table-flush">
                         <tbody>
                             <tr>
-                                <td width="190px">Nama</td>
+                                <td width="190px">No ID</td>
                                 <td width="5px">:</td>
+                                <td class="text-primary"><b><span class="no_anggota"></span></b></td>
+                            </tr>
+                            <tr>
+                                <td>Nama</td>
+                                <td>:</td>
                                 <td><b><span class="name"></span></b></td>
                             </tr>
                             <tr>

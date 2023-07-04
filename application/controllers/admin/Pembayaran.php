@@ -201,6 +201,9 @@ class Pembayaran extends CI_Controller
                         //Update data status pembayaran pada tabel pembiayaan by id
                         $this->Pembiayaan_model->update($this->input->post('id_pembiayaan'), array('status_pembayaran' => 1));
 
+                        // UBAH STATUS PEMBAYARAN DI TABEL SUMBER DANA
+                        $this->Sumberdana_model->change_status_pembayaran($this->input->post('id_pembiayaan'), array('status_pembayaran' => 1));
+
                         if ($pembiayaan->sumber_dana == 1) {
                             // MANIPULASI DATA INSTANSI
                             // Update data instansi untuk dikembalikan nominal yg dipinjam
@@ -505,6 +508,9 @@ class Pembayaran extends CI_Controller
             if ($tanggungan == $jml_terbayar_now) {
                 //Update data status pembayaran pada tabel pembiayaan by id
                 $this->Pembiayaan_model->update($id_pembiayaan, array('status_pembayaran' => 1));
+
+                // UBAH STATUS PEMBAYARAN DI TABEL SUMBER DANA
+                $this->Sumberdana_model->change_status_pembayaran($id_pembiayaan, array('status_pembayaran' => 1));
 
                 if ($pembiayaan->sumber_dana == 1) {
                     // MANIPULASI DATA INSTANSI

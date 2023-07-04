@@ -50,7 +50,7 @@
                                     <table class="table align-items-center table-flush table-hover" id="dataTableHover">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>No</th>
+                                                <th>ID</th>
                                                 <th>Nama</th>
                                                 <th>Username</th>
                                                 <th>Status</th>
@@ -60,7 +60,6 @@
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $no = 1;
                                             foreach ($get_all as $data) {
                                                 // status active
                                                 if ($data->is_active == '1') {
@@ -86,10 +85,10 @@
                                                 // Action
                                                 $edit = '<a href="#" id="editUser" class="btn btn-sm btn-warning" title="Edit Data" data-toggle="modal" data-target="#modalEditUser" data-id_users="' . $data->id_users . '" data-name="' . $data->name . '" data-birthplace="' . $data->birthplace . '" data-birthdate="' . $data->birthdate . '" data-gender="' . $data->gender . '" data-address="' . $data->address . '" data-phone="' . $data->phone . '" data-email="' . $data->email . '" data-username="' . $data->username . '" data-usertype_id="' . $data->usertype_id . '" data-image="' . $data->photo . '"><i class="fas fa-pen"></i></a>';
                                                 $delete = '<a href="' . base_url('admin/auth/delete/' . $data->id_users) . '" id="delete-button" class="btn btn-sm btn-danger" title="Hapus Data"><i class="fas fa-trash"></i></a>';
-                                                $detail = '<a href="#" id="detailUser" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#modalDetailUser" data-name="' . $data->name . '" data-birthplace="' . $data->birthplace . '" data-birthdate="' . $birthdate . '" data-gender="' . $gender . '" data-address="' . $data->address . '" data-phone="' . $data->phone . '" data-email="' . $data->email . '" data-username="' . $data->username . '" data-usertype="' . $data->usertype_name . '" data-created_by="' . $data->created_by . '" data-image="' . $data->photo . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '"><i class="fas fa-info-circle"></i></a>';
+                                                $detail = '<a href="#" id="detailUser" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#modalDetailUser" data-no_anggota="' . $data->no_anggota . '" data-name="' . $data->name . '" data-birthplace="' . $data->birthplace . '" data-birthdate="' . $birthdate . '" data-gender="' . $gender . '" data-address="' . $data->address . '" data-phone="' . $data->phone . '" data-email="' . $data->email . '" data-username="' . $data->username . '" data-usertype="' . $data->usertype_name . '" data-created_by="' . $data->created_by . '" data-image="' . $data->photo . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '"><i class="fas fa-info-circle"></i></a>';
                                             ?>
                                                 <tr>
-                                                    <td><?php echo $no++ ?></td>
+                                                    <td class="text-primary"><?php echo $data->no_anggota ?></td>
                                                     <td><?php echo $data->name ?></td>
                                                     <td><?php echo $data->username ?></td>
                                                     <td><?php echo $is_active ?></td>
@@ -152,7 +151,9 @@
     <script>
         $(document).ready(function() {
             $('#dataTable').DataTable(); // ID From dataTable
-            $('#dataTableHover').DataTable(); // ID From dataTable with Hover
+            $('#dataTableHover').DataTable({
+                ordering: false
+            }); // ID From dataTable with Hover
 
             $('#birthdate').datepicker({
                 startView: 2,
@@ -163,6 +164,7 @@
             });
 
             $(document).on('click', '#detailUser', function() {
+                const no_anggota = $(this).data('no_anggota');
                 const name = $(this).data('name');
                 const birthplace = $(this).data('birthplace');
                 const birthdate = $(this).data('birthdate');
@@ -176,6 +178,7 @@
                 const image = $(this).data('image');
                 const cabang_name = $(this).data('cabang_name');
                 const instansi_name = $(this).data('instansi_name');
+                $('.no_anggota').text(no_anggota);
                 $('.name').text(name);
                 $('.birthplace').text(birthplace);
                 $('.birthdate').text(birthdate);
