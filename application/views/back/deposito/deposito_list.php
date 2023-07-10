@@ -7,6 +7,7 @@
 <!-- Bootstrap DatePicker -->
 <link href="<?php echo base_url('assets/bootstrap-datepicker/css/bootstrap-datepicker.min.css') ?>" rel="stylesheet">
 <!-- Bootstrap DatePicker -->
+<link rel="stylesheet" href="<?php echo base_url('assets/') ?>css/mystyles.css">
 <style>
     .display {
         display: inline;
@@ -20,6 +21,57 @@
         .width-modal {
             max-width: 100%;
         }
+    }
+
+    .my-flip-card {
+        background-color: transparent;
+        width: 150px;
+        height: 35px;
+        perspective: 1000px;
+        padding: 5px;
+    }
+
+    .my-flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.9s;
+        transform-style: preserve-3d;
+        /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+        backface-visibility: hidden;
+        -moz-backface-visibility: hidden;
+    }
+
+    .my-flip-card:focus {
+        outline: 0;
+    }
+
+    .my-flip-card:hover .my-flip-card-inner,
+    .my-flip-card:focus .my-flip-card-inner {
+        transform: rotateY(180deg);
+    }
+
+    .my-flip-card-front,
+    .my-flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .my-flip-card-front {
+        z-index: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .my-flip-card-back {
+        transform: rotateY(180deg);
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>
 </head>
@@ -72,17 +124,39 @@
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>Nama Deposan</th>
-                                                <th>NIK</th>
                                                 <th>Jumlah Deposito</th>
                                                 <th>Status</th>
-                                                <th>Aksi</th>
+                                                <th>Jatuh Tempo</th>
+                                                <th>Basil</th>
+                                                <th width="40px">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
                                             foreach ($get_all as $data) {
-                                                // CHECK STATUS DEPOSITO
+                                                // Status Jatuh Tempo
+                                                $jatuh_tempo = strtotime($data->jatuh_tempo);
+                                                $today = strtotime(date('Y-m-d'));
+
+                                                $different_time = (date("Y", $jatuh_tempo) - date("Y", $today)) * 12;
+                                                $different_time += date("m", $jatuh_tempo) - date("m", $today);
+
                                                 if ($data->is_active == 0) {
+                                                    $badge_jatuh_tempo = '<span class="badge badge-danger">' . date_indonesian_only($data->jatuh_tempo) . '</span>';
+                                                } elseif ($different_time <= 1) {
+                                                    $badge_jatuh_tempo = '<span class="badge badge-warning">' . date_indonesian_only($data->jatuh_tempo) . '</span>';
+                                                } else {
+                                                    $badge_jatuh_tempo = '<span class="badge badge-success">' . date_indonesian_only($data->jatuh_tempo) . '</span>';
+                                                }
+
+                                                // Get basil for deposan berjalan
+                                                $basil_deposan_berjalan = $this->Sumberdana_model->get_basil_for_deposan_berjalan($data->id_deposito);
+
+                                                // CHECK STATUS DEPOSITO
+                                                if ($data->is_withdrawal == 1) {
+                                                    $is_active = "<span class='badge badge-danger'>INAKTIF</span>";
+                                                    $notif_is_active = "| <span class='badge badge-danger'>BASIL TELAH DITARIK</span>";
+                                                } elseif ($data->is_active == 0) {
                                                     $is_active = "<span class='badge badge-danger'>INAKTIF</span>";
                                                     $notif_is_active = "| <span class='badge badge-danger'>MASA AKTIF DEPOSITO TELAH HABIS</span>";
                                                 } elseif ($data->is_active == 1) {
@@ -94,12 +168,44 @@
                                                 $edit = '<a href="#" id="editDeposito" class="btn btn-sm btn-warning" title="Edit Data" data-toggle="modal" data-target="#exampleModal" data-id_deposito="' . $data->id_deposito . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-total_deposito="' . $data->total_deposito . '" data-waktu_deposito="' . $data->waktu_deposito . '" data-jatuh_tempo="' . $data->jatuh_tempo . '"><i class="fas fa-pen"></i></a>';
                                                 $delete = '<a href="' . base_url('admin/deposito/delete/' . $data->id_deposito) . '" id="delete-button" class="btn btn-sm btn-danger" title="Hapus Data"><i class="fas fa-trash"></i></a>';
                                                 $detail = '<a href="#" id="detailDeposito" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#detailModal" data-id_deposito="' . $data->id_deposito . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-total_deposito="' . number_format($data->total_deposito, 0, ',', '.') . '" data-resapan_deposito="' . number_format($data->resapan_deposito, 0, ',', '.') . '" data-saldo_deposito="' . number_format($data->saldo_deposito, 0, ',', '.') . '" data-jangka_waktu="' . $data->jangka_waktu . '" data-waktu_deposito="' . date_indonesian_only($data->waktu_deposito) . '" data-jatuh_tempo="' . date_indonesian_only($data->jatuh_tempo) . '" data-bagi_hasil="' . $data->bagi_hasil . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '" data-created_by="' . $data->created_by . '" data-notif_is_active="' . $notif_is_active . '"><i class="fas fa-info-circle"></i></a>';
+                                                if ($data->is_withdrawal == 0) {
+                                                    $tarik_basil = '
+                                                        <a href="' . base_url('admin/deposito/tarik_basil/' . $data->id_deposito) . '" id="konfirmasi-tarik-basil">
+                                                            <div class="my-flip-card" tabIndex="0">
+                                                                <div class="my-flip-card-inner">
+                                                                    <div class="my-flip-card-front">
+                                                                        <span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '</b></span>
+                                                                    </div>
+                                                                    <div class="my-flip-card-back">
+                                                                        <span class="btn btn-sm btn-success btn-block"><b>Tarik Basil</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    ';
+                                                } else {
+                                                    $tarik_basil = '
+                                                        <a href="#">
+                                                            <div class="my-flip-card" tabIndex="0">
+                                                                <div class="my-flip-card-inner">
+                                                                    <div class="my-flip-card-front">
+                                                                        <span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '</b></span>
+                                                                    </div>
+                                                                    <div class="my-flip-card-back">
+                                                                        <span class="btn btn-sm btn-danger btn-block"><b>Telah Ditarik</b></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    ';
+                                                }
                                             ?>
                                                 <tr>
                                                     <td><?php echo $data->name ?></td>
-                                                    <td><?php echo $data->nik ?></td>
                                                     <td>Rp. <?php echo number_format($data->total_deposito, 0, ',', '.') ?></td>
                                                     <td><?php echo $is_active ?></td>
+                                                    <td><?php echo $badge_jatuh_tempo ?></td>
+                                                    <td><?php echo $tarik_basil ?></td>
                                                     <td><?php echo $detail ?> <?php echo $edit ?> <?php echo $delete ?></td>
                                                 </tr>
                                             <?php } ?>

@@ -64,4 +64,25 @@
             }
         })
     });
+
+    $(document).on('click', '#konfirmasi-tarik-basil', function(e) {
+        e.preventDefault();
+        const link = $(this).attr('href');
+
+        Swal.fire({
+            title: 'Konfirmasi Tarik Basil',
+            text: "Apakah anda yakin akan melakukan tarik tunai basil?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00a65a',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Tarik Tunai'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = link;
+            } else {
+                location.reload();
+            }
+        })
+    });
 </script>

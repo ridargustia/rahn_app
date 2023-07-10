@@ -10,7 +10,7 @@ class Deposito_model extends CI_Model
 
     function get_all()
     {
-        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by, instansi.instansi_name, cabang.cabang_name, deposito.is_active');
+        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.is_withdrawal, deposito.riwayat_bagi_hasil, deposito.created_by, instansi.instansi_name, cabang.cabang_name, deposito.is_active');
 
         $this->db->join('instansi', 'deposito.instansi_id = instansi.id_instansi', 'left');
         $this->db->join('cabang', 'deposito.cabang_id = cabang.id_cabang', 'left');
@@ -24,7 +24,7 @@ class Deposito_model extends CI_Model
 
     function get_all_by_instansi()
     {
-        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by, instansi.instansi_name, cabang.cabang_name, deposito.is_active');
+        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.is_withdrawal, deposito.riwayat_bagi_hasil, deposito.created_by, instansi.instansi_name, cabang.cabang_name, deposito.is_active');
 
         $this->db->join('instansi', 'deposito.instansi_id = instansi.id_instansi', 'left');
         $this->db->join('cabang', 'deposito.cabang_id = cabang.id_cabang', 'left');
@@ -39,7 +39,7 @@ class Deposito_model extends CI_Model
 
     function get_all_by_cabang()
     {
-        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by, instansi.instansi_name, cabang.cabang_name, deposito.is_active');
+        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.is_withdrawal, deposito.riwayat_bagi_hasil, deposito.created_by, instansi.instansi_name, cabang.cabang_name, deposito.is_active');
 
         $this->db->join('instansi', 'deposito.instansi_id = instansi.id_instansi', 'left');
         $this->db->join('cabang', 'deposito.cabang_id = cabang.id_cabang', 'left');
@@ -54,7 +54,7 @@ class Deposito_model extends CI_Model
 
     function get_all_by_cabang_for_superadmin()
     {
-        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by, instansi.instansi_name, cabang.cabang_name');
+        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.riwayat_bagi_hasil, deposito.created_by, instansi.instansi_name, cabang.cabang_name');
 
         $this->db->join('instansi', 'deposito.instansi_id = instansi.id_instansi', 'left');
         $this->db->join('cabang', 'deposito.cabang_id = cabang.id_cabang', 'left');
@@ -70,7 +70,7 @@ class Deposito_model extends CI_Model
 
     function get_all_by_cabang_for_grandadmin_masteradmin($id_cabang)
     {
-        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by, instansi.instansi_name, cabang.cabang_name');
+        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.riwayat_bagi_hasil, deposito.created_by, instansi.instansi_name, cabang.cabang_name');
 
         $this->db->join('instansi', 'deposito.instansi_id = instansi.id_instansi', 'left');
         $this->db->join('cabang', 'deposito.cabang_id = cabang.id_cabang', 'left');
@@ -86,7 +86,7 @@ class Deposito_model extends CI_Model
 
     function get_all_deleted()
     {
-        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by');
+        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.riwayat_bagi_hasil, deposito.created_by');
 
         $this->db->where('is_delete_deposito', '1');
 
@@ -97,7 +97,7 @@ class Deposito_model extends CI_Model
 
     function get_all_deleted_by_instansi()
     {
-        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by');
+        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.riwayat_bagi_hasil, deposito.created_by');
 
         $this->db->where('is_delete_deposito', '1');
         $this->db->where('deposito.instansi_id', $this->session->instansi_id);
@@ -109,7 +109,7 @@ class Deposito_model extends CI_Model
 
     function get_all_deleted_by_cabang()
     {
-        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.bagi_hasil, deposito.created_by');
+        $this->db->select('deposito.id_deposito, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, deposito.total_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.riwayat_bagi_hasil, deposito.created_by');
 
         $this->db->where('is_delete_deposito', '1');
         $this->db->where('deposito.cabang_id', $this->session->cabang_id);
@@ -420,6 +420,19 @@ class Deposito_model extends CI_Model
                 }
             }
         }
+    }
+
+    function get_deposito_by_id($id)
+    {
+        $this->db->select('deposito.id_deposito, deposito.instansi_id, deposito.cabang_id, deposito.jatuh_tempo, deposito.is_active, deposito.saldo_deposito, deposito.resapan_deposito, deposito.riwayat_bagi_hasil, instansi.resapan_tabungan as instansi_resapan_tabungan, instansi.saldo_tabungan as instansi_saldo_tabungan, cabang.resapan_tabungan as cabang_resapan_tabungan, cabang.saldo_tabungan as cabang_saldo_tabungan');
+
+        $this->db->join('instansi', 'deposito.instansi_id = instansi.id_instansi');
+        $this->db->join('cabang', 'deposito.cabang_id = cabang.id_cabang');
+
+        $this->db->where($this->id, $id);
+        $this->db->where('is_delete_deposito', 0);
+
+        return $this->db->get($this->table)->row();
     }
 
     function get_by_user($id)
