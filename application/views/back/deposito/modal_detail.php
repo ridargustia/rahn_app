@@ -84,6 +84,9 @@
                 <br>
                 <h6 class="ml-2 font-weight-bold text-primary display">PENGGUNA DANA</h6> <a href="#" id="showDaftar" class="badge badge-info">Lihat Daftar</a>
                 <div id="showPenggunaDana"></div>
+                <br>
+                <h6 class="ml-2 font-weight-bold text-primary display">RIWAYAT PENARIKAN</h6> <a href="#" id="showDaftarRiwayatPenarikan" class="badge badge-info">Lihat Daftar</a>
+                <div id="showRiwayatPenarikan"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="location.reload()">Close</button>

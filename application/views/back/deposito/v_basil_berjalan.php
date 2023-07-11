@@ -21,6 +21,6 @@
     </table>
 </div>
 <div class="alert alert-success" role="alert">
-    Basil Deposan Berjalan&emsp;:&emsp; <b>Rp. <?php echo number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') ?></b>
+    Basil Deposan Berjalan&emsp;:&emsp; <b>Rp. <?php echo number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') ?></b> <?php if ($data_deposito->is_withdrawal == 1) { ?><i>(Basil telah ditarik sebesar Rp. <?php echo number_format($riwayat_basil_berjalan, 0, ',', '.') ?>)</i><?php } ?>
 </div>
 <!-- Content -->

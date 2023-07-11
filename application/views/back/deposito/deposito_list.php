@@ -342,6 +342,7 @@
                 const created_by = $(this).data('created_by');
                 const notif_is_active = $(this).data('notif_is_active');
                 $('#showDaftar').val(id_deposito);
+                $('#showDaftarRiwayatPenarikan').val(id_deposito);
                 $('.name').text(name);
                 $('.nik').text(nik);
                 $('.address').text(address);
@@ -377,6 +378,20 @@
                     },
                     success: function(data) {
                         $("#showPenggunaDana").html(data);
+                    },
+                });
+            });
+
+            $(document).on('click', '#showDaftarRiwayatPenarikan', function() {
+                const id_deposito = $(this).val();
+
+                jQuery.ajax({
+                    url: "<?php echo base_url('admin/deposito/get_riwayat_penarikan_by_deposan/') ?>" + id_deposito,
+                    beforeSend: function(data) {
+                        $("#showRiwayatPenarikan").html('<center><h1><i class="fa fa-spin fa-spinner" /></h1></center>');
+                    },
+                    success: function(data) {
+                        $("#showRiwayatPenarikan").html(data);
                     },
                 });
             });
