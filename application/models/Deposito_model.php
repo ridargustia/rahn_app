@@ -278,73 +278,94 @@ class Deposito_model extends CI_Model
 
                             $this->Sumberdana_model->update($sumber_dana->id_sumber_dana, $new_sumber_dana_deposito);
 
-                            if ($sumber_dana->basil_for_deposan_berjalan < $sumber_dana->basil_for_deposan && $sumber_dana->basil_for_lembaga_berjalan < $sumber_dana->basil_for_lembaga) {
-                                // Planning: Jumlah terbayar dikurangi basil_for_deposan_berjalan dan basil_for_lembaga_berjalan
-                                $sumber_dana_by_pembiayaan = $this->Sumberdana_model->get_all_sumberdana_by_pembiayaan($sumber_dana->pembiayaan_id);
-                                $pembiayaan = $this->Pembiayaan_model->get_by_id($sumber_dana->pembiayaan_id);
+                        } elseif ($different_time == 0) {
+                            // BASIL FOR DEPOSAN BERJALAN
+                            $basil_for_deposan_bulan_berjalan = $sumber_dana->basil_for_deposan / $sumber_dana->jangka_waktu_pinjam;
 
-                                $total_basil_berjalan_by_pembiayaan = 0;
+                            // BASIL FOR LEMBAGA BERJALAN
+                            $basil_for_lembaga_bulan_berjalan = $sumber_dana->basil_for_lembaga / $sumber_dana->jangka_waktu_pinjam;
 
-                                foreach ($sumber_dana_by_pembiayaan as $data) {
-                                    $total_basil_berjalan_by_pembiayaan = $total_basil_berjalan_by_pembiayaan + ($data->basil_for_deposan_berjalan + $data->basil_for_lembaga_berjalan);
-                                }
+                            // UPDATE TOTAL BASIL, BASIL FOR DEPOSAN, BASIL FOR LEMBAGA
+                            $total_basil_bulan_berjalan = $sumber_dana->total_basil / $sumber_dana->jangka_waktu_pinjam;
 
-                                $selisih_basil_berjalan = $total_basil_berjalan_by_pembiayaan - $pembiayaan->jml_terbayar; // Sisa -700.000
+                            // UPDATE DATA SUMBER DANA BY ID
+                            $new_sumber_dana_deposito = array(
+                                'total_basil'                   => $total_basil_bulan_berjalan,
+                                'basil_for_deposan'             => $basil_for_deposan_bulan_berjalan,
+                                'basil_for_lembaga'             => $basil_for_lembaga_bulan_berjalan,
+                                'basil_for_deposan_berjalan'    => $basil_for_deposan_bulan_berjalan,
+                                'basil_for_lembaga_berjalan'    => $basil_for_lembaga_bulan_berjalan,
+                                'status_pembayaran'             => 1,
+                                'is_change'                     => 1,
+                            );
 
-                                if ($selisih_basil_berjalan > 0) {
-                                    $basil_for_lembaga_berjalan = $selisih_basil_berjalan*70/100;   // 455.000
-                                    $basil_for_deposan_berjalan = $selisih_basil_berjalan*30/100;   // 195.000
+                            $this->Sumberdana_model->update($sumber_dana->id_sumber_dana, $new_sumber_dana_deposito);
+                        }
 
-                                    $result_basil_for_lembaga_berjalan = $basil_for_lembaga_bulan_berjalan - $basil_for_lembaga_berjalan; // 1.155.000 - 455.000 = 700.000
-                                    $result_basil_for_deposan_berjalan = $basil_for_deposan_bulan_berjalan - $basil_for_deposan_berjalan; // 495.000 - 195.000 = 300.000
+                        if ($sumber_dana->basil_for_deposan_berjalan < $sumber_dana->basil_for_deposan && $sumber_dana->basil_for_lembaga_berjalan < $sumber_dana->basil_for_lembaga) {
+                            // Planning: Jumlah terbayar dikurangi basil_for_deposan_berjalan dan basil_for_lembaga_berjalan
+                            $sumber_dana_by_pembiayaan = $this->Sumberdana_model->get_all_sumberdana_by_pembiayaan($sumber_dana->pembiayaan_id);
+                            $pembiayaan = $this->Pembiayaan_model->get_by_id($sumber_dana->pembiayaan_id);
 
-                                    $total_basil_bulan_berjalan = $total_basil_bulan_berjalan - $selisih_basil_berjalan; //     1.650.000 - 650.000 = 1.000.000
+                            $total_basil_berjalan_by_pembiayaan = 0;
 
-                                    // UPDATE DATA SUMBER DANA BY ID
-                                    $new_sumber_dana_deposito = array(
-                                        'total_basil'                   => $total_basil_bulan_berjalan,
-                                        'basil_for_deposan'             => $result_basil_for_deposan_berjalan,
-                                        'basil_for_lembaga'             => $result_basil_for_lembaga_berjalan,
-                                        'basil_for_deposan_berjalan'    => $result_basil_for_deposan_berjalan,
-                                        'basil_for_lembaga_berjalan'    => $result_basil_for_lembaga_berjalan,
-                                        'status_pembayaran'             => 1,
-                                        'is_change'                     => 1,
-                                    );
+                            foreach ($sumber_dana_by_pembiayaan as $data) {
+                                $total_basil_berjalan_by_pembiayaan = $total_basil_berjalan_by_pembiayaan + ($data->basil_for_deposan_berjalan + $data->basil_for_lembaga_berjalan);
+                            }
 
-                                    $this->Sumberdana_model->update($sumber_dana->id_sumber_dana, $new_sumber_dana_deposito);
+                            $selisih_basil_berjalan = $total_basil_berjalan_by_pembiayaan - $pembiayaan->jml_terbayar; // Sisa -700.000
 
-                                } elseif ($selisih_basil_berjalan < 0) {
-                                    $sumber_dana_by_pembiayaan = $this->Sumberdana_model->get_all_by_pembiayaan_non_onchange($sumber_dana->pembiayaan_id)->result();
-                                    $count_sumber_dana_by_pembiayaan = $this->Sumberdana_model->get_all_by_pembiayaan_non_onchange($sumber_dana->pembiayaan_id)->num_rows();
+                            if ($selisih_basil_berjalan > 0) {
+                                $basil_for_lembaga_berjalan = $selisih_basil_berjalan*70/100;   // 455.000
+                                $basil_for_deposan_berjalan = $selisih_basil_berjalan*30/100;   // 195.000
 
-                                    if ($count_sumber_dana_by_pembiayaan > 0) {
-                                        $pembagian_basil = $selisih_basil_berjalan / (-$count_sumber_dana_by_pembiayaan);   // -700.000 / -1 = 700.000
+                                $result_basil_for_lembaga_berjalan = $basil_for_lembaga_bulan_berjalan - $basil_for_lembaga_berjalan; // 1.155.000 - 455.000 = 700.000
+                                $result_basil_for_deposan_berjalan = $basil_for_deposan_bulan_berjalan - $basil_for_deposan_berjalan; // 495.000 - 195.000 = 300.000
 
-                                        foreach ($sumber_dana_by_pembiayaan as $data) {
-                                            $pembagian_basil_for_lembaga =  $data->basil_for_lembaga_berjalan + ($pembagian_basil*70/100);  // 700.000 + 490.000 = 1.190.000
-                                            $pembagian_basil_for_deposan = $data->basil_for_deposan_berjalan + ($pembagian_basil*30/100);   // 300.000 + 210.000 = 510.000
+                                $total_basil_bulan_berjalan = $total_basil_bulan_berjalan - $selisih_basil_berjalan; //     1.650.000 - 650.000 = 1.000.000
 
-                                            //Nominal cicilan lebih besar dari basil for lembaga
-                                            if ($pembagian_basil_for_lembaga > $data->basil_for_lembaga) {
-                                                //Update ke database by id sumber dana
-                                                $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_lembaga_berjalan' => $data->basil_for_lembaga));
-                                            } else {
-                                                //Update ke database by id sumber dana
-                                                $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_lembaga_berjalan' => $pembagian_basil_for_lembaga));
-                                            }
+                                // UPDATE DATA SUMBER DANA BY ID
+                                $new_sumber_dana_deposito = array(
+                                    'total_basil'                   => $total_basil_bulan_berjalan,
+                                    'basil_for_deposan'             => $result_basil_for_deposan_berjalan,
+                                    'basil_for_lembaga'             => $result_basil_for_lembaga_berjalan,
+                                    'basil_for_deposan_berjalan'    => $result_basil_for_deposan_berjalan,
+                                    'basil_for_lembaga_berjalan'    => $result_basil_for_lembaga_berjalan,
+                                );
 
-                                            //Nominal cicilan lebih besar dari basil for deposan
-                                            if ($pembagian_basil_for_deposan > $data->basil_for_deposan) {
-                                                //Update ke database by id sumber dana
-                                                $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_deposan_berjalan' => $data->basil_for_deposan));
-                                            } else {
-                                                //Update ke database by id sumber dana
-                                                $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_deposan_berjalan' => $pembagian_basil_for_deposan));
-                                            }
+                                $this->Sumberdana_model->update($sumber_dana->id_sumber_dana, $new_sumber_dana_deposito);
 
+                            } elseif ($selisih_basil_berjalan < 0) {
+                                $sumber_dana_by_pembiayaan = $this->Sumberdana_model->get_all_by_pembiayaan_non_onchange($sumber_dana->pembiayaan_id)->result();
+                                $count_sumber_dana_by_pembiayaan = $this->Sumberdana_model->get_all_by_pembiayaan_non_onchange($sumber_dana->pembiayaan_id)->num_rows();
+
+                                if ($count_sumber_dana_by_pembiayaan > 0) {
+                                    $pembagian_basil = $selisih_basil_berjalan / (-$count_sumber_dana_by_pembiayaan);   // -700.000 / -1 = 700.000
+
+                                    foreach ($sumber_dana_by_pembiayaan as $data) {
+                                        $pembagian_basil_for_lembaga =  $data->basil_for_lembaga_berjalan + ($pembagian_basil*70/100);  // 700.000 + 490.000 = 1.190.000
+                                        $pembagian_basil_for_deposan = $data->basil_for_deposan_berjalan + ($pembagian_basil*30/100);   // 300.000 + 210.000 = 510.000
+
+                                        //Nominal cicilan lebih besar dari basil for lembaga
+                                        if ($pembagian_basil_for_lembaga > $data->basil_for_lembaga) {
+                                            //Update ke database by id sumber dana
+                                            $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_lembaga_berjalan' => $data->basil_for_lembaga));
+                                        } else {
+                                            //Update ke database by id sumber dana
+                                            $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_lembaga_berjalan' => $pembagian_basil_for_lembaga));
+                                        }
+
+                                        //Nominal cicilan lebih besar dari basil for deposan
+                                        if ($pembagian_basil_for_deposan > $data->basil_for_deposan) {
+                                            //Update ke database by id sumber dana
+                                            $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_deposan_berjalan' => $data->basil_for_deposan));
+                                        } else {
+                                            //Update ke database by id sumber dana
+                                            $this->Sumberdana_model->update($data->id_sumber_dana, array('basil_for_deposan_berjalan' => $pembagian_basil_for_deposan));
                                         }
 
                                     }
+
                                 }
                             }
                         }
