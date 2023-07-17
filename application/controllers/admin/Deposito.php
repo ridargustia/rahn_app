@@ -51,7 +51,8 @@ class Deposito extends CI_Controller
             $this->data['get_saldo_deposito'] = $this->Deposito_model->saldo_deposito_by_cabang();
         }
 
-        $this->data['action']     = 'admin/deposito/update_action';
+        $this->data['action']                   = 'admin/deposito/update_action';
+        $this->data['action_jangka_waktu']      = 'admin/deposito/renew_jangka_waktu_action';
 
         $this->data['id_deposito'] = [
             'name'          => 'id_deposito',
@@ -125,6 +126,51 @@ class Deposito extends CI_Controller
             'required'      => '',
             'value'         => $this->form_validation->set_value('jatuh_tempo'),
         ];
+
+        // Perpanjang Masa Aktif
+        $this->data['masa_aktif'] = [
+            'name'          => 'masa_aktif',
+            'id'            => 'masa_aktif',
+            'class'         => 'form-control',
+            'autocomplete'  => 'off',
+            'required'      => '',
+            'value'         => $this->form_validation->set_value('nik'),
+            'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
+        ];
+        $this->data['perpanjang_waktu_deposito'] = [
+            'name'          => 'perpanjang_waktu_deposito',
+            'id'            => 'perpanjang_waktu_deposito',
+            'class'         => 'input-sm form-control',
+            'autocomplete'  => 'off',
+            'required'      => '',
+            'value'         => $this->form_validation->set_value('waktu_deposito'),
+            'readonly'      => '',
+        ];
+        $this->data['perpanjang_jatuh_tempo'] = [
+            'name'          => 'perpanjang_jatuh_tempo',
+            'id'            => 'perpanjang_jatuh_tempo',
+            'class'         => 'input-sm form-control',
+            'autocomplete'  => 'off',
+            'required'      => '',
+            'value'         => $this->form_validation->set_value('jatuh_tempo'),
+            'readonly'      => '',
+        ];
+        $this->data['data_waktu_deposito'] = [
+            'name'          => 'data_waktu_deposito',
+            'id'            => 'data_waktu_deposito',
+            'type'          => 'hidden',
+        ];
+        $this->data['data_jatuh_tempo'] = [
+            'name'          => 'data_jatuh_tempo',
+            'id'            => 'data_jatuh_tempo',
+            'type'          => 'hidden',
+        ];
+        $this->data['deposito_id'] = [
+            'name'          => 'deposito_id',
+            'id'            => 'deposito_id',
+            'type'          => 'hidden',
+        ];
+        // Perpanjang Masa Aktif
 
         $this->load->view('back/deposito/deposito_list', $this->data);
     }
@@ -506,11 +552,7 @@ class Deposito extends CI_Controller
         $basil_berjalan = $this->Sumberdana_model->count_basil_berjalan_by_deposan($id_deposito);
         $this->data['riwayat_basil_berjalan'] = $basil_berjalan[0]->basil_for_deposan;
 
-        if ($this->data['data_deposito']->is_withdrawal == 0) {
-            $this->data['basil_berjalan'] = $basil_berjalan[0]->basil_for_deposan;
-        } else {
-            $this->data['basil_berjalan'] = 0;
-        }
+        $this->data['basil_berjalan'] = $basil_berjalan[0]->basil_for_deposan;
 
         $this->data['basil_deposan_berjalan'] = $this->Sumberdana_model->get_basil_for_deposan_berjalan($id_deposito);
 
@@ -645,7 +687,7 @@ class Deposito extends CI_Controller
                         'basil_for_lembaga_berjalan'    => $basil_for_lembaga_bulan_berjalan,
                         'status_pembayaran'             => 1,
                         'is_change'                     => 1,
-                        'is_withdrawal'                 => 1,
+                        // 'is_withdrawal'                 => 1,
                     );
 
                     $this->Sumberdana_model->update($sumber_dana->id_sumber_dana, $new_sumber_dana_deposito);
@@ -669,7 +711,7 @@ class Deposito extends CI_Controller
                         'basil_for_lembaga_berjalan'    => $basil_for_lembaga_bulan_berjalan,
                         'status_pembayaran'             => 1,
                         'is_change'                     => 1,
-                        'is_withdrawal'                 => 1,
+                        // 'is_withdrawal'                 => 1,
                     );
 
                     $this->Sumberdana_model->update($sumber_dana->id_sumber_dana, $new_sumber_dana_deposito);
@@ -829,6 +871,7 @@ class Deposito extends CI_Controller
                     $this->Pembiayaan_model->update($sumber_dana->pembiayaan_id, array('sumber_dana' => 2));
                 }
 
+
             }
 
             // Get total basil for deposan berjalan by id deposito
@@ -838,6 +881,10 @@ class Deposito extends CI_Controller
             $riwayat_bagi_hasil = $deposito->riwayat_bagi_hasil + $get_basil_for_deposan_berjalan;
 
             $this->Deposito_model->update($id_deposito, array('riwayat_bagi_hasil' => $riwayat_bagi_hasil));
+
+            foreach ($data_sumber_dana as $sumber_dana) {
+                $this->Sumberdana_model->update($sumber_dana->id_sumber_dana, array('is_withdrawal' => 1));
+            }
 
             // Tambah riwayat penarikan di database tabel penarikan
             // Membandingkan tanggal hari ini dengan tgl jatuh tempo
@@ -877,5 +924,49 @@ class Deposito extends CI_Controller
         $this->data['riwayat_penarikan'] = $this->Penarikan_model->get_riwayat_penarikan_by_deposan($id_deposito);
 
         $this->load->view('back/deposito/v_riwayat_penarikan_by_deposan_list', $this->data);
+    }
+
+    function konversi_jangka_waktu_deposito()
+    {
+        $today             = date("Y/m/d");
+        $tahun             = $this->uri->segment(4);
+        $konversi          = mktime(0,0,0,date("n"),date("j"),date("Y")+$tahun);
+        $tahun_depan       = date("Y/m/d", $konversi);
+
+        $output['hasil_konversi'] = $tahun_depan;
+        $output['today'] = $today;
+        $output['review_hasil_konversi'] = date_indonesian_only($tahun_depan);
+        $output['review_today'] = date_indonesian_only($today);
+
+        echo json_encode($output);
+    }
+
+    function renew_jangka_waktu_action()
+    {
+        $this->form_validation->set_rules('masa_aktif', 'Jangka Waktu', 'is_numeric|required');
+
+        $this->form_validation->set_message('required', '{field} wajib diisi');
+        $this->form_validation->set_message('is_numeric', '{field} harus angka');
+
+        $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->index();
+        } else {
+            $data = array(
+                'jangka_waktu'      => $this->input->post('masa_aktif'),
+                'waktu_deposito'    => $this->input->post('data_waktu_deposito'),
+                'jatuh_tempo'       => $this->input->post('data_jatuh_tempo'),
+                'is_active'         => 1,
+                'is_withdrawal'     => 0,
+            );
+
+            $this->Deposito_model->update($this->input->post('deposito_id'), $data);
+
+            write_log();
+
+            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data Berhasil Disimpan!</b></h6></div>');
+            redirect('admin/deposito/index');
+        }
     }
 }
