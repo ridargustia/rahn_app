@@ -102,6 +102,19 @@ class Sumberdana_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function get_all_by_deposito_non_ischange($id_deposito)
+    {
+        $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.basil_for_deposan, sumber_dana.basil_for_lembaga, sumber_dana.total_basil, sumber_dana.basil_for_deposan_berjalan, sumber_dana.basil_for_lembaga_berjalan, sumber_dana.pembiayaan_id, sumber_dana.persentase, sumber_dana.nominal, pembiayaan.waktu_gadai, pembiayaan.total_biaya_sewa, pembiayaan.jangka_waktu_pinjam');
+
+        $this->db->join('pembiayaan', 'sumber_dana.pembiayaan_id = pembiayaan.id_pembiayaan');
+
+        $this->db->where('sumber_dana.deposito_id', $id_deposito);
+        $this->db->where('sumber_dana.is_change', 0);
+        $this->db->where('sumber_dana.is_delete_sumber_dana', 0);
+
+        return $this->db->get($this->table)->result();
+    }
+
     function get_deposan_by_pembiayaan($id_pembiayaan)
     {
         $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.persentase, sumber_dana.nominal, sumber_dana.total_basil, sumber_dana.basil_for_deposan, sumber_dana.basil_for_lembaga, deposito.name, sumber_dana.deposito_id');

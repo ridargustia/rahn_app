@@ -608,6 +608,7 @@ class Deposito extends CI_Controller
 
             // Get all data sumberdana by deposito id
             $data_sumber_dana = $this->Sumberdana_model->get_all_by_deposito($id_deposito);
+            $data_sumber_dana_non_ischange = $this->Sumberdana_model->get_all_by_deposito_non_ischange($id_deposito);
 
             // Deklarasi Variabel
             $resapan_tabungan_instansi = $deposito->instansi_resapan_tabungan;
@@ -882,7 +883,7 @@ class Deposito extends CI_Controller
 
             $this->Deposito_model->update($id_deposito, array('riwayat_bagi_hasil' => $riwayat_bagi_hasil));
 
-            foreach ($data_sumber_dana as $sumber_dana) {
+            foreach ($data_sumber_dana_non_ischange as $sumber_dana) {
                 $this->Sumberdana_model->update($sumber_dana->id_sumber_dana, array('is_withdrawal' => 1));
             }
 
