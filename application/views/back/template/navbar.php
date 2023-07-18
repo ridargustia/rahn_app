@@ -85,6 +85,54 @@
                     <a class="dropdown-item text-center small text-gray-500" href="<?php echo base_url("admin/pembayaran/riwayat_pembayaran_anggota") ?>">Show All Notification</a>
                 </div>
             </li>
+        <?php } elseif (is_admin()) { ?>
+            <li class="nav-item dropdown no-arrow mx-1">
+                <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-bell fa-fw"></i>
+                    <?php echo (check_masa_aktif_deposito()) ? '<span class="badge badge-danger badge-counter">1</span>' : '' ?>
+                </a>
+                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                aria-labelledby="alertsDropdown">
+                    <h6 class="dropdown-header">
+                        Notifikasi
+                    </h6>
+                    <?php if (check_masa_aktif_deposito()) { ?>
+                        <a class="dropdown-item d-flex align-items-center" href="#">
+                            <?php if (check_masa_aktif_deposito()->is_active == 0) { ?>
+                                <div class="mr-3">
+                                    <div class="icon-circle bg-danger">
+                                        <i class="fas fa-exclamation-triangle text-white"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="small text-gray-500"><?php echo date_indonesian_only(date('Y-m-d', strtotime('-1 month', strtotime(check_masa_aktif_deposito()->jatuh_tempo)))) ?></div>
+                                    <span class="font-weight-bold">Masa Aktif Deposito anda telah habis pada tanggal <?php echo date_indonesian_only(check_masa_aktif_deposito()->jatuh_tempo) ?></span>, silahkan lakukan perpanjangan.
+                                </div>
+                            <?php } else { ?>
+                                <div class="mr-3">
+                                    <div class="icon-circle bg-warning">
+                                        <i class="fas fa-exclamation-triangle text-white"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="small text-gray-500"><?php echo date_indonesian_only(date('Y-m-d', strtotime('-1 month', strtotime(check_masa_aktif_deposito()->jatuh_tempo)))) ?></div>
+                                    <span class="font-weight-bold">Masa Aktif Deposito anda akan habis pada tanggal <?php echo date_indonesian_only(check_masa_aktif_deposito()->jatuh_tempo) ?></span>, silahkan lakukan perpanjangan.
+                                </div>
+                            <?php } ?>
+                        </a>
+                    <?php } else { ?>
+                        <div class="row text-center p-4">
+                            <div class="col-md-12 mb-2">
+                                <img src="<?php echo base_url() ?>assets/images/empty_data.svg" style="max-height: 70px; opacity:.5;">
+                            </div>
+                            <div class="col-md-12">
+                                <div class="text-gray-500">Empty Notification</div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </li>
         <?php } ?>
         <div class="topbar-divider d-none d-sm-block"></div>
         <li class="nav-item dropdown no-arrow">

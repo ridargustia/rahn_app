@@ -51,19 +51,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="dateRangePicker">Jangka Waktu Deposito</label>
-                    <div class="input-daterange input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                        </div>
-                        <?php echo form_input($waktu_deposito) ?>
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">-</span>
-                        </div>
-                        <?php echo form_input($jatuh_tempo) ?>
-                    </div>
-                </div>
                 <!-- Content -->
             </div>
             <?php echo form_input($id_deposito) ?>

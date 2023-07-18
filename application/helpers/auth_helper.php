@@ -154,3 +154,25 @@ function check_active_deposan()
   $CI->Deposito_model->check_activated();
 
 }
+
+function check_masa_aktif_deposito()
+{
+  $CI = &get_instance();
+
+  $deposito = $CI->Deposito_model->get_by_user($CI->session->id_users);
+
+  if ($deposito) {
+    // Status Jatuh Tempo
+    $jatuh_tempo = strtotime($deposito->jatuh_tempo);
+    $today = strtotime(date('Y-m-d'));
+
+    $different_time = (date("Y", $jatuh_tempo) - date("Y", $today)) * 12;
+    $different_time += date("m", $jatuh_tempo) - date("m", $today);
+
+    if ($different_time <= 1) {
+      return $deposito;
+    }
+  }
+
+  return false;
+}
