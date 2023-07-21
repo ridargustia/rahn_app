@@ -115,6 +115,16 @@ class Sumberdana_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function get_all_sumberdana_by_deposito($id_deposito)
+    {
+        $this->db->select('sumber_dana.id_sumber_dana');
+
+        $this->db->where('sumber_dana.deposito_id', $id_deposito);
+        $this->db->where('sumber_dana.is_delete_sumber_dana', 0);
+
+        return $this->db->get($this->table)->result();
+    }
+
     function get_deposan_by_pembiayaan($id_pembiayaan)
     {
         $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.persentase, sumber_dana.nominal, sumber_dana.total_basil, sumber_dana.basil_for_deposan, sumber_dana.basil_for_lembaga, deposito.name, sumber_dana.deposito_id');

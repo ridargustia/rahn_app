@@ -53,6 +53,7 @@ class Deposito extends CI_Controller
 
         $this->data['action']                   = 'admin/deposito/update_action';
         $this->data['action_jangka_waktu']      = 'admin/deposito/renew_jangka_waktu_action';
+        $this->data['action_tarik_basil']       = 'admin/deposito/tarik_basil';
 
         $this->data['id_deposito'] = [
             'name'          => 'id_deposito',
@@ -165,12 +166,25 @@ class Deposito extends CI_Controller
             'id'            => 'data_jatuh_tempo',
             'type'          => 'hidden',
         ];
+        // Perpanjang Masa Aktif
+
         $this->data['deposito_id'] = [
             'name'          => 'deposito_id',
             'id'            => 'deposito_id',
             'type'          => 'hidden',
         ];
-        // Perpanjang Masa Aktif
+
+        // Tarik Basil Modal
+        $this->data['nominal'] = [
+            'name'          => 'nominal',
+            'id'            => 'nominal',
+            'class'         => 'form-control',
+            'autocomplete'  => 'off',
+            'required'      => '',
+            'value'         => $this->form_validation->set_value('nominal'),
+            'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
+        ];
+        // Tarik Basil Modal
 
         $this->load->view('back/deposito/deposito_list', $this->data);
     }
@@ -596,7 +610,7 @@ class Deposito extends CI_Controller
         $this->load->view('back/deposito/v_component_dropdown', $this->data);
     }
 
-    function tarik_basil($id_deposito)
+    function tarik_deposito($id_deposito)
     {
         // Get deposito by id
         $deposito = $this->Deposito_model->get_deposito_by_id($id_deposito);
@@ -914,7 +928,53 @@ class Deposito extends CI_Controller
             // Simpan ke database
             $this->Penarikan_model->insert($data_penarikan);
 
-            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Berhasil Tarik Tunai Basil.</b></h6></div>');
+            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Berhasil Tarik Tunai Deposito.</b></h6></div>');
+            redirect('admin/deposito/index');
+        } else {
+            $data_sumber_dana = $this->Sumberdana_model->get_all_sumberdana_by_deposito($id_deposito);
+
+            $this->Deposito_model->update($id_deposito, array('is_withdrawal' => 1));
+
+            // Get total basil for deposan berjalan by id deposito
+            $get_basil_for_deposan_berjalan = $this->Sumberdana_model->get_basil_for_deposan_berjalan($id_deposito)->basil_for_deposan_berjalan;
+
+            // Update kolom riwayat bagi hasil pada tabel deposito
+            $riwayat_bagi_hasil = $deposito->riwayat_bagi_hasil + $get_basil_for_deposan_berjalan;
+
+            $this->Deposito_model->update($id_deposito, array('riwayat_bagi_hasil' => $riwayat_bagi_hasil));
+
+            foreach ($data_sumber_dana as $sumber_dana) {
+                $this->Sumberdana_model->update($sumber_dana->id_sumber_dana, array('is_withdrawal' => 1));
+            }
+
+            // Tambah riwayat penarikan di database tabel penarikan
+            // Membandingkan tanggal hari ini dengan tgl jatuh tempo
+            if (strtotime(date('Y-m-d')) > strtotime($deposito->jatuh_tempo)) {
+                $status = 0;
+            } elseif (strtotime(date('Y-m-d')) < strtotime($deposito->jatuh_tempo)) {
+                $status = 1;
+            }
+
+            //Generate kode/no penarikan
+            $get_last_id = (int) $this->db->query('SELECT max(id_penarikan) as last_id FROM penarikan')->row()->last_id;
+            $get_last_id++;
+            $random = mt_rand(10, 99);
+            $no_penarikan = $random . sprintf("%04s", $get_last_id);
+
+            // Tambahkan pada variabel array
+            $data_penarikan = array(
+                'no_penarikan'  => $no_penarikan,
+                'deposito_id'   => $id_deposito,
+                'jml_penarikan' => $get_basil_for_deposan_berjalan,
+                'status'        => $status,
+                'jatuh_tempo'   => $deposito->jatuh_tempo,
+                'created_by'    => $this->session->username,
+            );
+
+            // Simpan ke database
+            $this->Penarikan_model->insert($data_penarikan);
+
+            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Berhasil Tarik Tunai Deposito.</b></h6></div>');
             redirect('admin/deposito/index');
         }
 
@@ -969,5 +1029,28 @@ class Deposito extends CI_Controller
             $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Data Berhasil Disimpan!</b></h6></div>');
             redirect('admin/deposito/index');
         }
+    }
+
+    function validasi_nominal_tarik_basil($nominal="", $deposito_id="")
+    {
+        // Get total basil for deposan berjalan by id deposito
+        $get_basil_for_deposan_berjalan = $this->Sumberdana_model->get_basil_for_deposan_berjalan($deposito_id)->basil_for_deposan_berjalan;
+
+        $nominal_penarikan = preg_replace("/[^0-9]/", "", $nominal);
+
+        if ($nominal_penarikan > $get_basil_for_deposan_berjalan) {
+            $is_valid = 0;
+        } else {
+            $is_valid = 1;
+        }
+
+        $output['is_valid'] = $is_valid;
+
+        echo json_encode($output);
+    }
+
+    function tarik_basil()
+    {
+
     }
 }

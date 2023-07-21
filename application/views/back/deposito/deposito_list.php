@@ -83,6 +83,16 @@
             max-width: 100%;
         }
     }
+
+    #tarikBasilModal .width-modal {
+        max-width: 40%;
+    }
+
+    @media screen and (max-width: 992px) {
+        #tarikBasilModal .width-modal {
+            max-width: 100%;
+        }
+    }
 </style>
 </head>
 <!-- Meta -->
@@ -137,7 +147,7 @@
                                                 <th>Jumlah Deposito</th>
                                                 <th>Status</th>
                                                 <th>Jatuh Tempo</th>
-                                                <th>Basil</th>
+                                                <th>Basil Berjalan</th>
                                                 <th width="40px">Aksi</th>
                                             </tr>
                                         </thead>
@@ -151,7 +161,9 @@
                                                 $different_time = (date("Y", $jatuh_tempo) - date("Y", $today)) * 12;
                                                 $different_time += date("m", $jatuh_tempo) - date("m", $today);
 
-                                                if ($data->is_active == 0) {
+                                                if ($data->is_active == 0 and $data->is_withdrawal == 1 and $different_time >= 0) {
+                                                    $btn_jatuh_tempo = '<span class="btn btn-sm btn-danger btn-block">' . date_indonesian_only($data->jatuh_tempo) . '</span>';
+                                                } elseif ($data->is_active == 0 and $data->is_withdrawal == 0 and $different_time <= 0) {
                                                     $btn_jatuh_tempo = '<a href="#" id="perpanjang-masa-aktif" data-toggle="modal" data-target="#perpanjangDepositoModal" data-id_deposito="' . $data->id_deposito . '"><div class="my-flip-card" tabIndex="0"><div class="my-flip-card-inner"><div class="my-flip-card-front"><span class="btn btn-sm btn-danger btn-block"><b>' . date_indonesian_only($data->jatuh_tempo) . '</b></span></div><div class="my-flip-card-back"><span class="btn btn-sm btn-success btn-block"><b>Perpanjang</b></span></div></div></div></a>';
                                                 } elseif ($different_time <= 1) {
                                                     $btn_jatuh_tempo = '<a href="#" id="perpanjang-masa-aktif" data-toggle="modal" data-target="#perpanjangDepositoModal" data-id_deposito="' . $data->id_deposito . '"><div class="my-flip-card" tabIndex="0"><div class="my-flip-card-inner"><div class="my-flip-card-front"><span class="btn btn-sm btn-warning btn-block"><b>' . date_indonesian_only($data->jatuh_tempo) . '</b></span></div><div class="my-flip-card-back"><span class="btn btn-sm btn-success btn-block"><b>Perpanjang</b></span></div></div></div></a>';
@@ -180,18 +192,25 @@
                                                 $detail = '<a href="#" id="detailDeposito" class="btn btn-sm btn-info" title="Detail Data" data-toggle="modal" data-target="#detailModal" data-id_deposito="' . $data->id_deposito . '" data-name="' . $data->name . '" data-nik="' . $data->nik . '" data-address="' . $data->address . '" data-email="' . $data->email . '" data-phone="' . $data->phone . '" data-total_deposito="' . number_format($data->total_deposito, 0, ',', '.') . '" data-resapan_deposito="' . number_format($data->resapan_deposito, 0, ',', '.') . '" data-saldo_deposito="' . number_format($data->saldo_deposito, 0, ',', '.') . '" data-jangka_waktu="' . $data->jangka_waktu . '" data-waktu_deposito="' . date_indonesian_only($data->waktu_deposito) . '" data-jatuh_tempo="' . date_indonesian_only($data->jatuh_tempo) . '" data-bagi_hasil="' . $data->bagi_hasil . '" data-instansi_name="' . $data->instansi_name . '" data-cabang_name="' . $data->cabang_name . '" data-created_by="' . $data->created_by . '" data-notif_is_active="' . $notif_is_active . '"><i class="fas fa-info-circle"></i></a>';
 
                                                 if ($data->is_withdrawal == 0) {
-                                                    if ($basil_deposan_berjalan->basil_for_deposan_berjalan > 0) {
-                                                        $tarik_basil = '<a href="' . base_url('admin/deposito/tarik_basil/' . $data->id_deposito) . '" id="konfirmasi-tarik-basil"><div class="my-flip-card" tabIndex="0"><div class="my-flip-card-inner"><div class="my-flip-card-front"><span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '</b></span></div><div class="my-flip-card-back"><span class="btn btn-sm btn-success btn-block"><b>Tarik Basil</b></span></div></div></div></a>';
+                                                    if ($data->total_deposito > 0) {
+                                                        $tarik_deposito = '<a href="' . base_url('admin/deposito/tarik_deposito/' . $data->id_deposito) . '" id="konfirmasi-tarik-deposito"><div class="my-flip-card" tabIndex="0"><div class="my-flip-card-inner"><div class="my-flip-card-front"><span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($data->total_deposito, 0, ',', '.') . '</b></span></div><div class="my-flip-card-back"><span class="btn btn-sm btn-success btn-block"><b>Tarik Deposito</b></span></div></div></div></a>';
                                                     } else {
-                                                        $tarik_basil = '<span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '</b></span>';
+                                                        $tarik_deposito = '<span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($data->total_deposito, 0, ',', '.') . '</b></span>';
                                                     }
                                                 } else {
-                                                    $tarik_basil = '<a href="#"><div class="my-flip-card" tabIndex="0"><div class="my-flip-card-inner"><div class="my-flip-card-front"><span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '</b></span></div><div class="my-flip-card-back"><span class="btn btn-sm btn-danger btn-block"><b>Telah Ditarik</b></span></div></div></div></a>';
+                                                    $tarik_deposito = '<a href="#"><div class="my-flip-card" tabIndex="0"><div class="my-flip-card-inner"><div class="my-flip-card-front"><span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($data->total_deposito, 0, ',', '.') . '</b></span></div><div class="my-flip-card-back"><span class="btn btn-sm btn-danger btn-block"><b>Telah Ditarik</b></span></div></div></div></a>';
+                                                }
+
+                                                // Tarik Basil
+                                                if ($basil_deposan_berjalan->basil_for_deposan_berjalan > 0) {
+                                                    $tarik_basil = '<a href="#" id="tarik-basil" data-toggle="modal" data-target="#tarikBasilModal" data-id_deposito="' . $data->id_deposito . '" data-basil_berjalan="' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '"><div class="my-flip-card" tabIndex="0"><div class="my-flip-card-inner"><div class="my-flip-card-front"><span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '</b></span></div><div class="my-flip-card-back"><span class="btn btn-sm btn-success btn-block"><b>Tarik Basil</b></span></div></div></div></a>';
+                                                } else {
+                                                    $tarik_basil = '<span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '</b></span>';
                                                 }
                                             ?>
                                                 <tr>
                                                     <td><?php echo $data->name ?></td>
-                                                    <td>Rp. <?php echo number_format($data->total_deposito, 0, ',', '.') ?></td>
+                                                    <td><?php echo $tarik_deposito ?></td>
                                                     <td><?php echo $is_active ?></td>
                                                     <td><?php echo $btn_jatuh_tempo ?></td>
                                                     <td><?php echo $tarik_basil ?></td>
@@ -218,6 +237,10 @@
                     <!-- Modal detail -->
                     <?php $this->load->view('back/deposito/modal_detail'); ?>
                     <!-- Modal detail -->
+
+                    <!-- Modal tarik basil -->
+                    <?php $this->load->view('back/deposito/modal_tarik_basil'); ?>
+                    <!-- Modal tarik basil -->
 
                     <!-- Modal perpanjang deposito -->
                     <?php $this->load->view('back/deposito/modal_perpanjang_deposito'); ?>
@@ -285,6 +308,12 @@
             $('#dataTableHover').DataTable({
                 ordering: false
             }); // ID From dataTable with Hover
+
+            $('#nominal').maskMoney({
+                thousands: '.',
+                decimal: ',',
+                precision: 0
+            });
         });
 
         $(document).ready(function() {
@@ -366,6 +395,13 @@
                 $('#deposito_id').val(id_deposito);
             });
 
+            $(document).on('click', '#tarik-basil', function() {
+                const id_deposito = $(this).data('id_deposito');
+                const basil_berjalan = $(this).data('basil_berjalan');
+                $('#deposito_id').val(id_deposito);
+                $('.basil_berjalan').text(basil_berjalan);
+            });
+
             $(document).on('click', '#showDaftar', function() {
                 const id_deposito = $(this).val();
 
@@ -419,6 +455,31 @@
                     $('#perpanjang_jatuh_tempo').val(myObj.review_hasil_konversi);
                     $('#data_waktu_deposito').val(myObj.today);
                     $('#data_jatuh_tempo').val(myObj.hasil_konversi);
+                }
+            });
+        });
+
+        $('#nominal').on('keyup', function() {
+            $("#nominal").removeClass("is-valid");
+            $("#nominal").removeClass("is-invalid");
+
+            nominal = document.getElementById("nominal").value;
+            deposito_id = document.getElementById("deposito_id").value;
+
+            $.ajax({
+                url: "<?php echo base_url('admin/deposito/validasi_nominal_tarik_basil/') ?>" + nominal + "/" + deposito_id,
+                success: function(response) {
+                    var myObj = JSON.parse(response);
+
+                    if (nominal == '' || nominal == "0") {
+                        $("#button").html('<button type="submit" class="btn btn-primary" style="cursor: not-allowed;" disabled>Tarik Basil</button>');
+                    } else if (myObj.is_valid == 0) {
+                        $("#nominal").addClass("is-invalid");
+                        $("#button").html('<button type="submit" class="btn btn-primary" style="cursor: not-allowed;" disabled>Tarik Basil</button>');
+                    } else if (myObj.is_valid == 1) {
+                        $("#nominal").addClass("is-valid");
+                        $("#button").html('<button type="submit" class="btn btn-primary">Tarik Basil</button>');
+                    }
                 }
             });
         });

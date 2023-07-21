@@ -65,13 +65,13 @@
         })
     });
 
-    $(document).on('click', '#konfirmasi-tarik-basil', function(e) {
+    $(document).on('click', '#konfirmasi-tarik-deposito', function(e) {
         e.preventDefault();
         const link = $(this).attr('href');
 
         Swal.fire({
-            title: 'Konfirmasi Tarik Basil',
-            text: "Apakah anda yakin akan melakukan tarik tunai basil?",
+            title: 'Konfirmasi Tarik Deposito',
+            text: "Apakah anda yakin akan melakukan tarik Deposito?",
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#00a65a',
