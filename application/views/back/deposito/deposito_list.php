@@ -172,7 +172,8 @@
                                                 }
 
                                                 // Get basil for deposan berjalan
-                                                $basil_deposan_berjalan = $this->Sumberdana_model->get_basil_for_deposan_berjalan($data->id_deposito);
+                                                // $basil_deposan_berjalan = $this->Sumberdana_model->get_basil_for_deposan_berjalan($data->id_deposito);
+                                                $basil_deposan_berjalan = $this->Sumberdana_model->get_basil_for_deposan_bulan_berjalan($data->id_deposito);
 
                                                 // CHECK STATUS DEPOSITO
                                                 if ($data->is_withdrawal == 1) {
@@ -202,10 +203,10 @@
                                                 }
 
                                                 // Tarik Basil
-                                                if ($basil_deposan_berjalan->basil_for_deposan_berjalan > 0) {
-                                                    $tarik_basil = '<a href="#" id="tarik-basil" data-toggle="modal" data-target="#tarikBasilModal" data-id_deposito="' . $data->id_deposito . '" data-basil_berjalan="' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '"><div class="my-flip-card" tabIndex="0"><div class="my-flip-card-inner"><div class="my-flip-card-front"><span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '</b></span></div><div class="my-flip-card-back"><span class="btn btn-sm btn-success btn-block"><b>Tarik Basil</b></span></div></div></div></a>';
+                                                if ($basil_deposan_berjalan > 0) {
+                                                    $tarik_basil = '<a href="#" id="tarik-basil" data-toggle="modal" data-target="#tarikBasilModal" data-id_deposito="' . $data->id_deposito . '" data-basil_berjalan="' . number_format($basil_deposan_berjalan, 0, ',', '.') . '"><div class="my-flip-card" tabIndex="0"><div class="my-flip-card-inner"><div class="my-flip-card-front"><span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan, 0, ',', '.') . '</b></span></div><div class="my-flip-card-back"><span class="btn btn-sm btn-success btn-block"><b>Tarik Basil</b></span></div></div></div></a>';
                                                 } else {
-                                                    $tarik_basil = '<span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan->basil_for_deposan_berjalan, 0, ',', '.') . '</b></span>';
+                                                    $tarik_basil = '<span class="btn btn-sm btn-info btn-block"><b>Rp. ' . number_format($basil_deposan_berjalan, 0, ',', '.') . '</b></span>';
                                                 }
                                             ?>
                                                 <tr>
@@ -365,6 +366,7 @@
                 const notif_is_active = $(this).data('notif_is_active');
                 $('#showDaftar').val(id_deposito);
                 $('#showDaftarRiwayatPenarikan').val(id_deposito);
+                $('#showDaftarRiwayatPenarikanBasil').val(id_deposito);
                 $('.name').text(name);
                 $('.nik').text(nik);
                 $('.address').text(address);
@@ -412,6 +414,20 @@
                     },
                     success: function(data) {
                         $("#showPenggunaDana").html(data);
+                    },
+                });
+            });
+
+            $(document).on('click', '#showDaftarRiwayatPenarikanBasil', function() {
+                const id_deposito = $(this).val();
+
+                jQuery.ajax({
+                    url: "<?php echo base_url('admin/deposito/get_riwayat_penarikan_basil_by_deposan/') ?>" + id_deposito,
+                    beforeSend: function(data) {
+                        $("#showRiwayatPenarikanBasil").html('<center><h1><i class="fa fa-spin fa-spinner" /></h1></center>');
+                    },
+                    success: function(data) {
+                        $("#showRiwayatPenarikanBasil").html(data);
                     },
                 });
             });

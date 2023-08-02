@@ -125,6 +125,19 @@ class Sumberdana_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function get_all_sumberdana_by_deposito_non_iswithdrawal($id_deposito)
+    {
+        $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.basil_for_deposan_berjalan, sumber_dana.basil_for_deposan, sumber_dana.status_pembayaran, pembiayaan.waktu_gadai, pembiayaan.jangka_waktu_pinjam');
+
+        $this->db->join('pembiayaan', 'sumber_dana.pembiayaan_id = pembiayaan.id_pembiayaan');
+
+        $this->db->where('sumber_dana.deposito_id', $id_deposito);
+        $this->db->where('sumber_dana.is_withdrawal', 0);
+        $this->db->where('sumber_dana.is_delete_sumber_dana', 0);
+
+        return $this->db->get($this->table)->result();
+    }
+
     function get_deposan_by_pembiayaan($id_pembiayaan)
     {
         $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.persentase, sumber_dana.nominal, sumber_dana.total_basil, sumber_dana.basil_for_deposan, sumber_dana.basil_for_lembaga, deposito.name, sumber_dana.deposito_id');
@@ -218,6 +231,56 @@ class Sumberdana_model extends CI_Model
     function get_basil_for_deposan_berjalan($id_deposito)
     {
         return $this->db->query('SELECT sum(basil_for_deposan_berjalan) AS basil_for_deposan_berjalan from sumber_dana where deposito_id = ' . $id_deposito . ' and is_withdrawal = 0')->row();
+    }
+
+    function get_basil_for_deposan_bulan_berjalan($id_deposito)
+    {
+        $this->db->select('sumber_dana.id_sumber_dana, sumber_dana.basil_for_deposan, sumber_dana.basil_for_deposan_berjalan, sumber_dana.status_pembayaran, pembiayaan.waktu_gadai, pembiayaan.jangka_waktu_pinjam');
+
+        $this->db->join('pembiayaan', 'sumber_dana.pembiayaan_id = pembiayaan.id_pembiayaan');
+
+        $this->db->where('sumber_dana.deposito_id', $id_deposito);
+        // $this->db->where('sumber_dana.status_pembayaran', 0);
+        $this->db->where('sumber_dana.is_withdrawal', 0);
+
+        $result = $this->db->get($this->table)->result();
+
+        $result_basil_for_deposan = 0;
+
+        foreach ($result as $data) {
+            if ($data->status_pembayaran == 0) {
+                // Hitung selisih bulan
+                $waktu_gadai = strtotime($data->waktu_gadai);
+                $today = strtotime(date('Y-m-d'));
+
+                $different_time = (date("Y", $today) - date("Y", $waktu_gadai)) * 12;
+                $different_time += date("m", $today) - date("m", $waktu_gadai);
+
+                if ($different_time > 0) {
+                    $basil_for_deposan_bulan_berjalan = $data->basil_for_deposan / $data->jangka_waktu_pinjam * $different_time;
+
+                    if ($basil_for_deposan_bulan_berjalan <= $data->basil_for_deposan_berjalan) {
+                        $result_basil_for_deposan += $basil_for_deposan_bulan_berjalan;
+                    } else {
+                        $result_basil_for_deposan += $data->basil_for_deposan_berjalan;
+                    }
+
+                } elseif ($different_time == 0) {
+                    $basil_for_deposan_bulan_berjalan = $data->basil_for_deposan / $data->jangka_waktu_pinjam;
+
+                    if ($basil_for_deposan_bulan_berjalan <= $data->basil_for_deposan_berjalan) {
+                        $result_basil_for_deposan += $basil_for_deposan_bulan_berjalan;
+                    } else {
+                        $result_basil_for_deposan += $data->basil_for_deposan_berjalan;
+                    }
+                }
+            } elseif ($data->status_pembayaran == 1) {
+                $result_basil_for_deposan += $data->basil_for_deposan_berjalan;
+            }
+
+        }
+
+        return $result_basil_for_deposan;
     }
 
     function get_basil_tabungan_for_lembaga_berjalan()

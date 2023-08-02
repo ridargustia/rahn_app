@@ -980,6 +980,13 @@ class Deposito extends CI_Controller
 
     }
 
+    function get_riwayat_penarikan_basil_by_deposan($id_deposito)
+    {
+        $this->data['riwayat_penarikan_basil'] = $this->Penarikanbasil_model->get_riwayat_penarikan_basil_by_deposan($id_deposito);
+
+        $this->load->view('back/deposito/v_riwayat_penarikan_basil_by_deposan_list', $this->data);
+    }
+
     function get_riwayat_penarikan_by_deposan($id_deposito)
     {
         $this->data['riwayat_penarikan'] = $this->Penarikan_model->get_riwayat_penarikan_by_deposan($id_deposito);
@@ -1051,6 +1058,95 @@ class Deposito extends CI_Controller
 
     function tarik_basil()
     {
+        $nominal_penarikan = preg_replace("/[^0-9]/", "", $this->input->post('nominal'));
 
+        //Generate kode/no penarikan
+        $get_last_id = (int) $this->db->query('SELECT max(id_penarikan_basil) as last_id FROM penarikan_basil')->row()->last_id;
+        $get_last_id++;
+        $random = mt_rand(10, 99);
+        $no_penarikan = $random . sprintf("%04s", $get_last_id);
+
+        $data = array(
+            'no_penarikan'  => $no_penarikan,
+            'deposito_id'   => $this->input->post('deposito_id'),
+            'jml_penarikan' => $nominal_penarikan,
+            'created_by'    => $this->session->username,
+        );
+
+        $this->Penarikanbasil_model->insert($data);
+
+        $sumber_dana = $this->Sumberdana_model->get_all_sumberdana_by_deposito_non_iswithdrawal($this->input->post('deposito_id'));
+
+        foreach ($sumber_dana as $data) {
+            // Hitung selisih bulan
+            $waktu_gadai = strtotime($data->waktu_gadai);
+            $today = strtotime(date('Y-m-d'));
+
+            $different_time = (date("Y", $today) - date("Y", $waktu_gadai)) * 12;
+            $different_time += date("m", $today) - date("m", $waktu_gadai);
+
+            if ($different_time > 0) {
+                $basil_for_deposan_bulan_berjalan = $data->basil_for_deposan / $data->jangka_waktu_pinjam * $different_time;
+
+            } elseif ($different_time == 0) {
+                $basil_for_deposan_bulan_berjalan = $data->basil_for_deposan / $data->jangka_waktu_pinjam;
+
+            }
+
+            if ($data->status_pembayaran == 0) {
+                if ($basil_for_deposan_bulan_berjalan <= $data->basil_for_deposan_berjalan) {
+                    $result_basil_for_deposan_berjalan = $basil_for_deposan_bulan_berjalan - $nominal_penarikan;
+                    $update_basil_for_deposan_berjalan = $data->basil_for_deposan_berjalan - $nominal_penarikan;
+                } else {
+                    $result_basil_for_deposan_berjalan = $data->basil_for_deposan_berjalan - $nominal_penarikan;
+                    $update_basil_for_deposan_berjalan = $result_basil_for_deposan_berjalan;
+                }
+
+            } elseif ($data->status_pembayaran == 1) {
+                $result_basil_for_deposan_berjalan = $data->basil_for_deposan_berjalan - $nominal_penarikan;
+                $update_basil_for_deposan_berjalan = $result_basil_for_deposan_berjalan;
+                $update_basil_for_deposan = $data->basil_for_deposan - $data->basil_for_deposan_berjalan;
+                $new_basil_for_deposan_berjalan = 0;
+                // var_dump($data->id_sumber_dana); die();
+            }
+
+            if ($result_basil_for_deposan_berjalan >= 0) {
+                $result_basil_for_deposan = $data->basil_for_deposan - $nominal_penarikan;
+
+                $data_update = array(
+                    'basil_for_deposan'             => $result_basil_for_deposan,
+                    'basil_for_deposan_berjalan'    => $update_basil_for_deposan_berjalan,
+                    // 'is_withdrawal'                 => 1,
+                );
+
+                $this->Sumberdana_model->update($data->id_sumber_dana, $data_update);
+                break;
+            } else {
+                if ($data->status_pembayaran == 0) {
+                    if ($basil_for_deposan_bulan_berjalan <= $data->basil_for_deposan_berjalan) {
+                        $update_basil_for_deposan = $data->basil_for_deposan - $basil_for_deposan_bulan_berjalan;
+                        $new_basil_for_deposan_berjalan = $data->basil_for_deposan_berjalan - $basil_for_deposan_bulan_berjalan;
+                    } else {
+                        $update_basil_for_deposan = $data->basil_for_deposan - $data->basil_for_deposan_berjalan;
+                        $new_basil_for_deposan_berjalan = 0;
+                    }
+                }
+
+                $data_update = array(
+                    'basil_for_deposan'             => $update_basil_for_deposan,
+                    'basil_for_deposan_berjalan'    => $new_basil_for_deposan_berjalan,
+                    // 'is_withdrawal'                 => 1,
+                );
+
+                $this->Sumberdana_model->update($data->id_sumber_dana, $data_update);
+
+                $nominal_penarikan = - ($result_basil_for_deposan_berjalan);
+            }
+        }
+
+        write_log();
+
+        $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Penarikan Basil Sukses!</b></h6></div>');
+        redirect('admin/deposito/index');
     }
 }

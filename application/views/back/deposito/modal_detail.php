@@ -85,6 +85,9 @@
                 <h6 class="ml-2 font-weight-bold text-primary display">RIWAYAT PENGGUNA DANA</h6> <a href="#" id="showDaftar" class="badge badge-info">Lihat Daftar</a>
                 <div id="showPenggunaDana"></div>
                 <br>
+                <h6 class="ml-2 font-weight-bold text-primary display">RIWAYAT PENARIKAN BASIL</h6> <a href="#" id="showDaftarRiwayatPenarikanBasil" class="badge badge-info">Lihat Daftar</a>
+                <div id="showRiwayatPenarikanBasil"></div>
+                <br>
                 <h6 class="ml-2 font-weight-bold text-primary display">RIWAYAT PENARIKAN DEPOSITO</h6> <a href="#" id="showDaftarRiwayatPenarikan" class="badge badge-info">Lihat Daftar</a>
                 <div id="showRiwayatPenarikan"></div>
             </div>

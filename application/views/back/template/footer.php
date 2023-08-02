@@ -71,7 +71,7 @@
 
         Swal.fire({
             title: 'Konfirmasi Tarik Deposito',
-            text: "Apakah anda yakin akan melakukan tarik Deposito?",
+            text: "Apakah anda yakin akan melakukan tarik Deposito? Jika Anda melakukan penarikan Deposito, maka data Deposito ini akan di nonaktifkan dan tidak dapat di aktifkan kembali.",
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#00a65a',
