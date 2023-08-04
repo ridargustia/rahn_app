@@ -1186,8 +1186,8 @@ class Deposito extends CI_Controller
 
         if (is_grandadmin()) {
             // merge cells
-            $spreadsheet->getActiveSheet()->mergeCells('A1:O1');
-            $spreadsheet->getActiveSheet()->mergeCells('A2:O2');
+            $spreadsheet->getActiveSheet()->mergeCells('A1:P1');
+            $spreadsheet->getActiveSheet()->mergeCells('A2:P2');
             // set warna font
             // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->getColor()->setARGB('FFFF0000');
             $spreadsheet->getActiveSheet()->getStyle('A1')
@@ -1299,18 +1299,18 @@ class Deposito extends CI_Controller
                 $spreadsheet->getActiveSheet()->getStyle('B' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('C' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('D' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
-                $spreadsheet->getActiveSheet()->getStyle('E' . $i)->applyFromArray($styleArray);
-                $spreadsheet->getActiveSheet()->getStyle('F' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('E' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('F' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('G' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
-                $spreadsheet->getActiveSheet()->getStyle('H' . $i)->applyFromArray($styleArray);
-                $spreadsheet->getActiveSheet()->getStyle('I' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('H' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('I' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('J' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('K' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('L' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('M' . $i)->applyFromArray($styleArray);
                 $spreadsheet->getActiveSheet()->getStyle('N' . $i)->applyFromArray($styleArray);
                 $spreadsheet->getActiveSheet()->getStyle('O' . $i)->applyFromArray($styleArray);
-                $spreadsheet->getActiveSheet()->getStyle('P' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('P' . $i)->applyFromArray($styleArray);
 
                 $spreadsheet->setActiveSheetIndex(0)
                     ->setCellValue('A' . $i, $no++)
@@ -1335,8 +1335,8 @@ class Deposito extends CI_Controller
         // jika masteradmin atau superadmin
         elseif (is_masteradmin() OR is_superadmin()) {
             // merge cells
-            $spreadsheet->getActiveSheet()->mergeCells('A1:N1');
-            $spreadsheet->getActiveSheet()->mergeCells('A2:N2');
+            $spreadsheet->getActiveSheet()->mergeCells('A1:O1');
+            $spreadsheet->getActiveSheet()->mergeCells('A2:O2');
             // set warna font
             // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->getColor()->setARGB('FFFF0000');
             $spreadsheet->getActiveSheet()->getStyle('A1')
@@ -1446,17 +1446,17 @@ class Deposito extends CI_Controller
                 $spreadsheet->getActiveSheet()->getStyle('B' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('C' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('D' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
-                $spreadsheet->getActiveSheet()->getStyle('E' . $i)->applyFromArray($styleArray);
-                $spreadsheet->getActiveSheet()->getStyle('F' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('E' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('F' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('G' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
-                $spreadsheet->getActiveSheet()->getStyle('H' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('H' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('I' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('J' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('K' . $i)->applyFromArray($styleArrayLeft);
                 $spreadsheet->getActiveSheet()->getStyle('L' . $i)->applyFromArray($styleArray);
                 $spreadsheet->getActiveSheet()->getStyle('M' . $i)->applyFromArray($styleArray);
                 $spreadsheet->getActiveSheet()->getStyle('N' . $i)->applyFromArray($styleArray);
-                $spreadsheet->getActiveSheet()->getStyle('O' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('O' . $i)->applyFromArray($styleArray);
 
                 $spreadsheet->setActiveSheetIndex(0)
                     ->setCellValue('A' . $i, $no++)
