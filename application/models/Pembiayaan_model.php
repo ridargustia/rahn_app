@@ -402,6 +402,54 @@ class Pembiayaan_model extends CI_Model
         return $this->db->get($this->table)->row();
     }
 
+    function get_all_laporan()
+    {
+        $this->db->select('users.no_anggota, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, instansi.instansi_name, cabang.cabang_name, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, pembiayaan.jenis_barang_gadai, pembiayaan.berat_barang_gadai, pembiayaan.waktu_gadai, pembiayaan.jatuh_tempo_gadai, pembiayaan.sewa_tempat_perbulan, pembiayaan.total_biaya_sewa, pembiayaan.jml_terbayar, pembiayaan.status_pembayaran, pembiayaan.sistem_pembayaran_sewa, pembiayaan.sumber_dana, pembiayaan.created_by, pembiayaan.created_at');
+
+        $this->db->join('users', 'pembiayaan.user_id = users.id_users');
+        $this->db->join('instansi', 'pembiayaan.instansi_id = instansi.id_instansi');
+        $this->db->join('cabang', 'pembiayaan.cabang_id = cabang.id_cabang');
+
+        $this->db->where('pembiayaan.is_delete_pembiayaan', 0);
+
+        $this->db->order_by('pembiayaan.id_pembiayaan', 'ASC');
+
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_by_instansi_laporan()
+    {
+        $this->db->select('users.no_anggota, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, instansi.instansi_name, cabang.cabang_name, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, pembiayaan.jenis_barang_gadai, pembiayaan.berat_barang_gadai, pembiayaan.waktu_gadai, pembiayaan.jatuh_tempo_gadai, pembiayaan.sewa_tempat_perbulan, pembiayaan.total_biaya_sewa, pembiayaan.jml_terbayar, pembiayaan.status_pembayaran, pembiayaan.sistem_pembayaran_sewa, pembiayaan.sumber_dana, pembiayaan.created_by, pembiayaan.created_at');
+
+        $this->db->join('users', 'pembiayaan.user_id = users.id_users');
+        $this->db->join('instansi', 'pembiayaan.instansi_id = instansi.id_instansi');
+        $this->db->join('cabang', 'pembiayaan.cabang_id = cabang.id_cabang');
+
+        $this->db->where('pembiayaan.instansi_id', $this->session->instansi_id);
+        $this->db->where('pembiayaan.is_delete_pembiayaan', 0);
+
+        $this->db->order_by('pembiayaan.id_pembiayaan', 'ASC');
+
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_by_cabang_laporan()
+    {
+        $this->db->select('users.no_anggota, pembiayaan.no_pinjaman, pembiayaan.name, pembiayaan.nik, pembiayaan.address, pembiayaan.email, pembiayaan.phone, instansi.instansi_name, cabang.cabang_name, pembiayaan.jml_pinjaman, pembiayaan.jangka_waktu_pinjam, pembiayaan.jenis_barang_gadai, pembiayaan.berat_barang_gadai, pembiayaan.waktu_gadai, pembiayaan.jatuh_tempo_gadai, pembiayaan.sewa_tempat_perbulan, pembiayaan.total_biaya_sewa, pembiayaan.jml_terbayar, pembiayaan.status_pembayaran, pembiayaan.sistem_pembayaran_sewa, pembiayaan.sumber_dana, pembiayaan.created_by, pembiayaan.created_at');
+
+        $this->db->join('users', 'pembiayaan.user_id = users.id_users');
+        $this->db->join('instansi', 'pembiayaan.instansi_id = instansi.id_instansi');
+        $this->db->join('cabang', 'pembiayaan.cabang_id = cabang.id_cabang');
+
+        $this->db->where('pembiayaan.instansi_id', $this->session->instansi_id);
+        $this->db->where('pembiayaan.cabang_id', $this->session->cabang_id);
+        $this->db->where('pembiayaan.is_delete_pembiayaan', 0);
+
+        $this->db->order_by('pembiayaan.id_pembiayaan', 'ASC');
+
+        return $this->db->get($this->table)->result();
+    }
+
     function get_by_user_id($user_id)
     {
         $this->db->where('user_id', $user_id);

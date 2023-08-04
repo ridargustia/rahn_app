@@ -1,6 +1,12 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+require('vendor/autoload.php');
+
+use PhpOffice\PhpSpreadsheet\Helper\Sample;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
 class Pembiayaan extends CI_Controller
 {
     public function __construct()
@@ -9,6 +15,8 @@ class Pembiayaan extends CI_Controller
 
         $this->data['module'] = 'Pinjaman';
 
+        $this->load->library('Pdf');
+
         $this->data['instansi'] = $this->Instansi_model->get_by_id($this->session->instansi_id);
         $this->data['notifikasi'] = $this->Riwayatpembayaran_model->get_all_non_is_paid()->result();
         $this->data['notifikasi_counter'] = $this->Riwayatpembayaran_model->get_all_non_is_paid()->num_rows();
@@ -16,7 +24,9 @@ class Pembiayaan extends CI_Controller
         $this->data['btn_submit'] = 'Save';
         $this->data['btn_reset']  = 'Reset';
         $this->data['btn_add']    = 'Tambah Data';
+        $this->data['btn_export']    = 'Export to Excel';
         $this->data['add_action'] = base_url('admin/pembiayaan/create');
+        $this->data['export_action'] = base_url('admin/pembiayaan/export');
 
         is_login();
 
@@ -2330,5 +2340,439 @@ class Pembiayaan extends CI_Controller
 
             $this->load->view('back/pembiayaan/v_pembiayaan_anggota_lama', $this->data);
         }
+    }
+
+    function export()
+    {
+        if (is_grandadmin()) {
+            $get_all = $this->Pembiayaan_model->get_all_laporan();
+        } elseif (is_masteradmin()) {
+            $get_all = $this->Pembiayaan_model->get_all_by_instansi_laporan();
+        } elseif (is_superadmin()) {
+            $get_all = $this->Pembiayaan_model->get_all_by_cabang_laporan();
+        }
+
+        // Create new Spreadsheet object
+        $spreadsheet = new Spreadsheet();
+
+        // Set document properties
+        $spreadsheet->getProperties()
+            ->setCreator($this->session->username . '-' . $this->session->instansi_name)
+            ->setLastModifiedBy($this->session->username . '-' . $this->session->instansi_name)
+            ->setTitle('Laporan Data Pembiayaan Keseluruhan - ' . $this->session->instansi_name)
+            ->setSubject('Laporan Data Pembiayaan Keseluruhan - ' . $this->session->instansi_name)
+            ->setCompany($this->session->instansi_name)
+            ->setDescription('Dokumen ini dicetak dari sistem Rahn. Copyright by EDUARSIP. DEVELOPER: Ridar Gustia Priatama (089697641301)')
+            ->setKeywords('office 2007 openxml php')
+            ->setCategory('laporan pembiayaan');
+
+        if (is_grandadmin()) {
+            // merge cells
+            $spreadsheet->getActiveSheet()->mergeCells('A1:X1');
+            $spreadsheet->getActiveSheet()->mergeCells('A2:X2');
+            // set warna font
+            // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->getColor()->setARGB('FFFF0000');
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A4:I4')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+            // styling dalam array
+            $styleArray = [
+                'font' => [
+                    'bold' => true,
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => '92D050',
+                    ],
+                ],
+            ];
+
+            $spreadsheet->getActiveSheet()->getStyle('A4:X4')->applyFromArray($styleArray);
+
+            // autowidth column
+            $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('P')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('Q')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('R')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('S')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('T')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('U')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('V')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('W')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('X')->setAutoSize(true);
+
+            // Add some data
+            $spreadsheet->setActiveSheetIndex(0)
+                ->setCellValue('A1', 'LAPORAN PEMBIAYAAN KESELURUHAN')
+                ->setCellValue('A2', $this->session->instansi_name)
+                ->setCellValue('A4', 'NO')
+                ->setCellValue('B4', 'NO. PINJAMAN')
+                ->setCellValue('C4', 'NO. ANGGOTA')
+                ->setCellValue('D4', 'NAMA')
+                ->setCellValue('E4', 'NIK')
+                ->setCellValue('F4', 'ALAMAT LENGKAP')
+                ->setCellValue('G4', 'EMAIL')
+                ->setCellValue('H4', 'NO. TELEPON/HP')
+                ->setCellValue('I4', 'CABANG')
+                ->setCellValue('J4', 'INSTANSI')
+                ->setCellValue('K4', 'JUMLAH PINJAMAN')
+                ->setCellValue('L4', 'JANGKA WAKTU PINJAM (BULAN)')
+                ->setCellValue('M4', 'JENIS BARANG GADAI')
+                ->setCellValue('N4', 'BERAT BARANG GADAI (GRAM)')
+                ->setCellValue('O4', 'WAKTU GADAI')
+                ->setCellValue('P4', 'JATUH TEMPO GADAI')
+                ->setCellValue('Q4', 'SEWA TEMPAT PERBULAN')
+                ->setCellValue('R4', 'TOTAL BIAYA SEWA')
+                ->setCellValue('S4', 'JUMLAH TERBAYAR')
+                ->setCellValue('T4', 'STATUS')
+                ->setCellValue('U4', 'SISTEM PEMBAYARAN')
+                ->setCellValue('V4', 'SUMBER DANA')
+                ->setCellValue('W4', 'DIBUAT OLEH')
+                ->setCellValue('X4', 'DIBUAT PADA');
+
+            $i = 5;
+            $no = '1';
+            foreach ($get_all as $data) {
+
+                if ($data->status_pembayaran == '1') {
+                    $status = 'Lunas';
+                } else {
+                    $status = 'Belum Lunas';
+                }
+
+                if ($data->sistem_pembayaran_sewa == '1') {
+                    $sistem_pembayaran = 'Bulanan';
+                } elseif ($data->sistem_pembayaran_sewa == '2') {
+                    $sistem_pembayaran = 'Jatuh Tempo';
+                }
+
+                if ($data->sumber_dana == '1') {
+                    $sumber_dana = 'Tabungan';
+                } elseif ($data->sumber_dana == '2') {
+                    $sumber_dana = 'Deposito';
+                } elseif ($data->sumber_dana == '3') {
+                    $sumber_dana = 'Tabungan dan Deposito';
+                }
+
+                $styleArray = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $styleArrayLeft = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $spreadsheet->getActiveSheet()->getStyle('A' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('B' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('C' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('D' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('E' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('F' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('G' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('H' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('I' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('J' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('K' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('L' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('M' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('N' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('O' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('P' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('Q' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('R' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('S' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('T' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('U' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('V' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('W' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('X' . $i)->applyFromArray($styleArray);
+
+                $spreadsheet->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $i, $no++)
+                    ->setCellValue('B' . $i, $data->no_pinjaman)
+                    ->setCellValue('C' . $i, $data->no_anggota)
+                    ->setCellValue('D' . $i, $data->name)
+                    ->setCellValue('E' . $i, substr($data->nik, 0, 12) . 'xxxx')
+                    ->setCellValue('F' . $i, $data->address)
+                    ->setCellValue('G' . $i, $data->email)
+                    ->setCellValue('H' . $i, $data->phone)
+                    ->setCellValue('I' . $i, $data->cabang_name)
+                    ->setCellValue('J' . $i, $data->instansi_name)
+                    ->setCellValue('K' . $i, $data->jml_pinjaman)
+                    ->setCellValue('L' . $i, $data->jangka_waktu_pinjam)
+                    ->setCellValue('M' . $i, $data->jenis_barang_gadai)
+                    ->setCellValue('N' . $i, $data->berat_barang_gadai)
+                    ->setCellValue('O' . $i, date_indonesian_only($data->waktu_gadai))
+                    ->setCellValue('P' . $i, date_indonesian_only($data->jatuh_tempo_gadai))
+                    ->setCellValue('Q' . $i, $data->sewa_tempat_perbulan)
+                    ->setCellValue('R' . $i, $data->total_biaya_sewa)
+                    ->setCellValue('S' . $i, $data->jml_terbayar)
+                    ->setCellValue('T' . $i, $status)
+                    ->setCellValue('U' . $i, $sistem_pembayaran)
+                    ->setCellValue('V' . $i, $sumber_dana)
+                    ->setCellValue('W' . $i, $data->created_by)
+                    ->setCellValue('X' . $i, date_indonesian_only($data->created_at));
+                $i++;
+            }
+        }
+        // jika masteradmin atau superadmin
+        elseif (is_masteradmin() OR is_superadmin()) {
+            // merge cells
+            $spreadsheet->getActiveSheet()->mergeCells('A1:W1');
+            $spreadsheet->getActiveSheet()->mergeCells('A2:W2');
+            // set warna font
+            // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->getColor()->setARGB('FFFF0000');
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A4:I4')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+            // styling dalam array
+            $styleArray = [
+                'font' => [
+                    'bold' => true,
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => '92D050',
+                    ],
+                ],
+            ];
+
+            $spreadsheet->getActiveSheet()->getStyle('A4:W4')->applyFromArray($styleArray);
+
+            // autowidth column
+            $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('P')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('Q')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('R')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('S')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('T')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('U')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('V')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('W')->setAutoSize(true);
+
+            // Add some data
+            $spreadsheet->setActiveSheetIndex(0)
+                ->setCellValue('A1', 'LAPORAN PEMBIAYAAN KESELURUHAN')
+                ->setCellValue('A2', $this->session->instansi_name)
+                ->setCellValue('A4', 'NO')
+                ->setCellValue('B4', 'NO. PINJAMAN')
+                ->setCellValue('C4', 'NO. ANGGOTA')
+                ->setCellValue('D4', 'NAMA')
+                ->setCellValue('E4', 'NIK')
+                ->setCellValue('F4', 'ALAMAT LENGKAP')
+                ->setCellValue('G4', 'EMAIL')
+                ->setCellValue('H4', 'NO. TELEPON/HP')
+                ->setCellValue('I4', 'CABANG')
+                ->setCellValue('J4', 'JUMLAH PINJAMAN')
+                ->setCellValue('K4', 'JANGKA WAKTU PINJAM (BULAN)')
+                ->setCellValue('L4', 'JENIS BARANG GADAI')
+                ->setCellValue('M4', 'BERAT BARANG GADAI (GRAM)')
+                ->setCellValue('N4', 'WAKTU GADAI')
+                ->setCellValue('O4', 'JATUH TEMPO GADAI')
+                ->setCellValue('P4', 'SEWA TEMPAT PERBULAN')
+                ->setCellValue('Q4', 'TOTAL BIAYA SEWA')
+                ->setCellValue('R4', 'JUMLAH TERBAYAR')
+                ->setCellValue('S4', 'STATUS')
+                ->setCellValue('T4', 'SISTEM PEMBAYARAN')
+                ->setCellValue('U4', 'SUMBER DANA')
+                ->setCellValue('V4', 'DIBUAT OLEH')
+                ->setCellValue('W4', 'DIBUAT PADA');
+
+            $i = 5;
+            $no = '1';
+            foreach ($get_all as $data) {
+
+                if ($data->status_pembayaran == '1') {
+                    $status = 'Lunas';
+                } else {
+                    $status = 'Belum Lunas';
+                }
+
+                if ($data->sistem_pembayaran_sewa == '1') {
+                    $sistem_pembayaran = 'Bulanan';
+                } elseif ($data->sistem_pembayaran_sewa == '2') {
+                    $sistem_pembayaran = 'Jatuh Tempo';
+                }
+
+                if ($data->sumber_dana == '1') {
+                    $sumber_dana = 'Tabungan';
+                } elseif ($data->sumber_dana == '2') {
+                    $sumber_dana = 'Deposito';
+                } elseif ($data->sumber_dana == '3') {
+                    $sumber_dana = 'Tabungan dan Deposito';
+                }
+
+                $styleArray = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $styleArrayLeft = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $spreadsheet->getActiveSheet()->getStyle('A' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('B' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('C' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('D' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('E' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('F' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('G' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('H' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('I' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('J' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('K' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('L' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('M' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('N' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('O' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('P' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('Q' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('R' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('S' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('T' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('U' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('V' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('W' . $i)->applyFromArray($styleArray);
+
+                $spreadsheet->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $i, $no++)
+                    ->setCellValue('B' . $i, $data->no_pinjaman)
+                    ->setCellValue('C' . $i, $data->no_anggota)
+                    ->setCellValue('D' . $i, $data->name)
+                    ->setCellValue('E' . $i, substr($data->nik, 0, 12) . 'xxxx')
+                    ->setCellValue('F' . $i, $data->address)
+                    ->setCellValue('G' . $i, $data->email)
+                    ->setCellValue('H' . $i, $data->phone)
+                    ->setCellValue('I' . $i, $data->cabang_name)
+                    ->setCellValue('J' . $i, $data->jml_pinjaman)
+                    ->setCellValue('K' . $i, $data->jangka_waktu_pinjam)
+                    ->setCellValue('L' . $i, $data->jenis_barang_gadai)
+                    ->setCellValue('M' . $i, $data->berat_barang_gadai)
+                    ->setCellValue('N' . $i, date_indonesian_only($data->waktu_gadai))
+                    ->setCellValue('O' . $i, date_indonesian_only($data->jatuh_tempo_gadai))
+                    ->setCellValue('P' . $i, $data->sewa_tempat_perbulan)
+                    ->setCellValue('Q' . $i, $data->total_biaya_sewa)
+                    ->setCellValue('R' . $i, $data->jml_terbayar)
+                    ->setCellValue('S' . $i, $status)
+                    ->setCellValue('T' . $i, $sistem_pembayaran)
+                    ->setCellValue('U' . $i, $sumber_dana)
+                    ->setCellValue('V' . $i, $data->created_by)
+                    ->setCellValue('W' . $i, date_indonesian_only($data->created_at));
+                $i++;
+            }
+        }
+
+        // Rename worksheet
+        $spreadsheet->getActiveSheet()->setTitle('Laporan Pembiayaan Keseluruhan');
+
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $spreadsheet->setActiveSheetIndex(0);
+
+        // Redirect output to a client’s web browser (Xlsx)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Laporan Pembiayaan Keseluruhan.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+        exit;
     }
 }
