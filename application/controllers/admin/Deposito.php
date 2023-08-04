@@ -1,6 +1,12 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+require('vendor/autoload.php');
+
+use PhpOffice\PhpSpreadsheet\Helper\Sample;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
 class Deposito extends CI_Controller
 {
 
@@ -10,6 +16,8 @@ class Deposito extends CI_Controller
 
         $this->data['module'] = 'Deposito';
 
+        $this->load->library('Pdf');
+
         $this->data['instansi'] = $this->Instansi_model->get_by_id($this->session->instansi_id);
         $this->data['notifikasi'] = $this->Riwayatpembayaran_model->get_all_non_is_paid()->result();
         $this->data['notifikasi_counter'] = $this->Riwayatpembayaran_model->get_all_non_is_paid()->num_rows();
@@ -17,7 +25,9 @@ class Deposito extends CI_Controller
         $this->data['btn_submit'] = 'Save';
         $this->data['btn_reset']  = 'Reset';
         $this->data['btn_add']    = 'Tambah Data';
+        $this->data['btn_export']    = 'Export to Excel';
         $this->data['add_action'] = base_url('admin/deposito/create');
+        $this->data['export_action'] = base_url('admin/deposito/export');
 
         is_login();
 
@@ -1148,5 +1158,347 @@ class Deposito extends CI_Controller
 
         $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Penarikan Basil Sukses!</b></h6></div>');
         redirect('admin/deposito/index');
+    }
+
+    function export()
+    {
+        if (is_grandadmin()) {
+            $get_all = $this->Deposito_model->get_all_laporan();
+        } elseif (is_masteradmin()) {
+            $get_all = $this->Deposito_model->get_all_by_instansi_laporan();
+        } elseif (is_superadmin()) {
+            $get_all = $this->Deposito_model->get_all_by_cabang_laporan();
+        }
+
+        // Create new Spreadsheet object
+        $spreadsheet = new Spreadsheet();
+
+        // Set document properties
+        $spreadsheet->getProperties()
+            ->setCreator($this->session->username . '-' . $this->session->instansi_name)
+            ->setLastModifiedBy($this->session->username . '-' . $this->session->instansi_name)
+            ->setTitle('Laporan Data Deposito Keseluruhan - ' . $this->session->instansi_name)
+            ->setSubject('Laporan Data Deposito Keseluruhan - ' . $this->session->instansi_name)
+            ->setCompany($this->session->instansi_name)
+            ->setDescription('Dokumen ini dicetak dari sistem Rahn. Copyright by EDUARSIP. DEVELOPER: Ridar Gustia Priatama (089697641301)')
+            ->setKeywords('office 2007 openxml php')
+            ->setCategory('laporan deposito');
+
+        if (is_grandadmin()) {
+            // merge cells
+            $spreadsheet->getActiveSheet()->mergeCells('A1:O1');
+            $spreadsheet->getActiveSheet()->mergeCells('A2:O2');
+            // set warna font
+            // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->getColor()->setARGB('FFFF0000');
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A4:I4')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+            // styling dalam array
+            $styleArray = [
+                'font' => [
+                    'bold' => true,
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => '92D050',
+                    ],
+                ],
+            ];
+
+            $spreadsheet->getActiveSheet()->getStyle('A4:P4')->applyFromArray($styleArray);
+
+            // autowidth column
+            $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('P')->setAutoSize(true);
+
+            // Add some data
+            $spreadsheet->setActiveSheetIndex(0)
+                ->setCellValue('A1', 'LAPORAN DEPOSITO KESELURUHAN')
+                ->setCellValue('A2', $this->session->instansi_name)
+                ->setCellValue('A4', 'NO')
+                ->setCellValue('B4', 'NO. ANGGOTA')
+                ->setCellValue('C4', 'NAMA')
+                ->setCellValue('D4', 'NIK')
+                ->setCellValue('E4', 'ALAMAT LENGKAP')
+                ->setCellValue('F4', 'EMAIL')
+                ->setCellValue('G4', 'NO. TELEPON/HP')
+                ->setCellValue('H4', 'CABANG')
+                ->setCellValue('I4', 'INSTANSI')
+                ->setCellValue('J4', 'TOTAL DEPOSITO')
+                ->setCellValue('K4', 'SERAPAN DEPOSITO')
+                ->setCellValue('L4', 'SALDO DEPOSITO')
+                ->setCellValue('M4', 'JANGKA WAKTU (TAHUN)')
+                ->setCellValue('N4', 'WAKTU DEPOSITO')
+                ->setCellValue('O4', 'JATUH TEMPO')
+                ->setCellValue('P4', 'STATUS');
+
+            $i = 5;
+            $no = '1';
+            foreach ($get_all as $data) {
+
+                if ($data->is_active == '1') {
+                    $status = 'Aktif';
+                } else {
+                    $status = 'NonAktif';
+                }
+
+                $styleArray = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $styleArrayLeft = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $spreadsheet->getActiveSheet()->getStyle('A' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('B' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('C' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('D' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('E' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('F' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('G' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('H' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('I' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('J' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('K' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('L' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('M' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('N' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('O' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('P' . $i)->applyFromArray($styleArrayLeft);
+
+                $spreadsheet->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $i, $no++)
+                    ->setCellValue('B' . $i, $data->no_anggota)
+                    ->setCellValue('C' . $i, $data->name)
+                    ->setCellValue('D' . $i, substr($data->nik, 0, 12) . 'xxxx')
+                    ->setCellValue('E' . $i, $data->address)
+                    ->setCellValue('F' . $i, $data->email)
+                    ->setCellValue('G' . $i, $data->phone)
+                    ->setCellValue('H' . $i, $data->cabang_name)
+                    ->setCellValue('I' . $i, $data->instansi_name)
+                    ->setCellValue('J' . $i, $data->total_deposito)
+                    ->setCellValue('K' . $i, $data->resapan_deposito)
+                    ->setCellValue('L' . $i, $data->saldo_deposito)
+                    ->setCellValue('M' . $i, $data->jangka_waktu)
+                    ->setCellValue('N' . $i, date_indonesian_only($data->waktu_deposito))
+                    ->setCellValue('O' . $i, date_indonesian_only($data->jatuh_tempo))
+                    ->setCellValue('P' . $i, $status);
+                $i++;
+            }
+        }
+        // jika masteradmin atau superadmin
+        elseif (is_masteradmin() OR is_superadmin()) {
+            // merge cells
+            $spreadsheet->getActiveSheet()->mergeCells('A1:N1');
+            $spreadsheet->getActiveSheet()->mergeCells('A2:N2');
+            // set warna font
+            // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->getColor()->setARGB('FFFF0000');
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A4:I4')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+            // styling dalam array
+            $styleArray = [
+                'font' => [
+                    'bold' => true,
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => '92D050',
+                    ],
+                ],
+            ];
+
+            $spreadsheet->getActiveSheet()->getStyle('A4:O4')->applyFromArray($styleArray);
+
+            // autowidth column
+            $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
+
+            // Add some data
+            $spreadsheet->setActiveSheetIndex(0)
+                ->setCellValue('A1', 'LAPORAN DEPOSITO KESELURUHAN')
+                ->setCellValue('A2', $this->session->instansi_name)
+                ->setCellValue('A4', 'NO')
+                ->setCellValue('B4', 'NO. ANGGOTA')
+                ->setCellValue('C4', 'NAMA')
+                ->setCellValue('D4', 'NIK')
+                ->setCellValue('E4', 'ALAMAT LENGKAP')
+                ->setCellValue('F4', 'EMAIL')
+                ->setCellValue('G4', 'NO. TELEPON/HP')
+                ->setCellValue('H4', 'CABANG')
+                ->setCellValue('I4', 'TOTAL DEPOSITO')
+                ->setCellValue('J4', 'SERAPAN DEPOSITO')
+                ->setCellValue('K4', 'SALDO DEPOSITO')
+                ->setCellValue('L4', 'JANGKA WAKTU (TAHUN)')
+                ->setCellValue('M4', 'WAKTU DEPOSITO')
+                ->setCellValue('N4', 'JATUH TEMPO')
+                ->setCellValue('O4', 'STATUS');
+
+            $i = 5;
+            $no = '1';
+            foreach ($get_all as $data) {
+
+                if ($data->is_active == '1') {
+                    $status = 'Aktif';
+                } else {
+                    $status = 'NonAktif';
+                }
+
+                $styleArray = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $styleArrayLeft = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $spreadsheet->getActiveSheet()->getStyle('A' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('B' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('C' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('D' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('E' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('F' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('G' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('H' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('I' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('J' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('K' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('L' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('M' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('N' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('O' . $i)->applyFromArray($styleArrayLeft);
+
+                $spreadsheet->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $i, $no++)
+                    ->setCellValue('B' . $i, $data->no_anggota)
+                    ->setCellValue('C' . $i, $data->name)
+                    ->setCellValue('D' . $i, substr($data->nik, 0, 12) . 'xxxx')
+                    ->setCellValue('E' . $i, $data->address)
+                    ->setCellValue('F' . $i, $data->email)
+                    ->setCellValue('G' . $i, $data->phone)
+                    ->setCellValue('H' . $i, $data->cabang_name)
+                    ->setCellValue('I' . $i, $data->total_deposito)
+                    ->setCellValue('J' . $i, $data->resapan_deposito)
+                    ->setCellValue('K' . $i, $data->saldo_deposito)
+                    ->setCellValue('L' . $i, $data->jangka_waktu)
+                    ->setCellValue('M' . $i, date_indonesian_only($data->waktu_deposito))
+                    ->setCellValue('N' . $i, date_indonesian_only($data->jatuh_tempo))
+                    ->setCellValue('O' . $i, $status);
+                $i++;
+            }
+        }
+
+        // Rename worksheet
+        $spreadsheet->getActiveSheet()->setTitle('Laporan Deposito Keseluruhan');
+
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $spreadsheet->setActiveSheetIndex(0);
+
+        // Redirect output to a client’s web browser (Xlsx)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Laporan Deposito Keseluruhan.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+        exit;
     }
 }

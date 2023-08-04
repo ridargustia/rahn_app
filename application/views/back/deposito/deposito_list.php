@@ -138,6 +138,7 @@
                             <div class="card mb-4">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <a href="<?php echo $add_action ?>" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo $btn_add ?></a>
+                                    <a href="<?php echo $export_action ?>" class="btn btn-success"><i class="fa fa-file-export"></i> <?php echo $btn_export ?></a>
                                 </div>
                                 <div class="table-responsive p-3">
                                     <table class="table align-items-center table-flush table-hover" id="dataTableHover">
