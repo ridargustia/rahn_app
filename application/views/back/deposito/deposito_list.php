@@ -93,6 +93,21 @@
             max-width: 100%;
         }
     }
+
+    #exportModal .width-modal {
+        max-width: 50%;
+    }
+
+    #exportModal input::placeholder {
+        font-weight: bold;
+        color: rgba(0, 0, 0, 0.3);
+    }
+
+    @media screen and (max-width: 992px) {
+        #exportModal .width-modal {
+            max-width: 100%;
+        }
+    }
 </style>
 </head>
 <!-- Meta -->
@@ -138,7 +153,7 @@
                             <div class="card mb-4">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <a href="<?php echo $add_action ?>" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo $btn_add ?></a>
-                                    <a href="<?php echo $export_action ?>" class="btn btn-success"><i class="fa fa-file-export"></i> <?php echo $btn_export ?></a>
+                                    <a href="#" id="export-excel" class="btn btn-success" data-toggle="modal" data-target="#exportModal"><i class="fa fa-file-export"></i> <?php echo $btn_export ?></a>
                                 </div>
                                 <div class="table-responsive p-3">
                                     <table class="table align-items-center table-flush table-hover" id="dataTableHover">
@@ -247,6 +262,10 @@
                     <!-- Modal perpanjang deposito -->
                     <?php $this->load->view('back/deposito/modal_perpanjang_deposito'); ?>
                     <!-- Modal perpanjang deposito -->
+
+                    <!-- Modal Export -->
+                    <?php $this->load->view('back/deposito/modal_export'); ?>
+                    <!-- Modal Export -->
                 </div>
                 <!--Container Fluid-->
             </div>
@@ -297,6 +316,22 @@
             $('#jatuh_tempo').datepicker({
                 startView: 2,
                 format: 'yyyy/mm/dd',
+                autoclose: true,
+                todayHighlight: true,
+                todayBtn: 'linked',
+            });
+
+            $('#tgl_mulai').datepicker({
+                startView: 2,
+                format: 'dd-mm-yyyy',
+                autoclose: true,
+                todayHighlight: true,
+                todayBtn: 'linked',
+            });
+
+            $('#tgl_akhir').datepicker({
+                startView: 2,
+                format: 'dd-mm-yyyy',
                 autoclose: true,
                 todayHighlight: true,
                 todayBtn: 'linked',

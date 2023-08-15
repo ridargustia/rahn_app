@@ -504,6 +504,60 @@ class Deposito_model extends CI_Model
         return $this->db->get($this->table)->result();
     }
 
+    function get_all_periode($tgl_mulai, $tgl_akhir)
+    {
+        $this->db->select('users.no_anggota, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, instansi.instansi_name, cabang.cabang_name, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.is_active, deposito.created_by, deposito.created_at');
+
+        $this->db->join('users', 'deposito.user_id = users.id_users');
+        $this->db->join('instansi', 'deposito.instansi_id = instansi.id_instansi');
+        $this->db->join('cabang', 'deposito.cabang_id = cabang.id_cabang');
+
+        $this->db->where('deposito.is_delete_deposito', 0);
+        $this->db->where('deposito.created_at >=', $tgl_mulai);
+        $this->db->where('deposito.created_at <=', $tgl_akhir);
+
+        $this->db->order_by('deposito.id_deposito', 'ASC');
+
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_periode_by_instansi($tgl_mulai, $tgl_akhir)
+    {
+        $this->db->select('users.no_anggota, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, instansi.instansi_name, cabang.cabang_name, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.is_active, deposito.created_by, deposito.created_at');
+
+        $this->db->join('users', 'deposito.user_id = users.id_users');
+        $this->db->join('instansi', 'deposito.instansi_id = instansi.id_instansi');
+        $this->db->join('cabang', 'deposito.cabang_id = cabang.id_cabang');
+
+        $this->db->where('deposito.instansi_id', $this->session->instansi_id);
+        $this->db->where('deposito.is_delete_deposito', 0);
+        $this->db->where('deposito.created_at >=', $tgl_mulai);
+        $this->db->where('deposito.created_at <=', $tgl_akhir);
+
+        $this->db->order_by('deposito.id_deposito', 'ASC');
+
+        return $this->db->get($this->table)->result();
+    }
+
+    function get_all_periode_by_cabang($tgl_mulai, $tgl_akhir)
+    {
+        $this->db->select('users.no_anggota, deposito.name, deposito.nik, deposito.address, deposito.email, deposito.phone, instansi.instansi_name, cabang.cabang_name, deposito.total_deposito, deposito.resapan_deposito, deposito.saldo_deposito, deposito.jangka_waktu, deposito.waktu_deposito, deposito.jatuh_tempo, deposito.is_active, deposito.created_by, deposito.created_at');
+
+        $this->db->join('users', 'deposito.user_id = users.id_users');
+        $this->db->join('instansi', 'deposito.instansi_id = instansi.id_instansi');
+        $this->db->join('cabang', 'deposito.cabang_id = cabang.id_cabang');
+
+        $this->db->where('deposito.instansi_id', $this->session->instansi_id);
+        $this->db->where('deposito.cabang_id', $this->session->cabang_id);
+        $this->db->where('deposito.is_delete_deposito', 0);
+        $this->db->where('deposito.created_at >=', $tgl_mulai);
+        $this->db->where('deposito.created_at <=', $tgl_akhir);
+
+        $this->db->order_by('deposito.id_deposito', 'ASC');
+
+        return $this->db->get($this->table)->result();
+    }
+
     function get_by_user($id)
     {
         $this->db->where('user_id', $id);

@@ -64,6 +64,7 @@ class Deposito extends CI_Controller
         $this->data['action']                   = 'admin/deposito/update_action';
         $this->data['action_jangka_waktu']      = 'admin/deposito/renew_jangka_waktu_action';
         $this->data['action_tarik_basil']       = 'admin/deposito/tarik_basil';
+        $this->data['action_export']            = 'admin/deposito/export_by_periode';
 
         $this->data['id_deposito'] = [
             'name'          => 'id_deposito',
@@ -195,6 +196,27 @@ class Deposito extends CI_Controller
             'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
         ];
         // Tarik Basil Modal
+
+        // Tarik Export by periode
+        $this->data['tgl_mulai'] = [
+            'name'          => 'tgl_mulai',
+            'id'            => 'tgl_mulai',
+            'class'         => 'form-control',
+            'autocomplete'  => 'off',
+            'required'      => '',
+            'placeholder'   => 'Dari Tanggal',
+            'value'         => $this->form_validation->set_value('tgl_mulai'),
+        ];
+        $this->data['tgl_akhir'] = [
+            'name'          => 'tgl_akhir',
+            'id'            => 'tgl_akhir',
+            'class'         => 'form-control',
+            'autocomplete'  => 'off',
+            'required'      => '',
+            'placeholder'   => 'Sampai Tanggal',
+            'value'         => $this->form_validation->set_value('tgl_akhir'),
+        ];
+        // Tarik Export by periode
 
         $this->load->view('back/deposito/deposito_list', $this->data);
     }
@@ -1487,6 +1509,351 @@ class Deposito extends CI_Controller
         // Redirect output to a client’s web browser (Xlsx)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Laporan Deposito Keseluruhan.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+        exit;
+    }
+
+    function export_by_periode()
+    {
+        $tgl_mulai = date('Y-m-d', strtotime($this->input->post('tgl_mulai')));
+        $tgl_akhir = date('Y-m-d', strtotime($this->input->post('tgl_akhir')));
+
+        if (is_grandadmin()) {
+            $get_all = $this->Deposito_model->get_all_periode($tgl_mulai, $tgl_akhir);
+        } elseif (is_masteradmin()) {
+            $get_all = $this->Deposito_model->get_all_periode_by_instansi($tgl_mulai, $tgl_akhir);
+        } elseif (is_superadmin()) {
+            $get_all = $this->Deposito_model->get_all_periode_by_cabang($tgl_mulai, $tgl_akhir);
+        }
+
+        // Create new Spreadsheet object
+        $spreadsheet = new Spreadsheet();
+
+        // Set document properties
+        $spreadsheet->getProperties()
+            ->setCreator($this->session->username . '-' . $this->session->instansi_name)
+            ->setLastModifiedBy($this->session->username . '-' . $this->session->instansi_name)
+            ->setTitle('Laporan Data Deposito Periode ' . date_only($tgl_mulai) . ' - ' . date_only($tgl_akhir) . ' - ' . $this->session->instansi_name)
+            ->setSubject('Laporan Data Deposito Periode ' . date_only($tgl_mulai) . ' - ' . date_only($tgl_akhir) . ' - ' . $this->session->instansi_name)
+            ->setCompany($this->session->instansi_name)
+            ->setDescription('Dokumen ini dicetak dari sistem Rahn. Copyright by EDUARSIP. DEVELOPER: Ridar Gustia Priatama (089697641301)')
+            ->setKeywords('office 2007 openxml php')
+            ->setCategory('laporan deposito periode');
+
+        if (is_grandadmin()) {
+            // merge cells
+            $spreadsheet->getActiveSheet()->mergeCells('A1:P1');
+            $spreadsheet->getActiveSheet()->mergeCells('A2:P2');
+            // set warna font
+            // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->getColor()->setARGB('FFFF0000');
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A4:I4')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+            // styling dalam array
+            $styleArray = [
+                'font' => [
+                    'bold' => true,
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => '92D050',
+                    ],
+                ],
+            ];
+
+            $spreadsheet->getActiveSheet()->getStyle('A4:P4')->applyFromArray($styleArray);
+
+            // autowidth column
+            $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('P')->setAutoSize(true);
+
+            // Add some data
+            $spreadsheet->setActiveSheetIndex(0)
+                ->setCellValue('A1', 'LAPORAN DEPOSITO PERIODE ' . strtoupper(date_indonesian_only($tgl_mulai)) . ' - ' . strtoupper(date_indonesian_only($tgl_akhir)) . ' ')
+                ->setCellValue('A2', $this->session->instansi_name)
+                ->setCellValue('A4', 'NO')
+                ->setCellValue('B4', 'NO. ANGGOTA')
+                ->setCellValue('C4', 'NAMA')
+                ->setCellValue('D4', 'NIK')
+                ->setCellValue('E4', 'ALAMAT LENGKAP')
+                ->setCellValue('F4', 'EMAIL')
+                ->setCellValue('G4', 'NO. TELEPON/HP')
+                ->setCellValue('H4', 'CABANG')
+                ->setCellValue('I4', 'INSTANSI')
+                ->setCellValue('J4', 'TOTAL DEPOSITO')
+                ->setCellValue('K4', 'SERAPAN DEPOSITO')
+                ->setCellValue('L4', 'SALDO DEPOSITO')
+                ->setCellValue('M4', 'JANGKA WAKTU (TAHUN)')
+                ->setCellValue('N4', 'WAKTU DEPOSITO')
+                ->setCellValue('O4', 'JATUH TEMPO')
+                ->setCellValue('P4', 'STATUS');
+
+            $i = 5;
+            $no = '1';
+            foreach ($get_all as $data) {
+
+                if ($data->is_active == '1') {
+                    $status = 'Aktif';
+                } else {
+                    $status = 'NonAktif';
+                }
+
+                $styleArray = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $styleArrayLeft = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $spreadsheet->getActiveSheet()->getStyle('A' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('B' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('C' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('D' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('E' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('F' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('G' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('H' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('I' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('J' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('K' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('L' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('M' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('N' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('O' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('P' . $i)->applyFromArray($styleArray);
+
+                $spreadsheet->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $i, $no++)
+                    ->setCellValue('B' . $i, $data->no_anggota)
+                    ->setCellValue('C' . $i, $data->name)
+                    ->setCellValue('D' . $i, substr($data->nik, 0, 12) . 'xxxx')
+                    ->setCellValue('E' . $i, $data->address)
+                    ->setCellValue('F' . $i, $data->email)
+                    ->setCellValue('G' . $i, $data->phone)
+                    ->setCellValue('H' . $i, $data->cabang_name)
+                    ->setCellValue('I' . $i, $data->instansi_name)
+                    ->setCellValue('J' . $i, $data->total_deposito)
+                    ->setCellValue('K' . $i, $data->resapan_deposito)
+                    ->setCellValue('L' . $i, $data->saldo_deposito)
+                    ->setCellValue('M' . $i, $data->jangka_waktu)
+                    ->setCellValue('N' . $i, date_indonesian_only($data->waktu_deposito))
+                    ->setCellValue('O' . $i, date_indonesian_only($data->jatuh_tempo))
+                    ->setCellValue('P' . $i, $status);
+                $i++;
+            }
+        }
+        // jika masteradmin atau superadmin
+        elseif (is_masteradmin() OR is_superadmin()) {
+            // merge cells
+            $spreadsheet->getActiveSheet()->mergeCells('A1:O1');
+            $spreadsheet->getActiveSheet()->mergeCells('A2:O2');
+            // set warna font
+            // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->getColor()->setARGB('FFFF0000');
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A1')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $spreadsheet->getActiveSheet()->getStyle('A2')
+                ->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A4:I4')
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+            // styling dalam array
+            $styleArray = [
+                'font' => [
+                    'bold' => true,
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => '92D050',
+                    ],
+                ],
+            ];
+
+            $spreadsheet->getActiveSheet()->getStyle('A4:O4')->applyFromArray($styleArray);
+
+            // autowidth column
+            $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+            $spreadsheet->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
+
+            // Add some data
+            $spreadsheet->setActiveSheetIndex(0)
+                ->setCellValue('A1', 'LAPORAN DEPOSITO PERIODE ' . strtoupper(date_indonesian_only($tgl_mulai)) . ' - ' . strtoupper(date_indonesian_only($tgl_akhir)) . ' ')
+                ->setCellValue('A2', $this->session->instansi_name)
+                ->setCellValue('A4', 'NO')
+                ->setCellValue('B4', 'NO. ANGGOTA')
+                ->setCellValue('C4', 'NAMA')
+                ->setCellValue('D4', 'NIK')
+                ->setCellValue('E4', 'ALAMAT LENGKAP')
+                ->setCellValue('F4', 'EMAIL')
+                ->setCellValue('G4', 'NO. TELEPON/HP')
+                ->setCellValue('H4', 'CABANG')
+                ->setCellValue('I4', 'TOTAL DEPOSITO')
+                ->setCellValue('J4', 'SERAPAN DEPOSITO')
+                ->setCellValue('K4', 'SALDO DEPOSITO')
+                ->setCellValue('L4', 'JANGKA WAKTU (TAHUN)')
+                ->setCellValue('M4', 'WAKTU DEPOSITO')
+                ->setCellValue('N4', 'JATUH TEMPO')
+                ->setCellValue('O4', 'STATUS');
+
+            $i = 5;
+            $no = '1';
+            foreach ($get_all as $data) {
+
+                if ($data->is_active == '1') {
+                    $status = 'Aktif';
+                } else {
+                    $status = 'NonAktif';
+                }
+
+                $styleArray = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $styleArrayLeft = [
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+
+                $spreadsheet->getActiveSheet()->getStyle('A' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('B' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('C' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('D' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('E' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('F' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('G' . $i)->applyFromArray($styleArray)->getNumberFormat()->setFormatCode('#');
+                $spreadsheet->getActiveSheet()->getStyle('H' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('I' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('J' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('K' . $i)->applyFromArray($styleArrayLeft);
+                $spreadsheet->getActiveSheet()->getStyle('L' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('M' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('N' . $i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('O' . $i)->applyFromArray($styleArray);
+
+                $spreadsheet->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $i, $no++)
+                    ->setCellValue('B' . $i, $data->no_anggota)
+                    ->setCellValue('C' . $i, $data->name)
+                    ->setCellValue('D' . $i, substr($data->nik, 0, 12) . 'xxxx')
+                    ->setCellValue('E' . $i, $data->address)
+                    ->setCellValue('F' . $i, $data->email)
+                    ->setCellValue('G' . $i, $data->phone)
+                    ->setCellValue('H' . $i, $data->cabang_name)
+                    ->setCellValue('I' . $i, $data->total_deposito)
+                    ->setCellValue('J' . $i, $data->resapan_deposito)
+                    ->setCellValue('K' . $i, $data->saldo_deposito)
+                    ->setCellValue('L' . $i, $data->jangka_waktu)
+                    ->setCellValue('M' . $i, date_indonesian_only($data->waktu_deposito))
+                    ->setCellValue('N' . $i, date_indonesian_only($data->jatuh_tempo))
+                    ->setCellValue('O' . $i, $status);
+                $i++;
+            }
+        }
+
+        // Rename worksheet
+        $spreadsheet->getActiveSheet()->setTitle('Laporan Deposito Periode');
+
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $spreadsheet->setActiveSheetIndex(0);
+
+        // Redirect output to a client’s web browser (Xlsx)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Laporan Deposito Periode.xlsx"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');
