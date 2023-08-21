@@ -197,7 +197,7 @@ class Deposito extends CI_Controller
         ];
         // Tarik Basil Modal
 
-        // Tarik Export by periode
+        // Export by periode
         $this->data['tgl_mulai'] = [
             'name'          => 'tgl_mulai',
             'id'            => 'tgl_mulai',
@@ -216,7 +216,7 @@ class Deposito extends CI_Controller
             'placeholder'   => 'Sampai Tanggal',
             'value'         => $this->form_validation->set_value('tgl_akhir'),
         ];
-        // Tarik Export by periode
+        // Export by periode
 
         $this->load->view('back/deposito/deposito_list', $this->data);
     }
