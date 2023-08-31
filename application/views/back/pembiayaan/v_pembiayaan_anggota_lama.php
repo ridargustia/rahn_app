@@ -91,19 +91,21 @@
             <small id="emailHelp" class="form-text text-muted">Isikan alamat lengkap sesuai KTP.</small>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label>Email</label>
                     <?php echo form_input($email) ?>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label>No HP/Telephone/WhatsApp</label>
                     <?php echo form_input($phone) ?>
                 </div>
             </div>
-            <div class="col-md-4">
+        </div>
+        <div class="row">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label>Jumlah Pinjaman <span style="color: red">*</span></label>
                     <div class="input-group mb-3">
@@ -117,29 +119,10 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label for="touchSpin">Jangka Waktu Pinjaman <span style="color: red">*</span></label>
                     <?php echo form_input($jangka_waktu_pinjam) ?>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>Jenis Barang Yang Digadaikan <span style="color: red">*</span></label>
-                    <?php echo form_input($jenis_barang_gadai) ?>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>Berat/Nilai Barang Yang Digadaikan <span style="color: red">*</span></label>
-                    <div class="input-group mb-3">
-                        <?php echo form_input($berat_barang_gadai) ?>
-                        <div class="input-group-append">
-                            <span class="input-group-text">Gram</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -156,6 +139,48 @@
                             <span class="input-group-text">-</span>
                         </div>
                         <?php echo form_input($jatuh_tempo_gadai) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Jenis Barang Yang Digadaikan <span style="color: red">*</span></label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <?php echo form_dropdown('', $jenis_barang_value, '', $jenis_barang) ?>
+                        </div>
+                        <?php echo form_input($jenis_barang_gadai) ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div id="form-jenis-barang"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Sewa Tempat Perbulan</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <?php echo form_input($sewa_tempat_perbulan) ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Total Biaya Sewa</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <?php echo form_input($total_biaya_sewa) ?>
                     </div>
                 </div>
             </div>
@@ -292,6 +317,21 @@
 
                 $('#waktu_gadai').val(myObj.today);
                 $('#jatuh_tempo_gadai').val(myObj.hasil_konversi);
+            }
+        });
+    });
+
+    $('#jenis_barang').on('change', function() {
+
+        jenis_barang = document.getElementById("jenis_barang").value;
+
+        $.ajax({
+            url: "<?php echo base_url('admin/pembiayaan/ubah_satuan/') ?>" + jenis_barang,
+            beforeSend: function() {
+                $("#form-jenis-barang").html('<center class="pt-4"><h1><i class="fa fa-spin fa-spinner" /></h1></center>');
+            },
+            success: function(response) {
+                $("#form-jenis-barang").html(response);
             }
         });
     });

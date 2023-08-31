@@ -217,7 +217,8 @@ class Pembiayaan extends CI_Controller
         $this->form_validation->set_rules('jml_pinjaman', 'Jumlah Pinjaman', 'required');
         $this->form_validation->set_rules('jangka_waktu_pinjam', 'Jangka Waktu Pinjaman', 'is_numeric|required');
         $this->form_validation->set_rules('jenis_barang_gadai', 'Jenis Barang Yang Digadai', 'required');
-        $this->form_validation->set_rules('berat_barang_gadai', 'Berat/Nilai Barang Yang Digadai', 'is_numeric|required');
+        $this->form_validation->set_rules('berat_barang_gadai', 'Berat/Nilai Barang Yang Digadai', 'is_numeric');
+        $this->form_validation->set_rules('konversi_gram', 'Berat/Nilai Barang Yang Digadai', 'is_numeric');
         $this->form_validation->set_rules('waktu_gadai', 'Waktu Gadai', 'required');
         $this->form_validation->set_rules('jatuh_tempo_gadai', 'Jatuh Tempo Gadai', 'required');
         $this->form_validation->set_rules('sistem_pembayaran_sewa', 'Sistem Pembayaran Sewa', 'required');
@@ -269,8 +270,14 @@ class Pembiayaan extends CI_Controller
                     // // menghitung selisih bulan
                     // $jangka_waktu_gadai += date("m", $jatuh_tempo_gadai) - date("m", $waktu_gadai);
 
+                    $data_instansi = $this->Instansi_model->get_by_id($this->session->instansi_id);
+
                     //Menentukan sewa tempat perbulan
-                    $sewa_tempat_perbulan = 10000 * $this->input->post('berat_barang_gadai');
+                    if ($this->input->post('jenis_barang') == 1) {
+                        $sewa_tempat_perbulan = $data_instansi->biaya_satuan_sewa_tempat * $this->input->post('berat_barang_gadai');
+                    } elseif ($this->input->post('jenis_barang') == 2) {
+                        $sewa_tempat_perbulan = $data_instansi->biaya_satuan_sewa_tempat * $this->input->post('konversi_gram');
+                    }
 
                     //Menentukan total biaya sewa
                     $total_biaya_sewa = $sewa_tempat_perbulan * $this->input->post('jangka_waktu_pinjam');
@@ -288,6 +295,12 @@ class Pembiayaan extends CI_Controller
                     } elseif (is_superadmin()) {
                         $instansi = $this->session->instansi_id;
                         $cabang = $this->session->cabang_id;
+                    }
+
+                    if ($this->input->post('jenis_barang') == 1) {
+                        $berat_barang_gadai = $this->input->post('berat_barang_gadai');
+                    } elseif ($this->input->post('jenis_barang') == 2) {
+                        $berat_barang_gadai = $this->input->post('konversi_gram');
                     }
 
                     if ($this->input->post('pilih_pinjaman') == 1) {
@@ -344,7 +357,7 @@ class Pembiayaan extends CI_Controller
                             'jml_pinjaman'              => (int) $jml_pinjaman,
                             'jangka_waktu_pinjam'       => $this->input->post('jangka_waktu_pinjam'),
                             'jenis_barang_gadai'        => $this->input->post('jenis_barang_gadai'),
-                            'berat_barang_gadai'        => $this->input->post('berat_barang_gadai'),
+                            'berat_barang_gadai'        => $berat_barang_gadai,
                             'waktu_gadai'               => $waktu_gadai,
                             'jatuh_tempo_gadai'         => $jatuh_tempo_gadai,
                             'jangka_waktu_gadai'        => $this->input->post('jangka_waktu_pinjam'),
@@ -377,7 +390,7 @@ class Pembiayaan extends CI_Controller
                             'jml_pinjaman'              => (int) $jml_pinjaman,
                             'jangka_waktu_pinjam'       => $this->input->post('jangka_waktu_pinjam'),
                             'jenis_barang_gadai'        => $this->input->post('jenis_barang_gadai'),
-                            'berat_barang_gadai'        => $this->input->post('berat_barang_gadai'),
+                            'berat_barang_gadai'        => $berat_barang_gadai,
                             'waktu_gadai'               => $waktu_gadai,
                             'jatuh_tempo_gadai'         => $jatuh_tempo_gadai,
                             'jangka_waktu_gadai'        => $this->input->post('jangka_waktu_pinjam'),
@@ -2145,16 +2158,8 @@ class Pembiayaan extends CI_Controller
                 'class'         => 'form-control',
                 'autocomplete'  => 'off',
                 'required'      => '',
+                'placeholder'   => 'Keterangan',
                 'value'         => $this->form_validation->set_value('jenis_barang_gadai'),
-            ];
-            $this->data['berat_barang_gadai'] = [
-                'name'          => 'berat_barang_gadai',
-                'id'            => 'berat_barang_gadai',
-                'class'         => 'form-control',
-                'autocomplete'  => 'off',
-                'required'      => '',
-                'value'         => $this->form_validation->set_value('berat_barang_gadai'),
-                'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
             ];
             $this->data['waktu_gadai'] = [
                 'name'          => 'waktu_gadai',
@@ -2198,6 +2203,34 @@ class Pembiayaan extends CI_Controller
                 '1'             => 'Tabungan',
                 '2'             => 'Deposito',
                 '3'             => 'Tabungan dan Deposito',
+            ];
+            $this->data['jenis_barang'] = [
+                'name'          => 'jenis_barang',
+                'id'            => 'jenis_barang',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('jenis_barang'),
+            ];
+            $this->data['jenis_barang_value'] = [
+                ''              => 'Pilih Jenis',
+                '1'             => 'Emas',
+                '2'             => 'Surat Berharga',
+            ];
+            $this->data['sewa_tempat_perbulan'] = [
+                'name'          => 'sewa_tempat_perbulan',
+                'id'            => 'sewa_tempat_perbulan',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('sewa_tempat_perbulan'),
+                'readonly'      => '',
+            ];
+            $this->data['total_biaya_sewa'] = [
+                'name'          => 'total_biaya_sewa',
+                'id'            => 'total_biaya_sewa',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('total_biaya_sewa'),
+                'readonly'      => '',
             ];
 
             $this->load->view('back/pembiayaan/v_pembiayaan_anggota_baru', $this->data);
@@ -2305,16 +2338,8 @@ class Pembiayaan extends CI_Controller
                 'class'         => 'form-control',
                 'autocomplete'  => 'off',
                 'required'      => '',
+                'placeholder'   => 'Keterangan',
                 'value'         => $this->form_validation->set_value('jenis_barang_gadai'),
-            ];
-            $this->data['berat_barang_gadai'] = [
-                'name'          => 'berat_barang_gadai',
-                'id'            => 'berat_barang_gadai',
-                'class'         => 'form-control',
-                'autocomplete'  => 'off',
-                'required'      => '',
-                'value'         => $this->form_validation->set_value('berat_barang_gadai'),
-                'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
             ];
             $this->data['waktu_gadai'] = [
                 'name'          => 'waktu_gadai',
@@ -2359,9 +2384,103 @@ class Pembiayaan extends CI_Controller
                 '2'             => 'Deposito',
                 '3'             => 'Tabungan dan Deposito',
             ];
+            $this->data['jenis_barang'] = [
+                'name'          => 'jenis_barang',
+                'id'            => 'jenis_barang',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('jenis_barang'),
+            ];
+            $this->data['jenis_barang_value'] = [
+                ''              => 'Pilih Jenis',
+                '1'             => 'Emas',
+                '2'             => 'Surat Berharga',
+            ];
+            $this->data['sewa_tempat_perbulan'] = [
+                'name'          => 'sewa_tempat_perbulan',
+                'id'            => 'sewa_tempat_perbulan',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('sewa_tempat_perbulan'),
+                'readonly'      => '',
+            ];
+            $this->data['total_biaya_sewa'] = [
+                'name'          => 'total_biaya_sewa',
+                'id'            => 'total_biaya_sewa',
+                'class'         => 'form-control',
+                'required'      => '',
+                'value'         => $this->form_validation->set_value('total_biaya_sewa'),
+                'readonly'      => '',
+            ];
 
             $this->load->view('back/pembiayaan/v_pembiayaan_anggota_lama', $this->data);
         }
+    }
+
+    function ubah_satuan()
+    {
+        $this->data['jenis_barang'] = $this->uri->segment(4);
+
+        $this->data['berat_barang_gadai'] = [
+            'name'          => 'berat_barang_gadai',
+            'id'            => 'berat_barang_gadai',
+            'class'         => 'form-control',
+            'autocomplete'  => 'off',
+            'required'      => '',
+            'value'         => $this->form_validation->set_value('berat_barang_gadai'),
+            'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
+        ];
+        $this->data['nominal_surat_berharga'] = [
+            'name'          => 'nominal_surat_berharga',
+            'id'            => 'nominal_surat_berharga',
+            'class'         => 'form-control',
+            'autocomplete'  => 'off',
+            'required'      => '',
+            'value'         => $this->form_validation->set_value('nominal_surat_berharga'),
+        ];
+        $this->data['konversi_gram'] = [
+            'name'          => 'konversi_gram',
+            'id'            => 'konversi_gram',
+            'class'         => 'form-control',
+            'required'      => '',
+            'value'         => $this->form_validation->set_value('konversi_gram'),
+            'readonly'      => '',
+        ];
+
+        $this->load->view('back/pembiayaan/v_form_jenis_barang', $this->data);
+    }
+
+    function konversi_gram()
+    {
+        $instansi = $this->Instansi_model->get_by_id($this->session->instansi_id);
+
+        //Ubah tipe data nilai surat berharga
+        $string = $this->uri->segment(4);
+        $nominal_surat_berharga = preg_replace("/[^0-9]/", "", $string);
+
+        $nilai_surat_berharga = $nominal_surat_berharga / $instansi->acuan_konversi_gram;
+        $sewa_tempat_perbulan = $nilai_surat_berharga * $instansi->biaya_satuan_sewa_tempat;
+        $total_biaya_sewa = $sewa_tempat_perbulan * $this->uri->segment(5);
+
+        $output['nilai_surat_berharga'] = $nilai_surat_berharga;
+        $output['sewa_tempat_perbulan'] = number_format($sewa_tempat_perbulan, 0, ',', '.');
+        $output['total_biaya_sewa'] = number_format($total_biaya_sewa, 0, ',', '.');
+
+        echo json_encode($output);
+
+    }
+
+    function konversi_basil()
+    {
+        $instansi = $this->Instansi_model->get_by_id($this->session->instansi_id);
+
+        $sewa_tempat_perbulan = $this->uri->segment(4) * $instansi->biaya_satuan_sewa_tempat;
+        $total_biaya_sewa = $sewa_tempat_perbulan * $this->uri->segment(5);
+
+        $output['sewa_tempat_perbulan'] = number_format($sewa_tempat_perbulan, 0, ',', '.');
+        $output['total_biaya_sewa'] = number_format($total_biaya_sewa, 0, ',', '.');
+
+        echo json_encode($output);
     }
 
     function export()

@@ -175,7 +175,7 @@
                                     </div>
                                     <div class="card mb-4">
                                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                            <h4 class="m-0 font-weight-bold text-primary">Data Pinjaman</h4>
+                                            <h4 class="m-0 font-weight-bold text-primary">Data Total Pinjaman</h4>
                                         </div>
                                         <div class="table-responsive">
                                             <table class="table align-items-center table-flush">
