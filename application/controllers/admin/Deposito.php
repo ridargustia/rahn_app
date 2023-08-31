@@ -300,6 +300,15 @@ class Deposito extends CI_Controller
             'required'      => '',
             'value'         => $this->form_validation->set_value('total_deposito'),
         ];
+        $this->data['jangka_waktu_deposito'] = [
+            'name'          => 'jangka_waktu_deposito',
+            'id'            => 'jangka_waktu_deposito',
+            'class'         => 'form-control',
+            'autocomplete'  => 'off',
+            'required'      => '',
+            'value'         => $this->form_validation->set_value('jangka_waktu_deposito'),
+            'onkeypress'    => 'return event.charCode >= 48 && event.charCode <=57'
+        ];
         $this->data['waktu_deposito'] = [
             'name'          => 'waktu_deposito',
             'id'            => 'waktu_deposito',
@@ -307,6 +316,7 @@ class Deposito extends CI_Controller
             'autocomplete'  => 'off',
             'required'      => '',
             'value'         => $this->form_validation->set_value('waktu_deposito'),
+            'readonly'      => '',
         ];
         $this->data['jatuh_tempo'] = [
             'name'          => 'jatuh_tempo',
@@ -315,6 +325,7 @@ class Deposito extends CI_Controller
             'autocomplete'  => 'off',
             'required'      => '',
             'value'         => $this->form_validation->set_value('jatuh_tempo'),
+            'readonly'      => '',
         ];
 
         $this->load->view('back/deposito/deposito_add', $this->data);
@@ -334,6 +345,7 @@ class Deposito extends CI_Controller
         $this->form_validation->set_rules('email', 'Email', 'valid_email|required');
         $this->form_validation->set_rules('phone', 'No. HP/Telephone', 'is_numeric|required');
         $this->form_validation->set_rules('total_deposito', 'Jumlah Deposito', 'required');
+        $this->form_validation->set_rules('jangka_waktu_deposito', 'Jangka Waktu Deposito', 'is_numeric|required');
         $this->form_validation->set_rules('waktu_deposito', 'Waktu Deposito', 'required');
         $this->form_validation->set_rules('jatuh_tempo', 'Jatuh Tempo', 'required');
 
@@ -1180,6 +1192,19 @@ class Deposito extends CI_Controller
 
         $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Penarikan Basil Sukses!</b></h6></div>');
         redirect('admin/deposito/index');
+    }
+
+    function add_konversi_jangka_waktu_deposito()
+    {
+        $today             = date("Y/m/d");
+        $tahun             = $this->uri->segment(4);
+        $konversi          = mktime(0,0,0,date("n"),date("j"),date("Y")+$tahun);
+        $tahun_depan       = date("Y/m/d", $konversi);
+
+        $output['hasil_konversi'] = $tahun_depan;
+        $output['today'] = $today;
+
+        echo json_encode($output);
     }
 
     function export()

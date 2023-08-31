@@ -4,6 +4,9 @@
 <!-- Bootstrap DatePicker -->
 <link href="<?php echo base_url('assets/bootstrap-datepicker/css/bootstrap-datepicker.min.css') ?>" rel="stylesheet">
 <!-- Bootstrap DatePicker -->
+<!-- Bootstrap Touchspin -->
+<link href="<?php echo base_url('assets/bootstrap-touchspin/css/jquery.bootstrap-touchspin.css') ?>" rel="stylesheet">
+<!-- Bootstrap Touchspin -->
 </head>
 <!-- Meta -->
 
@@ -95,13 +98,13 @@
                                         <small id="emailHelp" class="form-text text-muted">Isikan alamat lengkap sesuai KTP.</small>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Email</label>
                                                 <?php echo form_input($email) ?>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>No HP/Telephone/WhatsApp</label>
                                                 <div class="input-group mb-3">
@@ -112,12 +115,37 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <label for="dateRangePicker">Jangka Waktu Deposito</label>
+                                                <?php echo form_input($jangka_waktu_deposito) ?>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                <label for="dateRangePicker">Konversi Tanggal</label>
+                                                <div class="input-daterange input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                                    </div>
+                                                    <?php echo form_input($waktu_deposito) ?>
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">-</span>
+                                                    </div>
+                                                    <?php echo form_input($jatuh_tempo) ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>Jumlah Deposito</label>
                                                 <div class="input-group mb-3">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text">RP</span>
+                                                        <span class="input-group-text">Rp</span>
                                                     </div>
                                                     <?php echo form_input($total_deposito) ?>
                                                     <div class="input-group-append">
@@ -125,19 +153,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="dateRangePicker">Jangka Waktu Deposito</label>
-                                        <div class="input-daterange input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                            </div>
-                                            <?php echo form_input($waktu_deposito) ?>
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">-</span>
-                                            </div>
-                                            <?php echo form_input($jatuh_tempo) ?>
                                         </div>
                                     </div>
                                 </div>
@@ -180,6 +195,9 @@
     <!-- maskMoney -->
     <script src="<?php echo base_url('assets/') ?>maskMoney/jquery.maskMoney.min.js"></script>
     <!-- maskMoney -->
+    <!-- Bootstrap Touchspin -->
+    <script src="<?php echo base_url('assets/') ?>bootstrap-touchspin/js/jquery.bootstrap-touchspin.js"></script>
+    <!-- Bootstrap Touchspin -->
 
     <script>
         $(document).ready(function() {
@@ -188,23 +206,14 @@
                 decimal: ',',
                 precision: 0
             });
-        });
 
-        $(document).ready(function() {
-            $('#waktu_deposito').datepicker({
-                startView: 2,
-                format: 'yyyy/mm/dd',
-                autoclose: true,
-                todayHighlight: true,
-                todayBtn: 'linked',
-            });
-
-            $('#jatuh_tempo').datepicker({
-                startView: 2,
-                format: 'yyyy/mm/dd',
-                autoclose: true,
-                todayHighlight: true,
-                todayBtn: 'linked',
+            $('#jangka_waktu_deposito').TouchSpin({
+                min: 0,
+                max: 100,
+                postfix: 'Tahun',
+                // initval: 0,
+                boostat: 5,
+                maxboostedstep: 10
             });
         });
 
@@ -219,6 +228,21 @@
             });
             return false;
         }
+
+        $('#jangka_waktu_deposito').on('change', function() {
+
+            jangka_waktu_deposito = document.getElementById("jangka_waktu_deposito").value;
+
+            $.ajax({
+                url: "<?php echo base_url('admin/deposito/add_konversi_jangka_waktu_deposito/') ?>" + jangka_waktu_deposito,
+                success: function(response) {
+                    var myObj = JSON.parse(response);
+
+                    $('#waktu_deposito').val(myObj.today);
+                    $('#jatuh_tempo').val(myObj.hasil_konversi);
+                }
+            });
+        });
     </script>
 </body>
 
