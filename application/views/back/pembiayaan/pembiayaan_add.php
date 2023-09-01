@@ -7,6 +7,9 @@
 <!-- Bootstrap Touchspin -->
 <link href="<?php echo base_url('assets/bootstrap-touchspin/css/jquery.bootstrap-touchspin.css') ?>" rel="stylesheet">
 <!-- Bootstrap Touchspin -->
+<!-- Select2 -->
+<link href="<?php echo base_url('assets/select2/dist/css/select2.min.css') ?>" rel="stylesheet" type="text/css">
+<!-- Select2 -->
 </head>
 <!-- Meta -->
 

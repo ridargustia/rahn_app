@@ -2263,7 +2263,7 @@ class Pembiayaan extends CI_Controller
             $this->data['user_id'] = [
                 'name'          => 'user_id',
                 'id'            => 'user_id',
-                'class'         => 'form-control',
+                'class'         => 'form-control select2-single-placeholder',
                 'required'      => '',
                 'onChange'      => 'tampilDetailUser()',
                 'value'         => $this->form_validation->set_value('user_id'),

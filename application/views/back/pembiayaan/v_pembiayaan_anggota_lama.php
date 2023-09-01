@@ -222,6 +222,10 @@
     </div>
 </div>
 
+<!-- Select2 -->
+<script src="<?php echo base_url('assets/select2/dist/js/select2.min.js') ?>"></script>
+<!-- Select2 -->
+
 <script>
     $(document).ready(function() {
         $('#jml_pinjaman').maskMoney({
@@ -237,6 +241,12 @@
             // initval: 0,
             boostat: 5,
             maxboostedstep: 10
+        });
+
+        // Select2 Single  with Placeholder
+        $('.select2-single-placeholder').select2({
+            placeholder: "- Silahkan Pilih Anggota -",
+            allowClear: false
         });
 
     });
