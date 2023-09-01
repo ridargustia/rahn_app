@@ -869,7 +869,7 @@ class Pembayaran extends CI_Controller
         if ($image) {
             $this->data['image'] = $image;
         } else {
-            $this->data['image'] = 'noimage.jpg';
+            $this->data['image'] = 'pembayaran_tunai.jpg';
         }
 
         $this->load->view('back/pembayaran/v_image_by_riwayat_pembayaran', $this->data);
