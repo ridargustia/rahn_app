@@ -163,6 +163,12 @@
             </div>
         </div>
     </li>
+    <li class="<?php if($this->uri->segment(3) == 'setting_transaksi'){echo "nav-item active";} else {echo "nav-item";} ?>">
+        <a class="nav-link" href="<?php echo base_url('admin/instansi/setting_transaksi/'.$this->session->instansi_id) ?>">
+            <i class="fas fa-fw fa-sliders-h"></i>
+            <span>Transaction Guide</span>
+        </a>
+    </li>
     <?php } ?>
     <?php if (is_grandadmin()) { ?>
     <li class="nav-item">

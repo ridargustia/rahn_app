@@ -23,6 +23,9 @@
                             <li class="breadcrumb-item active" aria-current="page"><?php echo $page_title ?></li>
                         </ol>
                     </div>
+                    <?php if ($this->session->flashdata('message')) {
+                        echo $this->session->flashdata('message');
+                    } ?>
 
                     <?php if (is_admin()) { ?>
                         <?php if ($deposito->is_active == 0) { ?>

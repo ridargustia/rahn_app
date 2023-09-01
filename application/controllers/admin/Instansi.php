@@ -14,7 +14,7 @@ class Instansi extends CI_Controller
     $this->data['notifikasi'] = $this->Riwayatpembayaran_model->get_all_non_is_paid()->result();
     $this->data['notifikasi_counter'] = $this->Riwayatpembayaran_model->get_all_non_is_paid()->num_rows();
 
-    $this->data['btn_submit'] = 'Save';
+    $this->data['btn_submit'] = 'Simpan';
     $this->data['btn_reset']  = 'Reset';
     $this->data['btn_add']    = 'Tambah Data';
     $this->data['add_action'] = base_url('admin/instansi/create');
@@ -536,5 +536,58 @@ class Instansi extends CI_Controller
     $this->data['current_image'] = $instansi_img;
 
     $this->load->view('back/instansi/v_current_image', $this->data);
+  }
+
+  function setting_transaksi()
+  {
+    if (!is_grandadmin() && !is_masteradmin()) {
+      $this->session->set_flashdata('message', '<div class="alert alert-danger">Anda tidak berhak mengubah data orang lain</div>');
+      redirect('admin/dashboard');
+    }
+
+    $this->data['instansi'] = $this->Instansi_model->get_by_id($this->session->instansi_id);
+
+    $this->data['page_title'] = 'Edit Transaction Guide';
+    $this->data['action'] = 'admin/instansi/setting_transaksi_action';
+
+    $this->data['biaya_satuan_sewa_tempat'] = [
+      'name'          => 'biaya_satuan_sewa_tempat',
+      'id'            => 'biaya_satuan_sewa_tempat',
+      'class'         => 'form-control',
+      'autocomplete'  => 'off',
+      'required'      => '',
+    ];
+    $this->data['acuan_konversi_gram'] = [
+      'name'          => 'acuan_konversi_gram',
+      'id'            => 'acuan_konversi_gram',
+      'class'         => 'form-control',
+      'autocomplete'  => 'off',
+      'required'      => '',
+    ];
+
+    $this->load->view('back/instansi/transaksi_edit', $this->data);
+  }
+
+  function setting_transaksi_action()
+  {
+    $this->form_validation->set_rules('biaya_satuan_sewa_tempat', 'Biaya Satuan Sewa Tempat', 'required');
+    $this->form_validation->set_rules('acuan_konversi_gram', 'Acuan Konversi Gram', 'required');
+
+    $this->form_validation->set_message('required', '{field} wajib diisi');
+
+    $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
+
+    $biaya_satuan_sewa_tempat = preg_replace("/[^0-9]/", "", $this->input->post('biaya_satuan_sewa_tempat'));
+    $acuan_konversi_gram = preg_replace("/[^0-9]/", "", $this->input->post('acuan_konversi_gram'));
+
+    $data = array(
+      'biaya_satuan_sewa_tempat'  => $biaya_satuan_sewa_tempat,
+      'acuan_konversi_gram'       => $acuan_konversi_gram,
+    );
+
+    $this->Instansi_model->update($this->session->instansi_id, $data);
+
+    $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><h6 style="margin-top: 3px; margin-bottom: 3px;"><i class="fas fa-check"></i><b> Berhasil Disimpan!</b></h6></div>');
+    redirect('admin/instansi/setting_transaksi');
   }
 }
